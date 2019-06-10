@@ -3,11 +3,7 @@
     <CommonQuery>
       <template slot="button1">
         <el-button size="mini" type="primary" icon="el-icon-plus" @click="handleCreate" v-waves>
-          一键抓取
-        </el-button>
-
-        <el-button size="mini" type="primary" icon="el-icon-setting" @click="crawlerSettingFlag=true" v-waves>
-          参数设置
+          新建
         </el-button>
         <el-button size="mini" type="danger" icon="el-icon-delete" @click="handleMultipleDelete" v-waves>
           批量删除
@@ -29,16 +25,14 @@
               :height="tableHeight">
       <el-table-column type="selection" width="40"></el-table-column>
       <el-table-column label="No" type="index" width="45" align="center" fixed></el-table-column>
-      <el-table-column align="center" label="header ID" prop='movieName' width="200"></el-table-column>
-      <el-table-column align="center" label="行程" prop='releaseInfo'></el-table-column>
-      <el-table-column align="center" label="上座率" prop='seatRate'></el-table-column>
-      <el-table-column align="center" label="排片场次" prop='showInfo'></el-table-column>
-      <el-table-column align="center" label="排片占比" prop='showRate'></el-table-column>
-      <el-table-column align="center" label="场均人次" prop='avgShowView'></el-table-column>
+      <el-table-column align="center" label="header名称" prop='name' width="200"></el-table-column>
+      <el-table-column align="center" label="爬虫类型" prop='type'></el-table-column>
+      <el-table-column align="center" label="header键名" prop='headerKeyName'></el-table-column>
+      <el-table-column align="center" label="header值名" prop='headerValueName'></el-table-column>
 
-      <el-table-column align="center" label="操作" width="100px">
+      <el-table-column align="center" label="操作" width="200px">
         <template slot-scope="scope">
-          <!--          <el-button type="primary" size="mini" @click="handleUpdate(scope)">编辑</el-button>-->
+          <el-button type="primary" size="mini" @click="handleUpdate(scope)">编辑</el-button>
           <el-button type="danger" size="mini" @click="handleDelete(scope)">删除</el-button>
         </template>
       </el-table-column>
@@ -63,48 +57,20 @@
                    label-position="right"
                    label-width="140px">
             <el-form-item label="奖品类型" prop="rewardType">
-              <el-select v-model="formData.rewardType" placeholder='' @change="chooseRewardType">
+              <el-input v-model="formData.name" :disabled="formData.rewardType==='third_link'"></el-input>
+            </el-form-item>
+            <el-form-item label="奖品名称" prop="type">
+              <el-select v-model="formData.type" placeholder=''>
                 <el-option v-for="item in $store.state.app.rewardTypeDictionary"
                            :key="item.code" :label="item.name"
                            :value="item.code"></el-option>
               </el-select>
-              <el-button v-if="formData.rewardType==='third_link'" type="primary" @click="crawlerSettingFlag=true">
-                选择第三方产品
-              </el-button>
             </el-form-item>
-            <el-form-item label="奖品名称" prop="rewardName">
-              <el-input :disabled="formData.rewardType==='third_link'" v-model="formData.rewardName"></el-input>
+            <el-form-item label="描述" prop="headerKeyName">
+              <el-input v-model="formData.headerKeyName" :disabled="formData.rewardType==='third_link'"></el-input>
             </el-form-item>
-            <el-form-item label="描述" prop="description">
-              <el-input :disabled="formData.rewardType==='third_link'" type="textarea"
-                        v-model="formData.description"></el-input>
-            </el-form-item>
-            <el-form-item label="奖品图片" prop="rewardImage">
-              <CommonUploadImage
-                :action="$baseUrl+'image-upload-service/1.0.0/file/upload'"
-                @on-success="uploadSuccess2"
-                :returnUrlList.sync="formData.rewardImage"
-                :disabled="formData.rewardType==='third_link'"
-                fileType="image"
-              />
-              <el-input v-show="false" v-model="formData.rewardImage"></el-input>
-            </el-form-item>
-            <el-form-item label="奖品文案" prop="rewardPrompt">
-              <el-input type="textarea" v-model="formData.rewardPrompt"></el-input>
-            </el-form-item>
-            <el-form-item label="奖品Code" prop="rewardStr">
-              <el-input :disabled="formData.rewardType==='third_link'" v-model="formData.rewardStr"></el-input>
-            </el-form-item>
-
-            <el-form-item label="可用性" prop="status">
-              <el-switch v-model="formData.status"
-                         :active-value="1"
-                         :inactive-value="0"
-                         active-color="#13ce66"
-                         inactive-color="#ff4949"
-                         :disabled="formData.rewardType==='third_link'"
-              >
-              </el-switch>
+            <el-form-item label="奖品文案" prop="headerValueName">
+              <el-input v-model="formData.headerValueName" type="textarea"></el-input>
             </el-form-item>
           </el-form>
         </el-col>
@@ -113,23 +79,6 @@
         <el-button @click="dialogFormVisible = false" v-waves>{{$t('table.cancel')}}</el-button>
         <el-button v-if="dialogStatus==='create'" type="primary" @click="createData">{{$t('table.confirm')}}</el-button>
         <el-button v-else type="primary" @click="updateData" v-waves>{{$t('table.confirm')}}</el-button>
-      </div>
-    </el-dialog>
-    <!-- 弹框 -->
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="crawlerSettingFlag" width="600px">
-      <el-row type="flex" justify="center">
-        <el-col :span="20">
-          <el-form ref="chooseRewardTypeModel" :model="chooseRewardTypeModel" label-position="right"
-                   label-width="80px">
-            <el-form-item label="抓取地址" prop="name">
-              <el-input type="textarea" v-model="crawlerSetting.address"></el-input>
-            </el-form-item>
-          </el-form>
-        </el-col>
-      </el-row>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="crawlerSettingFlag = false" v-waves>{{$t('table.cancel')}}</el-button>
-        <el-button type="primary" @click="confirmCrawlerSetting" v-waves>{{$t('table.confirm')}}</el-button>
       </div>
     </el-dialog>
   </el-row>
@@ -146,9 +95,9 @@
     },
     data() {
       return {
-        getListByPaginationRequest: 'crawler/getListByPagination',
-        crawlAndSaveRequest: 'crawler/crawlAndSave',
-        deleteRecordRequest: 'crawler/deleteRecords',
+        getListRequest: 'headerSettings/getList',
+        createOrUpdateRequest: 'headerSettings/createOrUpdate',
+        deleteHeaderRequest: 'headerSettings/deleteHeader',
         crawlerSettingFlag: false,
         crawlerSetting: {
           address: ''
@@ -188,20 +137,11 @@
         statusOptions: ['published', 'draft', 'deleted'],
         showReviewer: false,
         formData: {
-          movieId: '',
-          movieName: '',
-          timestamp: '',
-          boxInfo: '',
-          boxRate: '',
-          releaseInfo: '',
-          seatRate: '',
-          showInfo: '',
-          showRate: '',
-          splitAvgViewBox: '',
-          splitBoxInfo: '',
-          splitBoxRate: '',
-          splitSumBoxInfo: '',
-          sumBoxInfo: ''
+          headerId: '',
+          name: '',
+          type: '',
+          headerKeyName: '',
+          headerValueName: ''
         },
         dialogFormVisible: false,
         dialogStatus: '',
@@ -211,14 +151,11 @@
         },
         dialogPvVisible: false,
         rules: {
-          id: [{ required: true, message: '此项为必填项', trigger: 'change' }],
-          description: [{ required: true, message: '此项为必填项', trigger: 'change' }],
+          headerId: [{ required: true, message: '此项为必填项', trigger: 'change' }],
           name: [{ required: true, message: '此项为必填项', trigger: 'change' }],
-          dailyLimit: [{ required: true, message: '此项为必填项', trigger: 'change' }],
-          limit: [{ required: true, message: '此项为必填项', trigger: 'change' }],
-          startDate: [{ required: true, message: '此项为必填项', trigger: 'change' }],
-          endDate: [{ required: true, message: '此项为必填项', trigger: 'change' }],
-          status: [{ required: true, message: '此项为必填项', trigger: 'change' }]
+          type: [{ required: true, message: '此项为必填项', trigger: 'change' }],
+          headerKeyName: [{ required: true, message: '此项为必填项', trigger: 'change' }],
+          headerValueName: [{ required: true, message: '此项为必填项', trigger: 'change' }]
         },
         downloadLoading: false,
         pickerOptions0: {
@@ -276,7 +213,7 @@
       getTableData() {
         this.listLoading = true
         this.queryModel = Object.assign(this.queryModel, this.pagination)
-        this.$http.get(this.$baseUrl + this.getListByPaginationRequest, {
+        this.$http.get(this.$baseUrl + this.getListRequest, {
           params: this.queryModel
         }).then(response => {
           console.log('getListByPaginationRequest', response)
@@ -340,7 +277,7 @@
 
       },
       createData() {
-        this.formData.id = ''
+        this.formData.headerId = ''
         this.updateData()
       },
       handleUpdate(scope) {
@@ -356,16 +293,12 @@
       updateData() {
         this.$refs['formData'].validate((valid) => {
           if (valid) {
-            this.$http.post(this.$baseUrl + this.addAndUpdateRewardInfoRequest, {
-              id: this.formData.id,
-              description: this.formData.description,
-              rewardImage: this.formData.rewardImage,
-              rewardName: this.formData.rewardName,
-              rewardPrompt: this.formData.rewardPrompt,
-              rewardStr: this.formData.rewardStr,
-              rewardType: this.formData.rewardType,
-              rewardValue: this.formData.rewardValue,
-              status: this.formData.status
+            this.$http.post(this.$baseUrl + this.createOrUpdateRequest, {
+              headerId: this.formData.headerId,
+              name: this.formData.name,
+              type: this.formData.type,
+              headerKeyName: this.formData.headerKeyName,
+              headerValueName: this.formData.headerValueName
             }).then((response) => {
               console.log(response)
               this.dialogFormVisible = false

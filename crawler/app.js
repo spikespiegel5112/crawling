@@ -11,7 +11,7 @@ const HeadersModel=require('./models/HeadersSettings');
 
 const errorController = require('./controllers/errorController');
 const crawlerRoutes = require('./routers/crawler');
-const settingsRoutes = require('./routers/settings');
+const headerSettingsRoutes = require('./routers/headerSettings');
 
 app.use(express.static(__dirname));
 app.use(bodyParser.json());
@@ -41,7 +41,7 @@ var corsOptions = {
 };
 
 app.use('/crawler', cors(corsOptions), crawlerRoutes);
-app.use('/settings', cors(corsOptions), settingsRoutes);
+app.use('/headerSettings', cors(corsOptions), headerSettingsRoutes);
 app.use(errorController.get404);
 
 sequelize.sync().then(result => {

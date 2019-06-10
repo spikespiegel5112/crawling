@@ -21,18 +21,16 @@ const getList = (req, res, next) => {
 		})
 	}).catch(error => {
 		res.status(500).json({
-			error: {
-				message: error,
-				req: pagination
-			}
+			error: error,
+			req: pagination
 		})
 	})
 };
 
 const createOrUpdate = (req, res, next) => {
 	let headerId = req.body.headerId;
-	console.log('headerId', headerId)
-	if (!headerId) {
+	console.log('headerId', headerId);
+	if (!headerId || headerId === '') {
 		headerId = uuidv1();
 		HeadersSettings.create({
 			headerId: headerId,
@@ -52,8 +50,9 @@ const createOrUpdate = (req, res, next) => {
 			});
 		})
 	} else {
-
-		HeadersSettings.findByPk(headerId).then(async data => {
+		HeadersSettings.findAll({
+			headerId: headerId
+		}).then(async data => {
 			data.name = req.body.name;
 			data.type = req.body.type;
 			data.headerKeyName = req.body.headerKeyName;
@@ -61,12 +60,12 @@ const createOrUpdate = (req, res, next) => {
 			await data.save();
 			res.status(200).json({
 				message: 'Success',
-				result: result
+				result: data
 			})
-		}).catch(error=>{
+		}).catch(error => {
 			res.status(400).json({
 				message: 'Failed',
-				req:req.body,
+				req: req.body,
 				error: error.toString()
 			});
 		})
@@ -75,14 +74,18 @@ const createOrUpdate = (req, res, next) => {
 
 };
 
-const deleteRecords = (req, res, next) => {
+const deleteHeader = (req, res, next) => {
 	console.log(req.body);
 	console.log(req.params);
-	const idBody = req.body.id;
+	const headerId = req.body.headerId;
 	console.log(idBody instanceof Array);
 	if (idBody instanceof Array) {
 		idBody.forEach((item, index) => {
-			HeadersSettings.findByPk(item).then(async response => {
+			HeadersSettings.findAll({
+				where: {
+					headerId: headerId
+				}
+			}).then(async response => {
 				const result = await response.destroy();
 				if (index + 1 === req.body.id.length) {
 					res.status(200).json({
@@ -120,4 +123,4 @@ const deleteRecords = (req, res, next) => {
 
 exports.createOrUpdate = createOrUpdate;
 exports.getList = getList;
-exports.deleteRecords = deleteRecords;
+exports.deleteHeader = deleteHeader;
