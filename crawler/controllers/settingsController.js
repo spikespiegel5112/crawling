@@ -1,0 +1,123 @@
+const HeadersSettings = require('../models/HeadersSettings');
+const uuidv1 = require('uuid/v1');
+
+const getList = (req, res, next) => {
+	let pagination = {
+		limit: Number(req.query.limit),
+		page: Number(req.query.page),
+		offset: req.query.limit * (req.query.page - 1)
+	};
+
+	HeadersSettings.findAll({
+		offset: pagination.offset,
+		limit: pagination.limit,
+		// order: ['DESC']
+	}).then(async data => {
+		res.status(200).json({
+			pagination: {
+				total: await HeadersSettings.count(),
+			},
+			data: data
+		})
+	}).catch(error => {
+		res.status(500).json({
+			error: {
+				message: error,
+				req: pagination
+			}
+		})
+	})
+};
+
+const createOrUpdate = (req, res, next) => {
+	let headerId = req.body.headerId;
+	console.log('headerId', headerId)
+	if (!headerId) {
+		headerId = uuidv1();
+		HeadersSettings.create({
+			headerId: headerId,
+			name: req.body.name,
+			type: req.body.type,
+			headerKeyName: req.body.headerKeyName,
+			headerValueName: req.body.headerValueName,
+		}).then(result => {
+			res.status(200).json({
+				message: 'Success',
+				result: result
+			})
+		}).catch(error => {
+			res.status(400).json({
+				message: 'Failed',
+				error: error.toString()
+			});
+		})
+	} else {
+
+		HeadersSettings.findByPk(headerId).then(async data => {
+			data.name = req.body.name;
+			data.type = req.body.type;
+			data.headerKeyName = req.body.headerKeyName;
+			data.headerValueName = req.body.headerValueName;
+			await data.save();
+			res.status(200).json({
+				message: 'Success',
+				result: result
+			})
+		}).catch(error=>{
+			res.status(400).json({
+				message: 'Failed',
+				req:req.body,
+				error: error.toString()
+			});
+		})
+	}
+
+
+};
+
+const deleteRecords = (req, res, next) => {
+	console.log(req.body);
+	console.log(req.params);
+	const idBody = req.body.id;
+	console.log(idBody instanceof Array);
+	if (idBody instanceof Array) {
+		idBody.forEach((item, index) => {
+			HeadersSettings.findByPk(item).then(async response => {
+				const result = await response.destroy();
+				if (index + 1 === req.body.id.length) {
+					res.status(200).json({
+						message: 'Delete successful',
+						body: result
+					});
+				}
+			}).catch(error => {
+				res.status(400).json({
+					message: 'Delete failed',
+					error: error.toString()
+				});
+			})
+		})
+	} else {
+		HeadersSettings.findByPk(idBody).then(result => {
+			console.log(result);
+			result.destroy().then(() => {
+				if (index + 1 === req.body.id.length) {
+					res.status(200).json({
+						message: 'Delete successful',
+						body: result
+					});
+				}
+			})
+		}).catch(error => {
+			res.status(400).json({
+				message: 'Delete failed',
+				error: error.toString()
+			});
+		})
+	}
+};
+
+
+exports.createOrUpdate = createOrUpdate;
+exports.getList = getList;
+exports.deleteRecords = deleteRecords;
