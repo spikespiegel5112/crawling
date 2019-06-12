@@ -1,9 +1,12 @@
+const express = require('express');
 const crawler = require('crawler');
 const MaoyanRecords = require('../models/MaoyanRecords');
+const SettingsModel = require('../models/SettingsModel');
 
 
+let dataJSONHeaders = {};
 const _crawlPromise = (address, res, next) => {
-	return new Promise((resolve, reject) => {
+	return new Promise(async (resolve, reject) => {
 		let $ = {};
 
 		const crawlerInstance = new crawler({
@@ -37,25 +40,44 @@ const _crawlPromise = (address, res, next) => {
 			'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36',
 		};
 
-		const dataJSONHeaders = {
-			'Access-Control-Allow-Credentials': true,
-			'Access-Control-Allow-Methods': 'GET',
-			'Access-Control-Allow-Origin': 'https://piaofang.maoyan.com',
-			'Access-Control-Max-Age': '2592000',
-			'Connection': 'keep-alive',
-			'Content-Encoding': 'gzip',
-			'Content-Type': 'application/json;charset=utf-8',
-			'Date': 'Wed, 05 Jun 2019 12:18:52 GMT',
-			'ETag': 'W/"0a3c3dfbb55a4bcfb08584d89d29ae9c8"',
-			'M-SpanName': 'MBOBoxController.getSecondBox',
-			'M-TraceId': '-1579717533259130308',
-			'Server': 'openresty',
-			'Transfer-Encoding': 'chunked',
+		dataJSONHeaders = {
+			"Access-Control-Allow-Credentials": "true",
+			"Access-Control-Allow-Methods": "GET",
+			"Access-Control-Allow-Origin": "https://piaofang.maoyan.com",
+			"Access-Control-Max-Age": "2592000",
+			"Connection": "keep-alive",
+			"Content-Encoding": "gzip",
+			"Content-Type": "application/json;charset=utf-8",
+			"Date": "Wed, 05 Jun 2019 12:18:52 GMT",
+			"ETag": "W/'0a3c3dfbb55a4bcfb08584d89d29ae9c8'",
+			"M-SpanName": "MBOBoxController.getSecondBox",
+			"M-TraceId": "-1579717533259130308",
+			"Server": "openresty",
+			"Transfer-Encoding": "chunked"
 		};
+
+		let headers = '';
+		SettingsModel.findOne({
+			where: {
+				type: 'maoyan'
+			}
+		}).then(response => {
+			headers = response._previousDataValues;
+			console.log('headers++++++++++++++++++++', headers);
+
+			// res.status(200).json(headers)
+		}).catch(error => {
+			res.status(400).json({
+				message: error,
+				data: jsonParser(error)
+			})
+		});
+
 
 		crawlerInstance.queue({
 			url: address,
-			headers: dataJSONHeaders,
+			// headers: dataJSONHeaders,
+			headers: headers,
 			callback: (error, result, done) => {
 				if (error) {
 					console.log('insrtance error: ', error);
@@ -65,9 +87,14 @@ const _crawlPromise = (address, res, next) => {
 					$ = result.$;
 					// console.log('Grabbed', result.body.length, 'bytes');
 					console.log('$: ', result.body);
-					let crawlerResult = JSON.parse(result.body);
+					let crawlerResult;
+					try {
+						crawlerResult = Object.assign({headers: JSON.parse(headers.value)}, JSON.parse(result.body));
+						resolve(crawlerResult);
+					} catch (e) {
+						reject(e)
+					}
 
-					resolve(crawlerResult);
 
 				}
 				done();
@@ -121,7 +148,7 @@ const _createRecord = (requestBody, timestamp) => {
 };
 
 const crawl = (req, res, next) => {
-	console.log(req.query.address)
+	console.log(req.query.address);
 	const address = req.query.address;
 	_crawlPromise(address, res, next).then(response => {
 		const timestamp = Date.now();

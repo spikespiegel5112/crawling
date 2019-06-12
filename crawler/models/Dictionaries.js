@@ -2,24 +2,16 @@ const Sequelize = require('sequelize');
 
 const sequelize = require('../util/database');
 
-const Dictionary = sequelize.define('Dictionary', {
+const Dictionaries = sequelize.define('Dictionaries', {
 	id: {
 		type: Sequelize.INTEGER,
 		autoIncrement: true,
 		allowNull: true,
 		primaryKey: true
 	},
-	dictionaryTypeCode:{
+	dictionaryId: {
 		type: Sequelize.STRING,
-		allowNull: false
-	},
-	typeId: {
-		type: Sequelize.STRING,
-		allowNull: false
-	},
-	typeCode: {
-		type: Sequelize.STRING,
-		allowNull: false
+		allowNull: true
 	},
 	name: {
 		type: Sequelize.STRING,
@@ -28,8 +20,16 @@ const Dictionary = sequelize.define('Dictionary', {
 	code: {
 		type: Sequelize.STRING,
 		allowNull: false
+	},
+	typeName: {
+		type: Sequelize.STRING,
+		allowNull: false
+	},
+	typeCode: {
+		type: Sequelize.STRING,
+		allowNull: false
 	}
 
 });
 
-module.exports = Dictionary;
+module.exports = Dictionaries;

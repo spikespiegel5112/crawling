@@ -148,7 +148,7 @@
         listLoading: true,
         availabilityFlag: false,
         dynamicTags: ['标签一', '标签二', '标签三'],
-        rewardTypeDictionary: [{
+        crawlerTypeDictionary: [{
           name: '积分',
           code: 'point'
         }, {

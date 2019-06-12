@@ -1,4 +1,4 @@
-const HeadersSettings = require('../models/HeadersSettings');
+const SettingsModel = require('../models/SettingsModel');
 const uuidv1 = require('uuid/v1');
 
 const getList = (req, res, next) => {
@@ -8,7 +8,7 @@ const getList = (req, res, next) => {
 		offset: req.query.limit * (req.query.page - 1)
 	};
 
-	HeadersSettings.findAll({
+	SettingsModel.findAll({
 		offset: pagination.offset,
 		limit: pagination.limit,
 
@@ -16,7 +16,7 @@ const getList = (req, res, next) => {
 	}).then(async data => {
 		res.status(200).json({
 			pagination: {
-				total: await HeadersSettings.count(),
+				total: await SettingsModel.count(),
 			},
 			data: data
 		})
@@ -29,15 +29,15 @@ const getList = (req, res, next) => {
 };
 
 const createOrUpdate = (req, res, next) => {
-	let headerId = req.body.headerId;
-	console.log('headerId',  req.body);
-	if (!headerId || headerId === '') {
-		HeadersSettings.create({
-			headerId: uuidv1(),
+	let settingId = req.body.settingId;
+	console.log('settingId',  req.body);
+	if (!settingId || settingId === '') {
+		SettingsModel.create({
+			settingId: uuidv1(),
 			name: req.body.name,
 			type: req.body.type,
-			headerKeyName: req.body.headerKeyName,
-			headerValueName: req.body.headerValueName,
+			code: req.body.code,
+			value: req.body.value,
 		}).then(result => {
 			res.status(200).json({
 				message: 'Created successful',
@@ -50,18 +50,18 @@ const createOrUpdate = (req, res, next) => {
 			});
 		})
 	} else {
-		console.log('headerId', headerId);
+		console.log('settingId', settingId);
 
-		HeadersSettings.findOne({
+		SettingsModel.findOne({
 			where:{
-				headerId: headerId
+				settingId: settingId
 			}
 		}).then(async data => {
 			console.log(data)
 			data.name = req.body.name;
 			data.type = req.body.type;
-			data.headerKeyName = req.body.headerKeyName;
-			data.headerValueName = req.body.headerValueName;
+			data.code = req.body.code;
+			data.value = req.body.value;
 			await data.save();
 			res.status(200).json({
 				message: 'Updated successful',
@@ -83,13 +83,13 @@ const createOrUpdate = (req, res, next) => {
 const deleteItem = (req, res, next) => {
 	console.log(req.body);
 	console.log(req.params);
-	const headerId = req.body.headerId;
+	const settingId = req.body.settingId;
 	console.log(idBody instanceof Array);
 	if (idBody instanceof Array) {
 		idBody.forEach((item, index) => {
-			HeadersSettings.findAll({
+			SettingsModel.findAll({
 				where: {
-					headerId: headerId
+					settingId: settingId
 				}
 			}).then(async response => {
 				const result = await response.destroy();
@@ -107,7 +107,7 @@ const deleteItem = (req, res, next) => {
 			})
 		})
 	} else {
-		HeadersSettings.findByPk(idBody).then(result => {
+		SettingsModel.findByPk(idBody).then(result => {
 			console.log(result);
 			result.destroy().then(() => {
 				if (index + 1 === req.body.id.length) {

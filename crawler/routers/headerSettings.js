@@ -5,7 +5,7 @@ const headerSettingsController = require('../controllers/headerSettingsControlle
 
 router.get('/getList', headerSettingsController.getList);
 router.post('/createOrUpdate', headerSettingsController.createOrUpdate);
-router.delete('/deleteHeader', headerSettingsController.deleteHeader);
+router.delete('/deleteItem', headerSettingsController.deleteItem);
 
 
 module.exports = router;

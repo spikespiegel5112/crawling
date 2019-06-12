@@ -35,7 +35,7 @@
       <el-table-column label="奖品文案" prop='rewardPrompt'></el-table-column>
       <el-table-column label="奖品类型" prop='rewardType'>
         <template slot-scope="scope">
-          {{$store.state.app.rewardTypeDictionary.filter(item=>item.code===scope.row.rewardType)[0].name}}
+          {{$store.state.app.crawlerTypeDictionary.filter(item=>item.code===scope.row.rewardType)[0].name}}
         </template>
       </el-table-column>
       <el-table-column label="奖品数量" prop='rewardValue'></el-table-column>
@@ -80,7 +80,7 @@
                    label-width="140px">
             <el-form-item label="奖品类型" prop="rewardType">
               <el-select v-model="formData.rewardType" placeholder='' @change="chooseRewardType">
-                <el-option v-for="item in $store.state.app.rewardTypeDictionary"
+                <el-option v-for="item in $store.state.app.crawlerTypeDictionary"
                            :key="item.code" :label="item.name"
                            :value="item.code"></el-option>
               </el-select>

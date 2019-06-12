@@ -1,8 +1,7 @@
 import Cookies from 'js-cookie'
 import request from '@/utils/request'
-import {baseUrl} from "@/utils/request";
-import VueInstance from "@/main";
-
+import { baseUrl } from '@/utils/request'
+import VueInstance from '@/main'
 
 const app = {
   state: {
@@ -12,6 +11,7 @@ const app = {
     },
     layoutHeight: 0,
     tableHeight: 0,
+    dictionary: [],
     device: 'desktop',
     actionType: [{
       name: 'native',
@@ -86,25 +86,37 @@ const app = {
       name: '每周',
       code: 3
     }],
-    rewardTypeDictionary: [{
-      name: '积分',
-      code: 'point'
+    crawlerTypeDictionary: [{
+      name: '猫眼',
+      code: 'maoyan'
     }, {
-      name: '趣豆',
-      code: 'coin'
+      name: '百度糯米',
+      code: 'nuomi'
     }, {
-      name: '百视通会员',
-      code: 'bes_tv'
-    }, {
-      name: '第三方链接',
-      code: 'third_link'
+      name: '淘票票',
+      code: 'taopiaopiao'
     }],
-    accessToken:Cookies.get('Admin-Token')
+    dictionaryDictionary: [{
+      name: '爬虫类型',
+      code: 'crawler'
+    }, {
+      name: '其他',
+      code: 'others'
+    }],
+    accessToken: Cookies.get('Admin-Token')
   },
   mutations: {
+    updateDictionary(state, payload) {
+      Object.keys(payload).forEach(item => {
+        if (!state.dictionary[item]) {
+          state.dictionary[item] = payload[item]
+        }
+      })
+
+    },
     UPDATE_LAYOUT_HEIGHT(state, payload) {
-      state.layoutHeight = payload;
-      state.tableHeight = payload - 115;
+      state.layoutHeight = payload
+      state.tableHeight = payload - 115
     },
     TOGGLE_SIDEBAR: state => {
       if (state.sidebar.opened) {
@@ -122,43 +134,43 @@ const app = {
     },
     TOGGLE_DEVICE: (state, device) => {
       state.device = device
-    },
+    }
 
   },
   actions: {
-    ToggleSideBar: ({commit}) => {
+    ToggleSideBar: ({ commit }) => {
       commit('TOGGLE_SIDEBAR')
     },
-    CloseSideBar({commit}, {withoutAnimation}) {
+    CloseSideBar({ commit }, { withoutAnimation }) {
       commit('CLOSE_SIDEBAR', withoutAnimation)
     },
-    ToggleDevice({commit}, device) {
+    ToggleDevice({ commit }, device) {
       commit('TOGGLE_DEVICE', device)
     },
-    updateShelfStatus({commit}, options) {
-      let updateShelfStatusRequest = 'task-service/1.0.0/task/bk/changeStatus/ ' + options.id + '/' + options.isShow + '';
+    updateShelfStatus({ commit }, options) {
+      let updateShelfStatusRequest = 'task-service/1.0.0/task/bk/changeStatus/ ' + options.id + '/' + options.isShow + ''
 
       return new Promise((resolve, reject) => {
         request.post(baseUrl + updateShelfStatusRequest).then(response => {
           VueInstance.$message({
-            message: "操作成功",
-            type: "success"
-          });
-          resolve();
+            message: '操作成功',
+            type: 'success'
+          })
+          resolve()
         }).catch(errpr => {
           VueInstance.$message({
-            message: "操作失败",
-            type: "error"
-          });
-          reject();
+            message: '操作失败',
+            type: 'error'
+          })
+          reject()
         })
-      });
+      })
 
     },
-    updateLayoutHeight({commit}, payload) {
+    updateLayoutHeight({ commit }, payload) {
       commit('UPDATE_LAYOUT_HEIGHT', payload)
     }
-  },
-};
+  }
+}
 
 export default app

@@ -51,13 +51,23 @@ export const constantRouterMap = [{
   path: '/settings',
   component: Layout,
   redirect: '/settings/headers',
-  name: 'settings',
-  meta: { title: '参数设置', icon: 'table' },
+  name: 'settingsLayout',
+  meta: { title: '设置', icon: 'table' },
   children: [{
     path: 'headers',
     name: 'headers',
     component: () => import('@/views/settings/Headers'),
     meta: { title: '请求头设置', icon: 'list' }
+  }, {
+    path: '',
+    name: 'settings',
+    component: () => import('@/views/settings/Settings'),
+    meta: { title: '参数设置', icon: 'list' }
+  }, {
+    path: 'dictionary',
+    name: 'dictionary',
+    component: () => import('@/views/settings/Dictionary'),
+    meta: { title: '字典表设置', icon: 'list' }
   }]
 }, {
 //   path: '/task',

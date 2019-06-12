@@ -2,7 +2,7 @@
   <el-row class="app-container">
     <CommonQuery>
       <template slot="button1">
-        <el-button size="mini" type="primary" icon="el-icon-plus" @click="handleCreate" v-waves>
+        <el-button size="mini" type="primary" icon="el-icon-plus" @click="createData" v-waves>
           新建
         </el-button>
         <el-button size="mini" type="danger" icon="el-icon-delete" @click="handleMultipleDelete" v-waves>
@@ -11,7 +11,9 @@
       </template>
       <template slot="query1">
         <div class="common-search-wrapper" @keyup.enter="search">
-          <input v-model="queryModel.brandName" type="text" placeholder="请输入游戏名称"/>
+          <label>
+            <input v-model="queryModel.brandName" type="text" placeholder="请输入游戏名称"/>
+          </label>
           <a>
             <span @click="search" class="el-icon-search"></span>
           </a>
@@ -26,7 +28,27 @@
       <el-table-column type="selection" width="40"></el-table-column>
       <el-table-column label="No" type="index" width="45" align="center" fixed></el-table-column>
       <el-table-column align="center" label="header名称" prop='name' width="200"></el-table-column>
-      <el-table-column align="center" label="爬虫类型" prop='type'></el-table-column>
+      <el-table-column align="center" label="爬虫类型" prop='type'>
+        <template slot-scope="scope">
+          <div v-if="currentEditingCrawlerId!==scope.row.headerId">
+            <!--                        {{scope.row.headerId}}-->
+            <el-tag v-for="(item, index) in getCrawlerType(scope)" :key="item.code" type="success">
+              {{getCrawlerType(scope).length>0?item.name:''}}
+            </el-tag>
+            <el-button type="text" size="mini" icon="el-icon-edit" @click="handleChangeCralerType(scope)"></el-button>
+          </div>
+          <div v-else>
+            <el-select v-model="formData.type" placeholder='请选择' multiple>
+              <el-option v-for="item in $store.state.app.dictionary['crawler']"
+                         :key="item.code" :label="item.name"
+                         :value="item.code"></el-option>
+            </el-select>
+            <el-button type="text" size="mini" icon="el-icon-check" @click="saveHeaderTypes"></el-button>
+            <el-button type="text" size="mini" icon="el-icon-close" @click="currentEditingCrawlerId=''"></el-button>
+
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="header键名" prop='headerKeyName'></el-table-column>
       <el-table-column align="center" label="header值名" prop='headerValueName'></el-table-column>
 
@@ -56,21 +78,22 @@
           <el-form :rules="rules" ref="formData" :model="formData"
                    label-position="right"
                    label-width="140px">
-            <el-form-item label="奖品类型" prop="rewardType">
-              <el-input v-model="formData.name" :disabled="formData.rewardType==='third_link'"></el-input>
+            <el-form-item label="名称" prop="name">
+              <el-input v-model="formData.name"></el-input>
             </el-form-item>
-            <el-form-item label="奖品名称" prop="type">
+            <el-form-item label="类型" prop="type">
               <el-select v-model="formData.type" placeholder=''>
-                <el-option v-for="item in $store.state.app.rewardTypeDictionary"
+                <el-option v-for="item in $store.state.app.dictionary['crawler']"
                            :key="item.code" :label="item.name"
                            :value="item.code"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="描述" prop="headerKeyName">
+            <el-form-item label="header键名" prop="headerKeyName">
               <el-input v-model="formData.headerKeyName" :disabled="formData.rewardType==='third_link'"></el-input>
             </el-form-item>
-            <el-form-item label="奖品文案" prop="headerValueName">
-              <el-input v-model="formData.headerValueName" type="textarea"></el-input>
+            <el-form-item label="header值名" prop="headerValueName">
+              <el-input v-model="formData.headerValueName" type="textarea"
+                        :autosize="{ minRows: 2, maxRows: 8}"></el-input>
             </el-form-item>
           </el-form>
         </el-col>
@@ -98,31 +121,10 @@
         getListRequest: 'headerSettings/getList',
         createOrUpdateRequest: 'headerSettings/createOrUpdate',
         deleteHeaderRequest: 'headerSettings/deleteHeader',
-        crawlerSettingFlag: false,
-        crawlerSetting: {
-          address: ''
-        },
-        chosenReward: '',
-        chooseRewardTypeModel: {},
-        chosenThirdPartyProductInfo: {},
-
-        value2: '',
-        value1: '',
-        dailyLimitMode: '',
-        limitMode: '',
-        tableKey: 0,
+        getDictionaryListRequest: 'dictionary/getList',
         tableList: [],
         total: null,
         listLoading: true,
-        availabilityFlag: false,
-
-        statusDictionary: [{
-          code: 0,
-          name: '未上线'
-        }, {
-          code: 1,
-          name: '上线'
-        }],
         queryModel: {
           sort: 'desc',
           brandName: ''
@@ -131,11 +133,8 @@
           page: 1,
           limit: 50
         },
-        importanceOptions: [1, 2, 3],
 
         sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-        statusOptions: ['published', 'draft', 'deleted'],
-        showReviewer: false,
         formData: {
           headerId: '',
           name: '',
@@ -150,6 +149,8 @@
           create: 'Create'
         },
         dialogPvVisible: false,
+        currentEditingCrawlerId: '',
+        currentEditingCrawlerCode: '',
         rules: {
           headerId: [{ required: true, message: '此项为必填项', trigger: 'change' }],
           name: [{ required: true, message: '此项为必填项', trigger: 'change' }],
@@ -157,14 +158,8 @@
           headerKeyName: [{ required: true, message: '此项为必填项', trigger: 'change' }],
           headerValueName: [{ required: true, message: '此项为必填项', trigger: 'change' }]
         },
-        downloadLoading: false,
-        pickerOptions0: {
-          disabledDate: (time) => {
-            if (this.value2 !== '') {
-              return time.getTime() > this.value2
-            }
-          }
-        },
+        typeList: [],
+
         pickerOptions1: {
           disabledDate: (time) => {
             return time.getTime() < this.value1
@@ -175,23 +170,18 @@
           bucketName: 'funyvalley',
           folderName: 'icon'
         },
-        iosVersionListData: [],
-        androidVersionListData: [],
-        searchTxt: '',
-        expandQuery: '',
-        showFileListFlag: false,
-        newFile: '',
-        advertisementDialogFlag: false,
-        currentAdvertisementTabIndex: 0,
-        effectiveDuration: [],
-        multipleSelection: []
+        expandQuery: ''
 
       }
     },
     computed: {
       tableHeight() {
         return this.$store.state.app.tableHeight
+      },
+      dictionaryList() {
+        return this.$store.state.app.dictionary
       }
+
     },
     watch: {
       effectiveDuration(value) {
@@ -206,8 +196,13 @@
         console.log(value)
       }
     },
-    mounted() {
+    async mounted() {
+      this.$store.commit('updateDictionary', {
+        crawler: await this.getDictionaryList()
+      })
       this.getTableData()
+
+      console.log(this.dictionaryList)
     },
     methods: {
       getTableData() {
@@ -222,6 +217,24 @@
           this.total = response.pagination.total
           this.listLoading = false
         })
+      },
+      getDictionaryList() {
+        return new Promise((resolve, reject) => {
+          this.$http.get(this.$baseUrl + this.getDictionaryListRequest, {
+            params: {
+              typeCode: 'crawler'
+            }
+          }).then(response => {
+            resolve(response.data)
+          }).catch(error => {
+            console.log(error)
+            reject(error)
+          })
+        })
+
+      },
+      getCrawlerType(scope) {
+        return this.$store.state.app.dictionary['crawler'].filter(item => item.code === scope.row.type)
       },
       handleFilter() {
         this.pagination.page = 1
@@ -249,36 +262,10 @@
         }
 
       },
-      handleCreate() {
-        const that = this
-        const h = this.$createElement
-        this.$msgbox({
-          title: '消息',
-          message: h('p', null, [
-            h('span', null, '抓取地址为 '),
-            h('i', { style: 'color: teal' }, that.crawlerSetting.address)
-          ]),
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$http.post(this.$baseUrl + this.crawlAndSaveRequest, this.crawlerSetting).then(response => {
-            console.log(response)
-            this.$message.success('抓取成功')
-
-            this.getTableData()
-          })
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
-        })
-
-      },
       createData() {
+        this.dialogFormVisible = true
         this.formData.headerId = ''
-        this.updateData()
+        this.resetTemp()
       },
       handleUpdate(scope) {
         console.log(scope)
@@ -293,22 +280,34 @@
       updateData() {
         this.$refs['formData'].validate((valid) => {
           if (valid) {
-            this.$http.post(this.$baseUrl + this.createOrUpdateRequest, {
-              headerId: this.formData.headerId,
-              name: this.formData.name,
-              type: this.formData.type,
-              headerKeyName: this.formData.headerKeyName,
-              headerValueName: this.formData.headerValueName
-            }).then((response) => {
-              console.log(response)
-              this.dialogFormVisible = false
-              this.$message.success('信息修改成功')
-              this.getTableData()
-            }).catch(error => {
-              console.log(error)
-              this.$message.error(`${error.response.status.toString()}  ${error.response.data.error}`)
-            })
+
+            this.commitUpdate()
           }
+        })
+      },
+      handleChangeCralerType(scope) {
+        this.currentEditingCrawlerId = scope.row.headerId
+        this.formData = Object.assign({}, scope.row)
+      },
+      saveHeaderTypes() {
+        this.commitUpdate()
+        this.currentEditingCrawlerId = ''
+      },
+      commitUpdate() {
+        this.$http.post(this.$baseUrl + this.createOrUpdateRequest, {
+          headerId: this.formData.headerId,
+          name: this.formData.name,
+          type: JSON.stringify(this.formData.type),
+          headerKeyName: this.formData.headerKeyName,
+          headerValueName: this.formData.headerValueName
+        }).then((response) => {
+          console.log(response)
+          this.dialogFormVisible = false
+          this.$message.success('信息修改成功')
+          this.getTableData()
+        }).catch(error => {
+          console.log(error)
+          this.$message.error(`${error.response.status.toString()}  ${error.response.data.error}`)
         })
       },
       handleSelectionChange(val) {

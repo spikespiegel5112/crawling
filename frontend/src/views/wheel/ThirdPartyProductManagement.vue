@@ -39,7 +39,7 @@
       <el-table-column align="center" label="现价" prop='price'></el-table-column>
       <el-table-column align="center" label="奖励类型" prop='rewardType'>
         <template slot-scope="scope">
-          {{scope.row.rewardType!==null?rewardTypeDictionary.filter(item=>item.code===scope.row.rewardType)[0].name:''}}
+          {{scope.row.rewardType!==null?crawlerTypeDictionary.filter(item=>item.code===scope.row.rewardType)[0].name:''}}
         </template>
       </el-table-column>
       <el-table-column align="center" label="是否可用" prop="status">
@@ -170,7 +170,7 @@
         listLoading: true,
         availabilityFlag: false,
         dynamicTags: ['标签一', '标签二', '标签三'],
-        rewardTypeDictionary: [{
+        crawlerTypeDictionary: [{
           name: '积分',
           code: 'point'
         }, {

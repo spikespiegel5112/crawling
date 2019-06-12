@@ -2,11 +2,8 @@
   <el-row class="app-container">
     <CommonQuery>
       <template slot="button1">
-        <el-button size="mini" type="primary" icon="el-icon-plus" @click="oneKeyCrawlFlag=true" v-waves>
-          一键抓取
-        </el-button>
-        <el-button size="mini" type="primary" icon="el-icon-setting" @click="crawlerSettingFlag=true" v-waves>
-          参数设置
+        <el-button size="mini" type="primary" icon="el-icon-plus" @click="createData" v-waves>
+          新建
         </el-button>
         <el-button size="mini" type="danger" icon="el-icon-delete" @click="handleMultipleDelete" v-waves>
           批量删除
@@ -30,31 +27,27 @@
               :height="tableHeight">
       <el-table-column type="selection" width="40"></el-table-column>
       <el-table-column label="No" type="index" width="45" align="center" fixed></el-table-column>
-      <el-table-column align="center" label="电影名称" prop='movieName' width="200"></el-table-column>
-      <el-table-column align="center" label="抓取时间" prop='timestamp' width="100">
+      <el-table-column align="center" label="设置名称" prop='name' width="200"></el-table-column>
+      <el-table-column align="center" label="设置Code" prop='code'></el-table-column>
+      <el-table-column align="center" label="设置类型" prop='type'>
         <template slot-scope="scope">
-          {{$moment(Number(scope.row.timestamp)).format('YYYY-MM-DD HH:mm:ss')}}
+          {{getCrawlerType(scope)}}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="综合票房（万）" prop='boxInfo'></el-table-column>
-      <el-table-column align="center" label="票房占比" prop='boxRate'></el-table-column>
-      <el-table-column align="center" label="总票房" prop='sumBoxInfo'></el-table-column>
-      <el-table-column align="center" label="分账综合票房（万）" prop='splitBoxInfo'></el-table-column>
-      <el-table-column align="center" label="分账票房占比" prop='splitBoxRate'></el-table-column>
-      <el-table-column align="center" label="分账总票房" prop='splitSumBoxInfo'></el-table-column>
-      <el-table-column align="center" label="上映情况" prop='releaseInfo'></el-table-column>
-      <el-table-column align="center" label="上座率" prop='seatRate'></el-table-column>
-      <el-table-column align="center" label="排片场次" prop='showInfo'></el-table-column>
-      <el-table-column align="center" label="排片占比" prop='showRate'></el-table-column>
-      <el-table-column align="center" label="场均人次" prop='avgShowView'></el-table-column>
-
-      <el-table-column align="center" label="操作" width="100px">
+      <el-table-column align="center" label="值" prop='value'>
         <template slot-scope="scope">
+          <el-button @click="checkValue(scope)">查看</el-button>
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="操作" width="200px">
+        <template slot-scope="scope">
+          <el-button type="primary" size="mini" @click="handleUpdate(scope)">编辑</el-button>
           <el-button type="danger" size="mini" @click="handleDelete(scope)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-    分页
+    <!-- 分页 -->
     <div class="common-pagination-wrapper">
       <el-pagination background @size-change="handleSizeChange"
                      @current-change="handleCurrentChange"
@@ -67,87 +60,95 @@
       </el-pagination>
     </div>
     <!-- 编辑 -->
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="oneKeyCrawlFlag" width="850px">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="850px">
       <el-row type="flex" justify="center">
         <el-col :span="20">
           <el-form :rules="rules" ref="formData" :model="formData"
                    label-position="right"
                    label-width="140px">
-            <el-form-item label="爬虫类型" prop="rewardType">
-              <el-select v-model="formData.rewardType" placeholder='' @change="chooseRewardType">
+            <el-form-item label="名称" prop="name">
+              <el-input v-model="formData.name"></el-input>
+            </el-form-item>
+            <el-form-item label="Code" prop="code">
+              <el-input v-model="formData.code"></el-input>
+            </el-form-item>
+            <el-form-item label="类型" prop="type">
+              {{dictionaryList}}
+
+              <el-select v-model="formData.type" placeholder='请选择'>
                 <el-option v-for="item in dictionaryList"
-                           :key="item.code" :label="item.name"
+                           :key="item.dictionaryId" :label="item.name"
                            :value="item.code"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="爬虫地址" prop="crawlerAddress">
-              <el-input v-model="formData.crawlerAddress"></el-input>
+            <el-form-item label="值" prop="value">
+              <el-input v-model="formData.value" type="textarea"
+                        :autosize="{ minRows: 2, maxRows: 8}"></el-input>
             </el-form-item>
           </el-form>
         </el-col>
       </el-row>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false" v-waves>{{$t('table.cancel')}}</el-button>
-        <el-button type="primary" v-waves @click="crawlerData">{{$t('table.confirm')}}</el-button>
+        <el-button v-if="dialogStatus==='create'" type="primary" @click="createData">{{$t('table.confirm')}}</el-button>
+        <el-button v-else type="primary" @click="updateData" v-waves>{{$t('table.confirm')}}</el-button>
       </div>
     </el-dialog>
+    <!-- JSON查看器 -->
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="valueViewerFlag" width="850px">
+      <el-row type="flex" justify="center">
+        <el-col :span="20">
+          <el-form :rules="rules" ref="formData" :model="formData"
+                   label-position="right"
+                   label-width="50px">
+            <el-form-item label="值" prop="name">
+              <el-input type="textarea" v-model="formData.value" :autosize="{ minRows: 16, maxRows: 32}"></el-input>
+            </el-form-item>
 
+          </el-form>
+        </el-col>
+      </el-row>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false" v-waves>{{$t('table.cancel')}}</el-button>
+        <el-button type="primary" v-waves @click="updateValue">{{$t('table.confirm')}}</el-button>
+      </div>
+    </el-dialog>
   </el-row>
 </template>
 
 <script>
+  import CommonTag from '@/views/common/CommonTag.vue'
   import CommonQuery from '@/views/common/CommonQuery.vue'
 
   export default {
     components: {
+      CommonTag,
       CommonQuery
     },
     data() {
       return {
-        getListByPaginationRequest: 'crawler/getListByPagination',
-        crawlAndSaveRequest: 'crawler/crawlAndSave',
-        deleteRecordRequest: 'crawler/deleteRecords',
+        getListRequest: 'settings/getList',
+        createOrUpdateRequest: 'settings/createOrUpdate',
+        deleteHeaderRequest: 'settings/deleteHeader',
         getDictionaryRequest: 'dictionary/getList',
-        crawlerSettingFlag: false,
-        crawlerSetting: {
-          address: ''
-        },
-        chosenReward: '',
-        chooseRewardTypeModel: {},
-        chosenThirdPartyProductInfo: {},
-
-        value2: '',
-        value1: '',
-        dailyLimitMode: '',
-        limitMode: '',
-        tableKey: 0,
         tableList: [],
         total: null,
         listLoading: true,
-        availabilityFlag: false,
-
-        statusDictionary: [{
-          code: 0,
-          name: '未上线'
-        }, {
-          code: 1,
-          name: '上线'
-        }],
         queryModel: {
-          sort: 'desc',
-          brandName: ''
+          sort: 'desc'
         },
         pagination: {
           page: 1,
           limit: 50
         },
-        importanceOptions: [1, 2, 3],
 
         sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-        statusOptions: ['published', 'draft', 'deleted'],
-        showReviewer: false,
         formData: {
-          crawlerAddress: ''
+          settingId: '',
+          name: '',
+          type: '',
+          code: '',
+          value: ''
         },
         dialogFormVisible: false,
         dialogStatus: '',
@@ -156,24 +157,18 @@
           create: 'Create'
         },
         dialogPvVisible: false,
+        valueViewerFlag: false,
+        currentEditingCrawlerId: '',
+        currentEditingCrawlerCode: '',
         rules: {
-          id: [{ required: true, message: '此项为必填项', trigger: 'change' }],
-          description: [{ required: true, message: '此项为必填项', trigger: 'change' }],
+          settingId: [{ required: true, message: '此项为必填项', trigger: 'change' }],
           name: [{ required: true, message: '此项为必填项', trigger: 'change' }],
-          dailyLimit: [{ required: true, message: '此项为必填项', trigger: 'change' }],
-          limit: [{ required: true, message: '此项为必填项', trigger: 'change' }],
-          startDate: [{ required: true, message: '此项为必填项', trigger: 'change' }],
-          endDate: [{ required: true, message: '此项为必填项', trigger: 'change' }],
-          status: [{ required: true, message: '此项为必填项', trigger: 'change' }]
+          type: [{ required: true, message: '此项为必填项', trigger: 'change' }],
+          code: [{ required: true, message: '此项为必填项', trigger: 'change' }],
+          value: [{ required: true, message: '此项为必填项', trigger: 'change' }]
         },
-        downloadLoading: false,
-        pickerOptions0: {
-          disabledDate: (time) => {
-            if (this.value2 !== '') {
-              return time.getTime() > this.value2
-            }
-          }
-        },
+        typeList: [],
+        valueViewerContent: {},
         pickerOptions1: {
           disabledDate: (time) => {
             return time.getTime() < this.value1
@@ -184,17 +179,7 @@
           bucketName: 'funyvalley',
           folderName: 'icon'
         },
-        iosVersionListData: [],
-        androidVersionListData: [],
-        searchTxt: '',
-        expandQuery: '',
-        showFileListFlag: false,
-        newFile: '',
-        advertisementDialogFlag: false,
-        currentAdvertisementTabIndex: 0,
-        effectiveDuration: [],
-        multipleSelection: [],
-        oneKeyCrawlFlag: false
+        expandQuery: ''
 
       }
     },
@@ -205,6 +190,7 @@
       dictionaryList() {
         return this.$store.state.app.dictionary.settings
       }
+
     },
     watch: {
       effectiveDuration(value) {
@@ -224,13 +210,16 @@
       this.$store.commit('updateDictionary', {
         settings: dictionaryData
       })
+      console.log('mounted', this.$store.state.app.dictionary)
       this.getTableData()
+
+      console.log(this.dictionaryList)
     },
     methods: {
       getTableData() {
         this.listLoading = true
         this.queryModel = Object.assign(this.queryModel, this.pagination)
-        this.$http.get(this.$baseUrl + this.getListByPaginationRequest, {
+        this.$http.get(this.$baseUrl + this.getListRequest, {
           params: this.queryModel
         }).then(response => {
           console.log('getListByPaginationRequest', response)
@@ -244,7 +233,7 @@
         return new Promise((resolve, reject) => {
           this.$http.get(this.$baseUrl + this.getDictionaryRequest, {
             params: {
-              typeCode: 'crawlerAddress'
+              typeCode: 'settings'
             }
           }).then(response => {
             resolve(response.data)
@@ -255,6 +244,11 @@
         })
 
       },
+      getCrawlerType(scope) {
+        const result = this.$store.state.app.dictionary['settings'].filter(item => item.code === scope.row.type)
+        return result.length > 0 ? result[0].name : ''
+      },
+
       handleFilter() {
         this.pagination.page = 1
         this.getTableData()
@@ -270,28 +264,28 @@
       resetTemp() {
         this.formData = {
           id: '',
-          description: '',
-          rewardImage: '',
-          rewardName: '',
-          rewardPrompt: '',
-          rewardStr: '',
-          rewardType: '',
-          rewardValue: '',
-          status: ''
+          settingId: '',
+          name: '',
+          type: '',
+          code: '',
+          value: ''
         }
 
       },
-      crawlerData() {
-        this.$http.post(this.$baseUrl + this.crawlAndSaveRequest, this.crawlerSetting).then(response => {
-          console.log(response)
-          this.$message.success('抓取成功')
-
-          this.getTableData()
-        })
-      },
       createData() {
-        this.formData.id = ''
-        this.updateData()
+        this.dialogFormVisible = true
+        this.formData.settingId = ''
+        this.resetTemp()
+      },
+      checkValue(scope) {
+        this.valueViewerFlag = true
+        this.formData = Object.assign({}, scope.row)
+      },
+      async updateValue() {
+        await this.commitUpdate()
+        this.getTableData()
+        this.valueViewerFlag = false
+
       },
       handleUpdate(scope) {
         console.log(scope)
@@ -304,29 +298,42 @@
         })
       },
       updateData() {
-        this.$refs['formData'].validate((valid) => {
+        this.$refs['formData'].validate(async valid => {
           if (valid) {
-            this.$http.post(this.$baseUrl + this.addAndUpdateRewardInfoRequest, {
-              id: this.formData.id,
-              description: this.formData.description,
-              rewardImage: this.formData.rewardImage,
-              rewardName: this.formData.rewardName,
-              rewardPrompt: this.formData.rewardPrompt,
-              rewardStr: this.formData.rewardStr,
-              rewardType: this.formData.rewardType,
-              rewardValue: this.formData.rewardValue,
-              status: this.formData.status
-            }).then((response) => {
-              console.log(response)
-              this.dialogFormVisible = false
-              this.$message.success('信息修改成功')
-              this.getTableData()
-            }).catch(error => {
-              console.log(error)
-              this.$message.error(`${error.response.status.toString()}  ${error.response.data.error}`)
-            })
+
+            await this.commitUpdate()
+            this.getTableData()
           }
         })
+      },
+      handleChangeCralerType(scope) {
+        this.currentEditingCrawlerId = scope.row.settingId
+        this.formData = Object.assign({}, scope.row)
+      },
+      saveHeaderTypes() {
+        this.commitUpdate()
+        this.currentEditingCrawlerId = ''
+      },
+      commitUpdate() {
+        return new Promise((resolve, reject) => {
+          this.$http.post(this.$baseUrl + this.createOrUpdateRequest, {
+            settingId: this.formData.settingId,
+            name: this.formData.name,
+            type: this.formData.type,
+            code: this.formData.code,
+            value: this.formData.value.trim('&nbsp')
+          }).then((response) => {
+            console.log(response)
+            this.dialogFormVisible = false
+            this.$message.success('信息修改成功')
+            resolve(response)
+          }).catch(error => {
+            console.log(error)
+            this.$message.error(`${error.response.status.toString()}  ${error.response.data.error}`)
+            reject(error)
+          })
+        })
+
       },
       handleSelectionChange(val) {
         this.multipleSelection = val
