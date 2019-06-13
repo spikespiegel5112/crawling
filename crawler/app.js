@@ -11,10 +11,12 @@ const HeadersModel = require('./models/HeadersSettings');
 const SettingsModel = require('./models/SettingsModel');
 
 const errorController = require('./controllers/errorController');
+const crawlerWantSeeMaoyanRoutes = require('./routers/crawlerWantSeeMaoyanRoutes');
 const crawlerRoutes = require('./routers/crawler');
 const headerSettingsRoutes = require('./routers/headerSettings');
 const settingsRoutes = require('./routers/settingsRoutes');
 const dictionaryRoutes = require('./routers/dictionary');
+
 
 app.use(express.static(__dirname));
 app.use(bodyParser.json());
@@ -44,6 +46,7 @@ var corsOptions = {
 };
 
 app.use('/crawler', cors(corsOptions), crawlerRoutes);
+app.use('/crawlerWantSeeMaoyan', cors(corsOptions), crawlerWantSeeMaoyanRoutes);
 app.use('/headerSettings', cors(corsOptions), headerSettingsRoutes);
 app.use('/settings', cors(corsOptions), settingsRoutes);
 app.use('/dictionary', cors(corsOptions), dictionaryRoutes);

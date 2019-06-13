@@ -95,7 +95,7 @@
       </div>
     </el-dialog>
     <!-- JSON查看器 -->
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="valueViewerFlag" width="850px">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="valueViewerFlag" :close-on-click-modal="false" width="850px">
       <el-row type="flex" justify="center">
         <el-col :span="20">
           <el-form :rules="rules" ref="formData" :model="formData"
@@ -109,7 +109,7 @@
         </el-col>
       </el-row>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false" v-waves>{{$t('table.cancel')}}</el-button>
+        <el-button @click="valueViewerFlag = false" v-waves>{{$t('table.cancel')}}</el-button>
         <el-button type="primary" v-waves @click="updateValue">{{$t('table.confirm')}}</el-button>
       </div>
     </el-dialog>

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const crawlerController = require('../controllers/crawlerByJsonController');
+const crawlerController = require('../controllers/crawlerWantSeeMaoyanController');
 
 router.get('/crawl', crawlerController.crawl);
 router.post('/save', crawlerController.save);

@@ -1,11 +1,11 @@
 const express = require('express');
 const crawler = require('crawler');
-const MaoyanRecords = require('../models/MaoyanRecords');
+const WantSeeMaoyanModel = require('../models/WantSeeMaoyanModel');
 const SettingsModel = require('../models/SettingsModel');
 
 
-let dataJSONHeaders = {};
-const _crawlPromise = (address, res, next) => {
+let dataJSONHeadersSample = {};
+const _crawlPromise = (req, res, next) => {
 	return new Promise(async (resolve, reject) => {
 		let $ = {};
 
@@ -27,20 +27,7 @@ const _crawlPromise = (address, res, next) => {
 			}
 		});
 
-		const homePageHeaders = {
-			'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
-			'Accept-Encoding': 'gzip, deflate, br',
-			'Accept-Language': 'zh-CN,zh;q=0.9',
-			'Cache-Control': 'max-age=0',
-			'Connection': 'keep-alive',
-			'Cookie': '_lxsdk_cuid=16b278f2da1c8-0bd217ef685a99-e353165-1fa400-16b278f2da1c8; _lxsdk=5B35B0C0878B11E9906EF30672EF100755FB61C41A934C41978723E76930287B; __mta=142417549.1559736824373.1559736824373.1559736841774.2; _lx_utm=utm_source%3Dgoogle%26utm_medium%3Dorganic; __mta=142417549.1559736824373.1559736841774.1559737125628.3; _lxsdk_s=16b278f2da4-502-080-202%7C%7C16',
-			'Host': 'piaofang.maoyan.com',
-			'Referer': 'https://www.google.com/',
-			'Upgrade-Insecure-Requests': '1',
-			'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36',
-		};
-
-		dataJSONHeaders = {
+		dataJSONHeadersSample = {
 			"Access-Control-Allow-Credentials": "true",
 			"Access-Control-Allow-Methods": "GET",
 			"Access-Control-Allow-Origin": "https://piaofang.maoyan.com",
@@ -56,28 +43,29 @@ const _crawlPromise = (address, res, next) => {
 			"Transfer-Encoding": "chunked"
 		};
 
-		let headers = '';
-		SettingsModel.findOne({
-			where: {
-				type: 'maoyan'
-			}
-		}).then(response => {
-			headers = response._previousDataValues;
-			console.log('headers++++++++++++++++++++', headers);
-
-			// res.status(200).json(headers)
-		}).catch(error => {
+		let headers = {};
+		try {
+			headers = await SettingsModel.findOne({
+				where: {
+					code: req.query.headerCode
+				}
+			});
+			headers = headers._previousDataValues;
+			// res.status(200).json({
+			// 	headers
+			// })
+		} catch (e) {
 			res.status(400).json({
-				message: error,
-				data: jsonParser(error)
+				error: e,
+				req: req.query
 			})
-		});
+		}
 
 
 		crawlerInstance.queue({
-			url: address,
-			// headers: dataJSONHeaders,
-			headers: headers,
+			url: req.query.address,
+			// headers: dataJSONHeadersSample,
+			headers: JSON.parse(headers.value),
 			callback: (error, result, done) => {
 				if (error) {
 					console.log('insrtance error: ', error);
@@ -86,15 +74,8 @@ const _crawlPromise = (address, res, next) => {
 				} else {
 					$ = result.$;
 					// console.log('Grabbed', result.body.length, 'bytes');
-					console.log('$: ', result.body);
-					let crawlerResult;
-					try {
-						crawlerResult = Object.assign({headers: JSON.parse(headers.value)}, JSON.parse(result.body));
-						resolve(crawlerResult);
-					} catch (e) {
-						reject(e)
-					}
-
+					console.log('$++++++++++++: ', result);
+					resolve(result)
 
 				}
 				done();
@@ -106,7 +87,7 @@ const _crawlPromise = (address, res, next) => {
 
 const _createRecord = (requestBody, timestamp) => {
 	let _timestamp = timestamp;
-	console.log(timestamp);
+	console.log('timestamp:   ', timestamp);
 	if (!timestamp) {
 		_timestamp = Date.now();
 	}
@@ -149,13 +130,8 @@ const _createRecord = (requestBody, timestamp) => {
 
 const crawl = (req, res, next) => {
 	console.log(req.query.address);
-	const address = req.query.address;
-	_crawlPromise(address, res, next).then(response => {
-		const timestamp = Date.now();
-		response.data.list.forEach((item, index) => {
-			_createRecord(item, timestamp);
-		});
-		res.status(200).json(response);
+	_crawlPromise(req, res, next).then(response => {
+		res.status(200).json(response.data);
 	}).catch(error => {
 		res.status(400).json({
 			message: error.toString()
@@ -287,7 +263,7 @@ const save = (req, res, next) => {
 
 const crawlAndSave = (req, res, next) => {
 	const address = req.query.address;
-	_crawlPromise(address, res).then(response => {
+	_crawlPromise(req, res).then(response => {
 		console.log('_crawlPromise', response);
 		const timestamp = Date.now();
 

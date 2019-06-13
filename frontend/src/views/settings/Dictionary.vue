@@ -28,8 +28,8 @@
       <el-table-column type="selection" width="40"></el-table-column>
       <el-table-column label="No" type="index" width="45" align="center" fixed></el-table-column>
 
-      <el-table-column align="center" label="名称" prop='name'></el-table-column>
-      <el-table-column align="center" label="code" prop='code'></el-table-column>
+      <el-table-column align="center" label="字典项名称" prop='name'></el-table-column>
+      <el-table-column align="center" label="字典项Code" prop='code'></el-table-column>
       <el-table-column align="center" label="类型" prop='typeName'></el-table-column>
       <el-table-column align="center" label="类型Code" prop='typeCode'></el-table-column>
       <el-table-column align="center" label="操作" width="200px">

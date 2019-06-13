@@ -2,121 +2,101 @@ const Sequelize = require('sequelize');
 
 const sequelize = require('../util/database');
 
-const MaoyanRecords = sequelize.define('MaoyanRecords', {
+const WantSeeMaoyanModel = sequelize.define('WantSeeMaoyanModel', {
 	id: {
 		type: Sequelize.INTEGER,
 		autoIncrement: true,
 		allowNull: true,
 		primaryKey: true
 	},
-	timestamp: {
+	timestamp:{
 		type: Sequelize.STRING,
 		allowNull: false
+	},
+	titleChi: {
+		type: Sequelize.STRING,
+		allowNull: true
 	},
 	title: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	description: {
+	date: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	avgSeatView: {
+	releaseDate: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	avgShowView: {
+	platformEngName: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	avgViewBox: {
+	platformChineseName: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	boxInfo: {
+	platformType: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	boxRate: {
+	numWantToSee: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	movieId: {
+	rating: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	movieName: {
+	byGenderMale: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	myRefundNumInfo: {
+	byGenderFemale: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	myRefundRateInfo: {
+	byAge20: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	onlineBoxRate: {
+	byAge20To24: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	refundViewInfo: {
+	byAge25To29: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	refundViewRate: {
+	byAge30To34: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	releaseInfo: {
+	byAge35To39: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	releaseInfoColor: {
+	byAge40: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	seatRate: {
+	byTier1: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	showInfo: {
+	byTier2: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	showRate: {
+	byTier3: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	splitAvgViewBox: {
-		type: Sequelize.STRING,
-		allowNull: true
-	},
-	splitBoxInfo: {
-		type: Sequelize.STRING,
-		allowNull: true
-	},
-	splitBoxRate: {
-		type: Sequelize.STRING,
-		allowNull: true
-	},
-	splitSumBoxInfo: {
-		type: Sequelize.STRING,
-		allowNull: true
-	},
-	sumBoxInfo: {
-		type: Sequelize.STRING,
-		allowNull: true
-	},
-	viewInfo: {
-		type: Sequelize.STRING,
-		allowNull: true
-	},
-	viewInfoV2: {
+	byTier4: {
 		type: Sequelize.STRING,
 		allowNull: true
 	}
 });
 
-module.exports = MaoyanRecords;
+module.exports = WantSeeMaoyanModel;

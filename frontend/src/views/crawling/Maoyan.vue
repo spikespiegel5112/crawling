@@ -5,9 +5,6 @@
         <el-button size="mini" type="primary" icon="el-icon-plus" @click="oneKeyCrawlFlag=true" v-waves>
           一键抓取
         </el-button>
-        <el-button size="mini" type="primary" icon="el-icon-setting" @click="crawlerSettingFlag=true" v-waves>
-          参数设置
-        </el-button>
         <el-button size="mini" type="danger" icon="el-icon-delete" @click="handleMultipleDelete" v-waves>
           批量删除
         </el-button>
@@ -54,7 +51,7 @@
         </template>
       </el-table-column>
     </el-table>
-    分页
+    <!-- 分页 -->
     <div class="common-pagination-wrapper">
       <el-pagination background @size-change="handleSizeChange"
                      @current-change="handleCurrentChange"
@@ -75,9 +72,9 @@
                    label-width="140px">
             <el-form-item label="爬虫类型" prop="rewardType">
               <el-select v-model="formData.rewardType" placeholder='' @change="chooseRewardType">
-                <el-option v-for="item in dictionaryList"
+                <el-option v-for="item in settingsList"
                            :key="item.code" :label="item.name"
-                           :value="item.code"></el-option>
+                           :value="item.value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="爬虫地址" prop="crawlerAddress">
@@ -87,7 +84,7 @@
         </el-col>
       </el-row>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false" v-waves>{{$t('table.cancel')}}</el-button>
+        <el-button @click="oneKeyCrawlFlag = false" v-waves>{{$t('table.cancel')}}</el-button>
         <el-button type="primary" v-waves @click="crawlerData">{{$t('table.confirm')}}</el-button>
       </div>
     </el-dialog>
@@ -107,7 +104,7 @@
         getListByPaginationRequest: 'crawler/getListByPagination',
         crawlAndSaveRequest: 'crawler/crawlAndSave',
         deleteRecordRequest: 'crawler/deleteRecords',
-        getDictionaryRequest: 'dictionary/getList',
+        getSettingsRequest: 'settings/getList',
         crawlerSettingFlag: false,
         crawlerSetting: {
           address: ''
@@ -147,6 +144,7 @@
         statusOptions: ['published', 'draft', 'deleted'],
         showReviewer: false,
         formData: {
+          type: '',
           crawlerAddress: ''
         },
         dialogFormVisible: false,
@@ -194,8 +192,8 @@
         currentAdvertisementTabIndex: 0,
         effectiveDuration: [],
         multipleSelection: [],
-        oneKeyCrawlFlag: false
-
+        oneKeyCrawlFlag: false,
+        settingsList: []
       }
     },
     computed: {
@@ -203,7 +201,7 @@
         return this.$store.state.app.tableHeight
       },
       dictionaryList() {
-        return this.$store.state.app.dictionary.settings
+        return this.$store.state.app.dictionary.crawlerAddress
       }
     },
     watch: {
@@ -220,10 +218,7 @@
       }
     },
     async mounted() {
-      const dictionaryData = await this.getSettingsDictionary()
-      this.$store.commit('updateDictionary', {
-        settings: dictionaryData
-      })
+      this.settingsList = await this.getSettingsDictionary()
       this.getTableData()
     },
     methods: {
@@ -242,9 +237,9 @@
       },
       getSettingsDictionary() {
         return new Promise((resolve, reject) => {
-          this.$http.get(this.$baseUrl + this.getDictionaryRequest, {
+          this.$http.get(this.$baseUrl + this.getSettingsRequest, {
             params: {
-              typeCode: 'crawlerAddress'
+              type: 'crawlerAddress'
             }
           }).then(response => {
             resolve(response.data)
@@ -282,11 +277,16 @@
 
       },
       crawlerData() {
-        this.$http.post(this.$baseUrl + this.crawlAndSaveRequest, this.crawlerSetting).then(response => {
+        this.$http.post(this.$baseUrl + this.crawlAndSaveRequest, {
+          address: this.formData.crawlerAddress,
+          type: this.formData.type
+        }).then(response => {
           console.log(response)
           this.$message.success('抓取成功')
 
           this.getTableData()
+          this.oneKeyCrawlFlag = false
+
         })
       },
       createData() {
@@ -406,7 +406,8 @@
         alert(this.formData.limit)
       },
       chooseRewardType(data) {
-        console.log(data)
+        this.formData.type = this.settingsList.filter(item => item.value === data)[0].code
+        this.formData.crawlerAddress = data
       },
       chooseThirdPartyProduct(data) {
         this.chosenThirdPartyProductInfo = data
