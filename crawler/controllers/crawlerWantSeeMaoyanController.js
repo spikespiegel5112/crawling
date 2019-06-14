@@ -3,30 +3,12 @@ const crawler = require('crawler');
 const WantSeeMaoyanModel = require('../models/WantSeeMaoyanModel');
 const SettingsModel = require('../models/SettingsModel');
 
+let headers = {};
 
 let dataJSONHeadersSample = {};
-const _crawlPromise = (req, res, next) => {
+const _crawlPagePromise = (req, res, next) => {
 	return new Promise(async (resolve, reject) => {
 		let $ = {};
-
-		const crawlerInstance = new crawler({
-			maxConnections: 10,
-			// This will be called for each crawled page
-			callback: function (error, result, done) {
-				if (error) {
-					console.log('creating error: ', error);
-					res.status(400).json({
-						message: error.toString()
-					});
-				} else {
-					// $ is Cheerio by default
-					//a lean implementation of core jQuery designed specifically for the server
-					// console.log($("title").text());
-				}
-				done();
-			}
-		});
-
 		dataJSONHeadersSample = {
 			"Host": "piaofang.maoyan.com",
 			"Connection": "keep-alive",
@@ -40,42 +22,74 @@ const _crawlPromise = (req, res, next) => {
 			"Cookie": "_lxsdk_cuid=16b278f2da1c8-0bd217ef685a99-e353165-1fa400-16b278f2da1c8; _lxsdk=5B35B0C0878B11E9906EF30672EF100755FB61C41A934C41978723E76930287B; __mta=142417549.1559736824373.1559736824373.1559736841774.2; theme=moviepro; wantindex-city={\"city_tier\":0,\"city_id\":0,\"cityName\":\"%E5%85%A8%E5%9B%BD\"}; __mta=142417549.1559736824373.1559736841774.1560403190012.3; _lx_utm=utm_source%3Dgoogle%26utm_medium%3Dorganic; _lxsdk_s=16b4f46f13a-264-392-c4e%7C%7C18"
 		};
 
-		let headers = {};
-		try {
-			headers = await SettingsModel.findOne({
-				where: {
-					code: req.query.headerCode
-				}
-			});
-			headers = headers._previousDataValues;
-			// res.status(200).json({
-			// 	headers
-			// })
-		} catch (e) {
-			res.status(400).json({
-				error: e,
-				req: req.query
-			})
-		}
+		let crawlerInstance = new crawler({
+			maxConnections: 10,
+			// rateLimit: 3000,
 
+			// This will be called for each crawled page
+			callback: function (error, result, done) {
+				if (error) {
+					console.log('creating error: ', error);
+					res.status(400).json({
+						message: error.toString()
+					});
+					// done()
+				} else {
+					// $ is Cheerio by default
+					//a lean implementation of core jQuery designed specifically for the server
+					// console.log($("title").text());
+					console.log('dataJSONHeadersSample+++++', dataJSONHeadersSample)
+					// done();
+
+				}
+			}
+		});
+
+
+		headers = await SettingsModel.findOne({
+			where: {
+				code: req.query.headerCode
+			}
+		});
+		headers = headers._previousDataValues;
+
+
+		// try {
+		//
+		// 	// res.status(200).json({
+		// 	// 	headers
+		// 	// })
+		// } catch (e) {
+		// 	res.status(400).json({
+		// 		error: e,
+		// 		req: req.query
+		// 	})
+		// }
+
+		console.log('crawlerInstance+++++++++++', headers);
 
 		crawlerInstance.queue({
 			url: req.query.address,
-			// headers: dataJSONHeadersSample,
-			headers: JSON.parse(headers.value),
+			// headers: JSON.parse(headers.value),
+			headers: dataJSONHeadersSample,
 			callback: (error, result, done) => {
 				if (error) {
 					console.log('insrtance error: ', error);
+					done();
+
 					reject(error.toString());
 
 				} else {
-					$ = result.$;
+					// $ = result.$;
 					// console.log('Grabbed', result.body.length, 'bytes');
-					console.log('$++++++++++++: ', result);
-					resolve(result)
+					// console.log('$++++++++++++: ', Object.keys(result));
+					done();
+
+					resolve(result);
 
 				}
-				done();
+
+
 			}
 		});
 	});
@@ -122,18 +136,182 @@ const _createRecord = (requestBody, timestamp) => {
 			reject(error)
 		})
 	})
+};
+
+const _crawlMovieListPromise = (req, res, next) => {
+	return new Promise((resolve, reject) => {
+		console.log('_crawlMovieListPromise++++++++', req.query);
+		_crawlPagePromise(req, res, next).then(response => {
+			const $ = response.$;
+			let result = [];
+			let titleEL = $("#movie-list section article");
+			Object.keys(titleEL).forEach(item => {
+				// console.log('item+++++++', item);
+				if (Number(item).toString() !== 'NaN') {
+					// console.log('item+++++++', Number(item));
+					let itemValue = titleEL[item].attribs['data-com'];
+					result.push({
+						data: itemValue,
+						indexOf: itemValue.indexOf('/movie/'),
+						movieId: itemValue.replace(/[^0-9]/ig, "")
+					})
+
+				}
+			});
+			console.log('titleEL+++++++++', titleEL.options);
+
+			resolve(result)
+		}).catch(error => {
+			reject(error)
+		})
+	})
+};
+
+const _crawlMovieDetailPromise = (req, res, next) => {
+	return new Promise(async (resolve, reject) => {
+		console.log('_crawlPagePromise+++++', req.query);
+
+		_crawlPagePromise(req, res, next).then(response => {
+			console.log('_crawlPagePromise(req, res, next)+++++', req.query);
+			// res.status(200).json({
+			// 	data: req.query
+			// });
+			// console.log('_crawlPagePromise', response);
+			const $ = response.$;
+			let titleEL = $(".movie-baseinfo .info-title-content");
+			// console.log('$+++++++++', titleEL.text());
+
+			const result = {
+				titleChi: $(".movie-baseinfo .info-title-content").text(),
+				title: $(".movie-baseinfo .info-etitle-content").text(),
+				releaseDate: $(".movie-baseinfo .score-info.ellipsis-1").text(),
+				platformEngName: 'Maoyan',
+				platformChineseName: '猫眼',
+				platformType: 'Web',
+				numWantToSee: $(".movie-baseinfo .block-wish-item.left h2").text(),
+				byGenderMale: $(".movie-baseinfo .block-wish-detail p").text(),
+				byGenderFemale: $(".movie-baseinfo .block-wish-detail p").text()
+			};
+
+			console.log('_crawlMovieDetailPromise result+++++++++', result);
+			resolve(result)
+		}).catch(error => {
+			reject(error)
+		})
+	})
+};
+
+const crawlMovieList = async (req, res, next) => {
+	_crawlMovieListPromise(req, res, next).then((response) => {
+		res.status(200).json({
+			data: response
+		});
+	}).catch(error => {
+		res.status(400).json({
+			error: error
+		});
+	})
+};
+
+const crawlMovieDetail = async (req, res, next) => {
+	return new Promise((resolve, reject) => {
+		_crawlMovieDetailPromise(req, res, next).then(response => {
+			console.log('_crawlMovieDetailPromise+++++++++++++++++++++++++++++++', response);
+			resolve(response);
+			res.status(200).json({
+				data: response
+			});
+		}).catch(error => {
+			reject(error);
+			res.status(400).json({
+				error: error
+			});
+		})
+	})
 
 };
 
-const crawl = (req, res, next) => {
-	console.log(req.query.address);
-	_crawlPromise(req, res, next).then(response => {
-		res.status(200).json(response.data);
-	}).catch(error => {
-		res.status(400).json({
-			message: error.toString()
+const oneKeyMovieDetail = async (req, res, next) => {
+	let address1 = "https://piaofang.maoyan.com/store";
+	let reqWithAddress1 = Object.assign(req, {
+		query: {
+			address: address1,
+			headerCode: 'maoyanWantSee'
+		}
+	});
+
+	console.log('reqWithAddress1++++++++++', reqWithAddress1.query);
+
+
+	const movieList = await _crawlMovieListPromise(reqWithAddress1, res, next);
+	let result = [];
+	// console.log('oneKeyMovieDetail movieList++++++++++', movieList);
+
+	let length = 4;
+	movieList.filter((item, index) => index < length).forEach(async (item, index) => {
+		item = item.data;
+		let movieId = item.replace(/[^0-9]/ig, "");
+
+		let address2 = 'https://piaofang.maoyan.com/movie/' + movieId;
+		// console.log('address2++++++++++++', address2);
+		// console.log('movieId+++++++++++++++', movieId);
+
+		let reqWithAddress2 = Object.assign(req, {
+			query: {
+				address: address2,
+				headerCode: 'maoyanWantSee'
+			}
 		});
-	})
+		let data = {};
+		console.log('index++++++', index);
+
+		try {
+			data = await _crawlMovieDetailPromise(reqWithAddress2, res, next);
+
+			result.push({
+				movieId: movieId,
+				data: data
+			});
+			if (index === length - 1) {
+				res.status(200).json({
+					status: 'success',
+					data: result
+				});
+			}
+		} catch (e) {
+			res.status(400).json({
+				error: e
+			});
+		}
+
+		// _crawlMovieDetailPromise(reqWithAddress2, res, next).then(response => {
+		// 	// data = response;
+		//
+		// 	console.log('result+++++++++++++++', result);
+		//
+		//
+		// }).catch(error => {
+		// 	res.status(400).json({
+		// 		error: error
+		// 	});
+		// })
+
+
+	});
+
+
+};
+
+const crawl = async (req, res, next) => {
+	console.log(req.query.address);
+	const movieIndexList = await _extractMovieListPromise(req, res, next);
+	res.status(200).json({
+		// keys: Object.keys(result),
+		// length: result.length,
+		// typeof: result instanceof Array,
+		data: movieIndexList,
+		// body: response.body
+	});
 };
 
 const getListByPagination = (req, res, next) => {
@@ -260,8 +438,8 @@ const save = (req, res, next) => {
 
 const crawlAndSave = (req, res, next) => {
 	const address = req.query.address;
-	_crawlPromise(req, res).then(response => {
-		console.log('_crawlPromise', response);
+	_crawlPagePromise(req, res).then(response => {
+		console.log('_crawlPagePromise', response);
 		const timestamp = Date.now();
 
 		response.data.list.forEach((item, index) => {
@@ -327,6 +505,9 @@ const deleteRecords = (req, res, next) => {
 
 
 exports.crawl = crawl;
+exports.crawlMovieList = crawlMovieList;
+exports.crawlMovieDetail = crawlMovieDetail;
+exports.oneKeyMovieDetail = oneKeyMovieDetail;
 exports.save = save;
 exports.getListByPagination = getListByPagination;
 exports.getListByDate = getListByDate;

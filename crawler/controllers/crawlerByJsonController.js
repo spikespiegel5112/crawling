@@ -28,7 +28,16 @@ const _crawlPromise = (req, res, next) => {
 		});
 
 		const homePageHeaders = {
-
+			"Host": "piaofang.maoyan.com",
+			"Connection": "keep-alive",
+			"Cache-Control": "max-age=0",
+			"Upgrade-Insecure-Requests": "1",
+			"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36",
+			"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",
+			"Referer": "https://piaofang.maoyan.com/seat",
+			"Accept-Encoding": "gzip, deflate, br",
+			"Accept-Language": "zh-CN,zh;q=0.9",
+			"Cookie": "_lxsdk_cuid=16b278f2da1c8-0bd217ef685a99-e353165-1fa400-16b278f2da1c8; _lxsdk=5B35B0C0878B11E9906EF30672EF100755FB61C41A934C41978723E76930287B; __mta=142417549.1559736824373.1559736824373.1559736841774.2; theme=moviepro; wantindex-city={\"city_tier\":0,\"city_id\":0,\"cityName\":\"%E5%85%A8%E5%9B%BD\"}; __mta=142417549.1559736824373.1559736841774.1560403190012.3; _lx_utm=utm_source%3Dgoogle%26utm_medium%3Dorganic; _lxsdk_s=16b4f46f13a-264-392-c4e%7C%7C18"
 
 
 		};
