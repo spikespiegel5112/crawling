@@ -144,7 +144,7 @@
         statusOptions: ['published', 'draft', 'deleted'],
         showReviewer: false,
         formData: {
-          type: '',
+          headerCode: 'maoyan',
           crawlerAddress: ''
         },
         dialogFormVisible: false,
@@ -279,7 +279,7 @@
       crawlerData() {
         this.$http.post(this.$baseUrl + this.crawlAndSaveRequest, {
           address: this.formData.crawlerAddress,
-          type: this.formData.type
+          headerCode: this.formData.headerCode
         }).then(response => {
           console.log(response)
           this.$message.success('抓取成功')

@@ -3,7 +3,7 @@ const router = express.Router();
 
 const crawlerController = require('../controllers/crawlerByJsonController');
 
-router.get('/crawl', crawlerController.crawl);
+router.post('/crawl', crawlerController.crawl);
 router.post('/save', crawlerController.save);
 router.get('/getListByPagination', crawlerController.getListByPagination);
 router.post('/crawlAndSave', crawlerController.crawlAndSave);

@@ -62,7 +62,7 @@ const _crawlPromise = (req, res, next) => {
 		try {
 			headers = await SettingsModel.findOne({
 				where: {
-					code: req.query.headerCode
+					code: req.body.headerCode
 				}
 			});
 			headers = headers._previousDataValues;
@@ -78,7 +78,7 @@ const _crawlPromise = (req, res, next) => {
 
 
 		crawlerInstance.queue({
-			url: req.query.address,
+			url: req.body.address,
 			// headers: dataJSONHeaders,
 			headers: JSON.parse(headers.value),
 			callback: (error, result, done) => {
@@ -284,7 +284,7 @@ const save = (req, res, next) => {
 
 
 const crawlAndSave = (req, res, next) => {
-	const address = req.query.address;
+	const address = req.body.address;
 	_crawlPromise(req, res).then(response => {
 		console.log('_crawlPromise', response);
 		const timestamp = Date.now();

@@ -87,20 +87,20 @@ const createOrUpdate = (req, res, next) => {
 
 };
 
-const deleteItem = (req, res, next) => {
+const deleteItems = (req, res, next) => {
 	console.log(req.body);
 	console.log(req.params);
 	const settingId = req.body.settingId;
-	console.log(idBody instanceof Array);
-	if (idBody instanceof Array) {
-		idBody.forEach((item, index) => {
+	console.log(settingId instanceof Array);
+	if (settingId instanceof Array) {
+		settingId.forEach((item, index) => {
 			SettingsModel.findAll({
 				where: {
-					settingId: settingId
+					settingId: item
 				}
 			}).then(async response => {
 				const result = await response.destroy();
-				if (index + 1 === req.body.id.length) {
+				if (index + 1 === req.body.settingId.length) {
 					res.status(200).json({
 						message: 'Delete successful',
 						body: result
@@ -114,16 +114,27 @@ const deleteItem = (req, res, next) => {
 			})
 		})
 	} else {
-		SettingsModel.findByPk(idBody).then(result => {
-			console.log(result);
-			result.destroy().then(() => {
-				if (index + 1 === req.body.id.length) {
-					res.status(200).json({
-						message: 'Delete successful',
-						body: result
-					});
-				}
-			})
+		// SettingsModel.findAll({
+		// 	where: {
+		// 		settingId: settingId
+		// 	}
+		// }).then(result => {
+		//
+		// }).catch(error => {
+		//
+		// });
+
+		SettingsModel.destroy({
+			where: {
+				settingId: settingId
+			}
+		}).then(result => {
+			console.log('result+++++', result);
+
+			res.status(200).json({
+				message: 'Delete successful',
+				settingId: settingId
+			});
 		}).catch(error => {
 			res.status(400).json({
 				message: 'Delete failed',
@@ -136,4 +147,4 @@ const deleteItem = (req, res, next) => {
 
 exports.createOrUpdate = createOrUpdate;
 exports.getList = getList;
-exports.deleteItem = deleteItem;
+exports.deleteItems = deleteItems;

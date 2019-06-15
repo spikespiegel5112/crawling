@@ -1,0 +1,573 @@
+{
+	"info": {
+		"_postman_id": "c4a4abf1-4a15-4bb4-8dc0-5e27fb2e5071",
+		"name": "crawler",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "爬虫管理",
+			"item": [
+				{
+					"name": "crawlByJson",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "localhost:3000/crawler/crawl?address=https://box.maoyan.com/promovie/api/box/second.json&headerCode=maoyan",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"crawler",
+								"crawl"
+							],
+							"query": [
+								{
+									"key": "address",
+									"value": "https://box.maoyan.com/promovie/api/box/second.json"
+								},
+								{
+									"key": "headerCode",
+									"value": "maoyan"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteRecord",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": [\n        \"19\"\n    ]\n}"
+						},
+						"url": {
+							"raw": "localhost:3000/crawler/deleteRecords",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"crawler",
+								"deleteRecords"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getListByPagination",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "localhost:3000/crawler/getListByPagination?limit=10&page=1",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"crawler",
+								"getListByPagination"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "save",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"avgSeatView\": \"3.0%\",\n    \"avgShowView\": \"3\",\n    \"avgViewBox\": \"39.2\",\n    \"boxInfo\": \"46.21\",\n    \"boxRate\": \"0.9%\",\n    \"movieId\": \"1207959\",\n    \"movieName\": \"阿拉丁\",\n    \"myRefundNumInfo\": \"--\",\n    \"myRefundRateInfo\": \"--\",\n    \"onlineBoxRate\": \"--\",\n    \"refundViewInfo\": \"--\",\n    \"refundViewRate\": \"--\",\n    \"releaseInfo\": \"上映14天\",\n    \"releaseInfoColor\": \"#666666 1.00\",\n    \"seatRate\": \"0.9%\",\n    \"showInfo\": \"4701\",\n    \"showRate\": \"1.3%\",\n    \"splitAvgViewBox\": \"35.7\",\n    \"splitBoxInfo\": \"42.00\",\n    \"splitBoxRate\": \"0.9%\",\n    \"splitSumBoxInfo\": \"2.71亿\",\n    \"sumBoxInfo\": \"2.92亿\",\n    \"viewInfo\": \"1.1\",\n    \"viewInfoV2\": \"1.1万\"\n}"
+						},
+						"url": {
+							"raw": "localhost:3000/crawler/save?",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"crawler",
+								"save"
+							],
+							"query": [
+								{
+									"key": "domain",
+									"value": "baidu.com",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "crawlAndSave",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"address\":\"https://box.maoyan.com/promovie/api/box/second.json\"\n}"
+						},
+						"url": {
+							"raw": "localhost:3000/crawler/crawlAndSave?address=https://box.maoyan.com/promovie/api/box/second.json",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"crawler",
+								"crawlAndSave"
+							],
+							"query": [
+								{
+									"key": "address",
+									"value": "https://box.maoyan.com/promovie/api/box/second.json"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "crawlerWantSeeMaoyanList",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/crawlerWantSeeMaoyan/crawlMovieList?address=https://piaofang.maoyan.com/store&headerCode=maoyanWantSee",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"crawlerWantSeeMaoyan",
+								"crawlMovieList"
+							],
+							"query": [
+								{
+									"key": "address",
+									"value": "https://piaofang.maoyan.com/store"
+								},
+								{
+									"key": "headerCode",
+									"value": "maoyanWantSee"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "crawlerWantSeeMaoyanDetail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/crawlerWantSeeMaoyan/crawlMovieDetail?address=https://piaofang.maoyan.com/movie/346559&headerCode=maoyanWantSee",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"crawlerWantSeeMaoyan",
+								"crawlMovieDetail"
+							],
+							"query": [
+								{
+									"key": "address",
+									"value": "https://piaofang.maoyan.com/movie/346559"
+								},
+								{
+									"key": "headerCode",
+									"value": "maoyanWantSee"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "oneKeyMovieDetail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/crawlerWantSeeMaoyan/oneKeyMovieDetail?",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"crawlerWantSeeMaoyan",
+								"oneKeyMovieDetail"
+							],
+							"query": [
+								{
+									"key": "address",
+									"value": "https://piaofang.maoyan.com/movie/346559",
+									"disabled": true
+								},
+								{
+									"key": "headerCode",
+									"value": "maoyanWantSee",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "请求头设置",
+			"item": [
+				{
+					"name": "getList",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:3000/headerSettings/getList?limit=10&page=1",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"headerSettings",
+								"getList"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createOrUpdate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"req222\",\n    \"type\": \"req\",\n    \"headerKeyName\": \"req\",\n    \"headerValueName\": \"req\"\n}"
+						},
+						"url": {
+							"raw": "localhost:3000/headerSettings/createOrUpdate",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"headerSettings",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "字典表设置",
+			"item": [
+				{
+					"name": "getList",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:3000/dictionary/getList?typeCode=header&page=&limit=",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"dictionary",
+								"getList"
+							],
+							"query": [
+								{
+									"key": "typeCode",
+									"value": "header"
+								},
+								{
+									"key": "page",
+									"value": ""
+								},
+								{
+									"key": "limit",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createOrUpdate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"敖燕\",\n    \"code\": \"maoyan\",\n    \"typeCode\": \"header\",\n    \"typeName\": \"请求头\"\n}"
+						},
+						"url": {
+							"raw": "localhost:3000/dictionary/createOrUpdate",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"dictionary",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "删除字典表",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"1\"\n}"
+						},
+						"url": {
+							"raw": "localhost:3000/dictionary/deleteItem",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"dictionary",
+								"deleteItem"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "设置",
+			"item": [
+				{
+					"name": "获取列表",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/settings/getList?limit=10&limit=10&page=1",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"settings",
+								"getList"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "添加或更新",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"settingId\": \"\",\n    \"name\": \"req222\",\n    \"type\": \"req\",\n    \"code\": \"req\",\n    \"value\": \"req\"\n}"
+						},
+						"url": {
+							"raw": "localhost:3000/settings/createOrUpdate",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"settings",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "删除",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"settingId\": \"dde6d9a0-8efb-11e9-aca0-41c1d0c1168d\"\n}"
+						},
+						"url": {
+							"raw": "localhost:3000/settings/deleteItems",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"settings",
+								"deleteItems"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

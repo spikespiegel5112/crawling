@@ -73,10 +73,10 @@
               <el-input v-model="formData.code"></el-input>
             </el-form-item>
             <el-form-item label="类型" prop="type">
-              {{dictionaryList}}
+              {{$store.state.app.dictionary}}
 
               <el-select v-model="formData.type" placeholder='请选择'>
-                <el-option v-for="item in dictionaryList"
+                <el-option v-for="item in dictionaryList.settings"
                            :key="item.dictionaryId" :label="item.name"
                            :value="item.code"></el-option>
               </el-select>
@@ -95,7 +95,8 @@
       </div>
     </el-dialog>
     <!-- JSON查看器 -->
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="valueViewerFlag" :close-on-click-modal="false" width="850px">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="valueViewerFlag" :close-on-click-modal="false"
+               width="850px">
       <el-row type="flex" justify="center">
         <el-col :span="20">
           <el-form :rules="rules" ref="formData" :model="formData"
@@ -129,7 +130,7 @@
       return {
         getListRequest: 'settings/getList',
         createOrUpdateRequest: 'settings/createOrUpdate',
-        deleteHeaderRequest: 'settings/deleteHeader',
+        deleteItemsRequest: 'settings/deleteItems',
         getDictionaryRequest: 'dictionary/getList',
         tableList: [],
         total: null,
@@ -188,7 +189,7 @@
         return this.$store.state.app.tableHeight
       },
       dictionaryList() {
-        return this.$store.state.app.dictionary.settings
+        return this.$store.state.app.dictionary
       }
 
     },
@@ -210,10 +211,11 @@
       this.$store.commit('updateDictionary', {
         settings: dictionaryData
       })
+
       console.log('mounted', this.$store.state.app.dictionary)
       this.getTableData()
 
-      console.log(this.dictionaryList)
+      console.log('dictionaryList', this.dictionaryList.settings)
     },
     methods: {
       getTableData() {
@@ -345,7 +347,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.deleteRecord(this.multipleSelection.map(item => {
+          this.deleteItem(this.multipleSelection.map(item => {
             return item.id
           }))
         }).catch(() => {
@@ -363,7 +365,7 @@
           type: 'warning'
         }).then(() => {
 
-          this.deleteRecord([scope.row.id])
+          this.deleteItem(scope.row.settingId)
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -371,10 +373,10 @@
           })
         })
       },
-      deleteRecord(data) {
-        this.$http.delete(this.$baseUrl + this.deleteRecordRequest, {
+      deleteItem(data) {
+        this.$http.delete(this.$baseUrl + this.deleteItemsRequest, {
           data: {
-            id: data
+            settingId: data
           }
         }).then((response) => {
           console.log(response)

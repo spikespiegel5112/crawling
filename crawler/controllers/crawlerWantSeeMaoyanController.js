@@ -22,6 +22,21 @@ const _crawlPagePromise = (req, res, next) => {
 			"Cookie": "_lxsdk_cuid=16b278f2da1c8-0bd217ef685a99-e353165-1fa400-16b278f2da1c8; _lxsdk=5B35B0C0878B11E9906EF30672EF100755FB61C41A934C41978723E76930287B; __mta=142417549.1559736824373.1559736824373.1559736841774.2; theme=moviepro; wantindex-city={\"city_tier\":0,\"city_id\":0,\"cityName\":\"%E5%85%A8%E5%9B%BD\"}; __mta=142417549.1559736824373.1559736841774.1560403190012.3; _lx_utm=utm_source%3Dgoogle%26utm_medium%3Dorganic; _lxsdk_s=16b4f46f13a-264-392-c4e%7C%7C18"
 		};
 
+
+		wantSeeDataJSONHeaderSample = {
+			"GET":"/movie/1197814/wantindex?city_tier=0&city_id=0&cityName=%E5%85%A8%E5%9B%BD HTTP/1.1",
+			"Host": "piaofang.maoyan.com",
+			"Connection": "keep-alive",
+			"Cache-Control": "max-age=0",
+			"Upgrade-Insecure-Requests": "1",
+			"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36",
+			"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",
+			"Referer": "https://piaofang.maoyan.com/movie/1197814",
+			"Accept-Encoding": "gzip, deflate, br",
+			"Accept-Language": "zh-CN,zh;q=0.9",
+			"Cookie": "_lxsdk_cuid=16b278f2da1c8-0bd217ef685a99-e353165-1fa400-16b278f2da1c8; _lxsdk=5B35B0C0878B11E9906EF30672EF100755FB61C41A934C41978723E76930287B; __mta=142417549.1559736824373.1559736824373.1559736841774.2; wantindex-city={'city_tier':0,'city_id':0,'cityName':'%E5%85%A8%E5%9B%BD'}; theme=moviepro; __mta=142417549.1559736824373.1559736841774.1560526087657.3; _lx_utm=utm_source%3Dgoogle%26utm_medium%3Dorganic; _lxsdk_s=16b5699e75e-a28-65-652%7C%7C28"
+		};
+
 		let crawlerInstance = new crawler({
 			maxConnections: 10,
 			// rateLimit: 3000,
@@ -52,26 +67,12 @@ const _crawlPagePromise = (req, res, next) => {
 			}
 		});
 		headers = headers._previousDataValues;
-
-
-		// try {
-		//
-		// 	// res.status(200).json({
-		// 	// 	headers
-		// 	// })
-		// } catch (e) {
-		// 	res.status(400).json({
-		// 		error: e,
-		// 		req: req.query
-		// 	})
-		// }
-
 		console.log('crawlerInstance+++++++++++', headers);
 
 		crawlerInstance.queue({
 			url: req.query.address,
-			// headers: JSON.parse(headers.value),
-			headers: dataJSONHeadersSample,
+			headers: JSON.parse(headers.value),
+			// headers: dataJSONHeadersSample,
 			callback: (error, result, done) => {
 				if (error) {
 					console.log('insrtance error: ', error);
@@ -171,7 +172,9 @@ const _crawlMovieDetailPromise = (req, res, next) => {
 	return new Promise(async (resolve, reject) => {
 		console.log('_crawlPagePromise+++++', req.query);
 
-		_crawlPagePromise(req, res, next).then(response => {
+		try {
+			const response = await _crawlPagePromise(req, res, next);
+
 			console.log('_crawlPagePromise(req, res, next)+++++', req.query);
 			// res.status(200).json({
 			// 	data: req.query
@@ -192,12 +195,59 @@ const _crawlMovieDetailPromise = (req, res, next) => {
 				byGenderMale: $(".movie-baseinfo .block-wish-detail p").text(),
 				byGenderFemale: $(".movie-baseinfo .block-wish-detail p").text()
 			};
-
 			console.log('_crawlMovieDetailPromise result+++++++++', result);
+
 			resolve(result)
-		}).catch(error => {
-			reject(error)
-		})
+
+		} catch (e) {
+			res.status(400).json({
+				error: e
+			});
+			reject(e)
+		}
+
+	})
+};
+
+const _crawlMovieWantSeePromise = (req, res, next) => {
+	return new Promise(async (resolve, reject) => {
+		console.log('_crawlPagePromise+++++', req.query);
+
+		try {
+			const response = await _crawlPagePromise(req, res, next);
+
+			console.log('_crawlPagePromise(req, res, next)+++++', req.query);
+			// res.status(200).json({
+			// 	data: req.query
+			// });
+			// console.log('_crawlPagePromise', response);
+			const $ = response.$;
+			let titleEL = $(".movie-baseinfo .info-title-content");
+			// console.log('$+++++++++', titleEL.text());
+
+			const result = {
+				byAge20: $(".movie-baseinfo .block-wish-detail p").text(),
+				byAge2024: $(".movie-baseinfo .block-wish-detail p").text(),
+				byAge2529: $(".movie-baseinfo .block-wish-detail p").text(),
+				byAge3034: $(".movie-baseinfo .block-wish-detail p").text(),
+				byAge3539: $(".movie-baseinfo .block-wish-detail p").text(),
+				byAge40: $(".movie-baseinfo .block-wish-detail p").text(),
+				byTier1: $(".movie-baseinfo .block-wish-detail p").text(),
+				byTier2: $(".movie-baseinfo .block-wish-detail p").text(),
+				byTier3: $(".movie-baseinfo .block-wish-detail p").text(),
+				byTier4: $(".movie-baseinfo .block-wish-detail p").text(),
+			};
+			console.log('_crawlMovieDetailPromise result+++++++++', result);
+
+			resolve(result)
+
+		} catch (e) {
+			res.status(400).json({
+				error: e
+			});
+			reject(e)
+		}
+
 	})
 };
 
@@ -247,58 +297,64 @@ const oneKeyMovieDetail = async (req, res, next) => {
 	let result = [];
 	// console.log('oneKeyMovieDetail movieList++++++++++', movieList);
 
-	let length = 4;
-	movieList.filter((item, index) => index < length).forEach(async (item, index) => {
-		item = item.data;
-		let movieId = item.replace(/[^0-9]/ig, "");
+	let length = movieList.length;
+	let index = 0;
 
-		let address2 = 'https://piaofang.maoyan.com/movie/' + movieId;
-		// console.log('address2++++++++++++', address2);
+	const loop = async () => {
+		index++;
+		item2 = movieList[index].data;
+		let movieId = item2.replace(/[^0-9]/ig, "");
+
+		let address = 'https://piaofang.maoyan.com/movie/' + movieId;
+		let addressWantSee = address + '/wantindex?city_tier=0&city_id=0&cityName=全国';
+		// console.log('address++++++++++++', address);
 		// console.log('movieId+++++++++++++++', movieId);
 
-		let reqWithAddress2 = Object.assign(req, {
+		let reqWithAddress1 = Object.assign(req, {
 			query: {
-				address: address2,
-				headerCode: 'maoyanWantSee'
+				address: address,
+				headerCode: 'maoyanWantSeeDetail'
 			}
 		});
+
+		// let reqWithAddress2 = Object.assign(req, {
+		// 	query: {
+		// 		address: addressWantSee,
+		// 		headerCode: 'maoyanWantSee'
+		// 	}
+		// });
 		let data = {};
-		console.log('index++++++', index);
-
+		let dataWantSee = {};
+		// console.log('index++++++', reqWithAddress1);
 		try {
-			data = await _crawlMovieDetailPromise(reqWithAddress2, res, next);
-
+			data = await _crawlMovieDetailPromise(reqWithAddress1, res, next);
+			// dataWantSee = await _crawlMovieWantSeePromise(reqWithAddress2, res, next);
 			result.push({
 				movieId: movieId,
-				data: data
+				data: Object.assign(data, dataWantSee)
 			});
+
 			if (index === length - 1) {
+				console.log('result++++++++++++', result);
+
 				res.status(200).json({
 					status: 'success',
-					data: result
+					data: result,
+					index: index
 				});
+			} else {
+				loop()
 			}
 		} catch (e) {
+
 			res.status(400).json({
 				error: e
 			});
 		}
 
-		// _crawlMovieDetailPromise(reqWithAddress2, res, next).then(response => {
-		// 	// data = response;
-		//
-		// 	console.log('result+++++++++++++++', result);
-		//
-		//
-		// }).catch(error => {
-		// 	res.status(400).json({
-		// 		error: error
-		// 	});
-		// })
+	};
 
-
-	});
-
+	loop()
 
 };
 
