@@ -232,7 +232,7 @@ const _crawlMovieWantSeeDetailPromise = (req, res, next) => {
 				platformEngName: 'Maoyan',
 				platformChineseName: '猫眼',
 				platformType: 'Web',
-				numWantToSee: $(".movie-baseinfo .block-wish-item.left h2").text(),
+				numWantToSee: $(".movie-baseinfo .block-wish-item.left h2").text().replace('想看', ''),
 				byGenderMale: find($, ".movie-baseinfo .block-wish-detail p:eq(0)").text(),
 				byGenderFemale: find($, ".movie-baseinfo .block-wish-detail p:eq(0)").text(),
 				// request: req.query,
