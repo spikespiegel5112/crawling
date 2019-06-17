@@ -2,6 +2,9 @@
   <el-row class="app-container">
     <CommonQuery>
       <template slot="button1">
+        <el-button size="mini" type="primary" icon="el-icon-plus" @click="stepCrawlFlag=true" v-waves>
+          分步抓取
+        </el-button>
         <el-button size="mini" type="primary" icon="el-icon-plus" @click="oneKeyCrawlFlag=true" v-waves>
           一键抓取
         </el-button>
@@ -25,25 +28,33 @@
               highlight-current-row
               @selection-change="handleSelectionChange"
               :height="tableHeight">
-      <el-table-column type="selection" width="40"></el-table-column>
+      <el-table-column type="selection" width="40" fixed="left"></el-table-column>
       <el-table-column label="No" type="index" width="45" align="center" fixed></el-table-column>
-      <el-table-column align="center" label="电影名称" prop='movieName' width="200"></el-table-column>
+      <el-table-column align="center" label="电影名称（中文）" prop='titleChi' width="100"></el-table-column>
+      <el-table-column align="center" label="电影名称（原文）" prop='title' width="100"></el-table-column>
       <el-table-column align="center" label="抓取时间" prop='timestamp' width="100">
         <template slot-scope="scope">
           {{$moment(Number(scope.row.timestamp)).format('YYYY-MM-DD HH:mm:ss')}}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="综合票房（万）" prop='boxInfo'></el-table-column>
-      <el-table-column align="center" label="票房占比" prop='boxRate'></el-table-column>
-      <el-table-column align="center" label="总票房" prop='sumBoxInfo'></el-table-column>
-      <el-table-column align="center" label="分账综合票房（万）" prop='splitBoxInfo'></el-table-column>
-      <el-table-column align="center" label="分账票房占比" prop='splitBoxRate'></el-table-column>
-      <el-table-column align="center" label="分账总票房" prop='splitSumBoxInfo'></el-table-column>
-      <el-table-column align="center" label="上映情况" prop='releaseInfo'></el-table-column>
-      <el-table-column align="center" label="上座率" prop='seatRate'></el-table-column>
-      <el-table-column align="center" label="排片场次" prop='showInfo'></el-table-column>
-      <el-table-column align="center" label="排片占比" prop='showRate'></el-table-column>
-      <el-table-column align="center" label="场均人次" prop='avgShowView'></el-table-column>
+      <el-table-column align="center" label="上映时间" prop='releaseDate'></el-table-column>
+      <el-table-column align="center" label="平台名称（英文）" prop='platformEngName'></el-table-column>
+      <el-table-column align="center" label="平台名称（中文）" prop='platformChineseName'></el-table-column>
+      <el-table-column align="center" label="平台类型" prop='platformType'></el-table-column>
+      <el-table-column align="center" label="想看数量" prop='numWantToSee'></el-table-column>
+      <el-table-column align="center" label="男性受众占比" prop='byGenderMale'></el-table-column>
+      <el-table-column align="center" label="女性受众占比" prop='byGenderFemale'></el-table-column>
+      <el-table-column align="center" label="20岁以下占比" prop='byAge20'></el-table-column>
+      <el-table-column align="center" label="20到24岁占比" prop='byAge20To24'></el-table-column>
+      <el-table-column align="center" label="25到29岁占比" prop='byAge25To29'></el-table-column>
+      <el-table-column align="center" label="30到34岁占比" prop='byAge30To34'></el-table-column>
+      <el-table-column align="center" label="35到39岁占比" prop='byAge35To39'></el-table-column>
+      <el-table-column align="center" label="40岁以上占比" prop='byAge40'></el-table-column>
+      <el-table-column align="center" label="一线城市占比" prop='byTier1'></el-table-column>
+      <el-table-column align="center" label="二线城市占比" prop='byTier2'></el-table-column>
+      <el-table-column align="center" label="三线城市占比" prop='byTier3'></el-table-column>
+      <el-table-column align="center" label="四线城市占比" prop='byTier4'></el-table-column>
+
 
       <el-table-column align="center" label="操作" width="100px">
         <template slot-scope="scope">
@@ -65,8 +76,10 @@
     </div>
     <!-- 编辑 -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="oneKeyCrawlFlag" width="850px">
+
       <el-row type="flex" justify="center">
         <el-col :span="20">
+
           <el-form :rules="rules" ref="formData" :model="formData"
                    label-position="right"
                    label-width="140px">
@@ -88,7 +101,86 @@
         <el-button type="primary" v-waves @click="crawlerData">{{$t('table.confirm')}}</el-button>
       </div>
     </el-dialog>
+    <!--    分步抓取-->
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="stepCrawlFlag" width="850px">
+      <el-row type="flex" justify="space-between">
+        <el-col :span="21">
+          {{crawlingFlag}}
+          {{crawlingCount }}
+          {{crawlingCountLimit}}
+          <el-button v-if="!crawlingFlag" type="primary" @click="beginToCrawl">
+            {{wantSeeListData.length===0?'开始抓取':'重新抓取'}}
+          </el-button>
+          <el-button v-else type="danger" @click="stopCrawling">停止抓取</el-button>
 
+        </el-col>
+        <el-col :span="3" style="text-align: right">
+          <el-button type="primary" @click="save">保存</el-button>
+
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="24">
+          <el-card shadow="never">
+            <el-progress :text-inside="true" :stroke-width="20"
+                         :percentage="wantSeeListData.length!==0?Math.floor(crawlingCount/wantSeeListData.length*100):0"
+                         status="success"></el-progress>
+            <el-divider>
+              <el-row>
+                <el-col v-if="wantSeeListData.length>0&&crawlingCount<wantSeeListData.length" :span="24">
+                  共有{{wantSeeListData.length}}条数据，正在抓取第{{crawlingCount}}条...
+                </el-col>
+                <el-col v-else :span="24">
+                  共有{{wantSeeListData.length}}条数据，抓取完毕
+                </el-col>
+              </el-row>
+            </el-divider>
+            <el-row type="flex" justify="left">
+              <el-col :span="24">
+                <!--          {{wantSeeListData}}-->
+                <el-timeline>
+
+                  <el-timeline-item v-for="(item, index) in wantSeeListData"
+                                    :key="index"
+                                    :timestamp="item.recordTime"
+                                    placement="top"
+                                    :color="item.color==='success'?'#91d929':'#e4e7ed'"
+                                    class="timelineitem"
+                  >
+                    <el-card shadow="hover">
+                      <el-row>
+                        <el-col :span="3" style="text-align: left">第{{index+1}}条</el-col>
+                        <el-col :span="4">
+                          详情: <i v-if="item.detailSuccess===0" class="el-icon-loading"></i>
+                          <i v-else-if="item.detailSuccess===1" class="el-icon-check success"></i>
+                          <i v-else="item.detailSuccess===2" class="el-icon-close failed"></i>
+                        </el-col>
+                        <el-col :span="4">
+                          画像: <i v-if="item.portraitSuccess===0" class="el-icon-loading"></i>
+                          <i v-else-if="item.portraitSuccess===1" class="el-icon-check success"></i>
+                          <i v-else="item.portraitSuccess===2" class="el-icon-close failed"></i>
+                        </el-col>
+                      </el-row>
+                    </el-card>
+
+
+                  </el-timeline-item>
+                </el-timeline>
+              </el-col>
+            </el-row>
+
+          </el-card>
+        </el-col>
+      </el-row>
+
+      <el-row type="flex" justify="space-between">
+        <el-col :span="21">
+        </el-col>
+        <el-col :span="3" style="text-align: right">
+          <el-button type="primary" @click="stepCrawlFlag=false">关闭</el-button>
+        </el-col>
+      </el-row>
+    </el-dialog>
   </el-row>
 </template>
 
@@ -101,10 +193,15 @@
     },
     data() {
       return {
-        getListByPaginationRequest: 'crawlerBoxOfficeMaoyan/getListByPagination',
-        crawlAndSaveRequest: 'crawlerBoxOfficeMaoyan/crawlAndSave',
-        deleteRecordRequest: 'crawlerBoxOfficeMaoyan/deleteRecords',
+        getListByPaginationRequest: 'crawlerWantSeeMaoyan/getListByPagination',
+        crawlAndSaveRequest: 'crawlerWantSeeMaoyan/crawlAndSave',
+        crawlMovieWantSeeDetailRequest: 'crawlerWantSeeMaoyan/crawlMovieWantSeeDetail',
+        crawlMovieWantSeePortraitRequest: 'crawlerWantSeeMaoyan/crawlMovieWantSeePortrait',
+        deleteRecordRequest: 'crawlerWantSeeMaoyan/deleteRecords',
         getSettingsRequest: 'settings/getList',
+
+        crawlMovieListRequest: 'crawlerWantSeeMaoyan/crawlMovieList',
+        saveMultipleMaoyanWantSeeRequest: 'crawlerWantSeeMaoyan/saveMultipleMaoyanWantSee',
         crawlerSettingFlag: false,
         crawlerSetting: {
           address: ''
@@ -136,7 +233,7 @@
         },
         pagination: {
           page: 1,
-          limit: 50
+          limit: 100
         },
         importanceOptions: [1, 2, 3],
 
@@ -193,7 +290,14 @@
         effectiveDuration: [],
         multipleSelection: [],
         oneKeyCrawlFlag: false,
-        settingsList: []
+        stepCrawlFlag: false,
+        settingsList: [],
+        wantSeeData: [],
+        crawlingCount: 0,
+        wantSeeListData: [],
+        crawlingFlag: false,
+        crawlingCountLimit: 0
+
       }
     },
     computed: {
@@ -454,6 +558,141 @@
           }
 
         })
+      },
+      async beginToCrawl() {
+        this.crawlingCount = 0
+
+        const wantSeeListData = await this.$http.get(this.$baseUrl + this.crawlMovieListRequest, {
+          params: {
+            address: 'https://piaofang.maoyan.com/store',
+            headerCode: 'maoyanWantSee'
+          }
+        })
+        this.crawlingCountLimit = 10
+        // this.crawlingCountLimit = wantSeeListData.data.length
+
+        wantSeeListData.data.forEach((item, index) => {
+          if (index < this.crawlingCountLimit) {
+            this.$set(this.wantSeeListData, index, Object.assign(item, {
+              detailSuccess: 0,
+              portraitSuccess: 0,
+              content: 'detailSuccess' + 'portraitSuccess',
+              color: 'sunccess',
+              recordTime: '---'
+            }))
+
+          }
+        })
+
+        let result = []
+        let record = {}
+
+        let detailReadyFlag = false
+        let portraitReadyFlag = false
+
+        const loop = () => {
+          let crawlingCount = this.crawlingCount
+          this.crawlingFlag = true
+          const movieId = this.wantSeeListData[crawlingCount].movieId
+          const getDetail = () => {
+            return new Promise((resolve, reject) => {
+              this.$http.get(this.$baseUrl + this.crawlMovieWantSeeDetailRequest, {
+                params: {
+                  address: 'https://piaofang.maoyan.com/movie/' + movieId,
+                  headerCode: 'maoyanWantSee'
+                }
+              }).then(response1 => {
+                record.detail = response1.data
+
+                this.$set(this.wantSeeListData, crawlingCount, Object.assign(this.wantSeeListData[crawlingCount], {
+                  detailSuccess: 1
+                }))
+
+                resolve(response1.data)
+              }).catch(error => {
+
+                this.$set(this.wantSeeListData, crawlingCount, Object.assign(this.wantSeeListData[crawlingCount], {
+                  detailSuccess: 2
+                }))
+                reject(error)
+
+              })
+            })
+          }
+
+          const getPortrait = () => {
+            return new Promise((resolve, reject) => {
+              this.$http.get(this.$baseUrl + this.crawlMovieWantSeePortraitRequest, {
+                params: {
+                  address: 'https://piaofang.maoyan.com/movie/' + movieId,
+                  headerCode: 'maoyanWantSeePortrait'
+                }
+              }).then(response1 => {
+                record.portrait = response1.data.data
+
+                this.$set(this.wantSeeListData, crawlingCount, Object.assign(this.wantSeeListData[crawlingCount], {
+                  portraitSuccess: 1,
+                  color: 'success'
+                }))
+                resolve(response1.data.data)
+              }).catch(error => {
+                this.$set(this.wantSeeListData, crawlingCount, Object.assign(this.wantSeeListData[crawlingCount], {
+                  portraitSuccess: 2,
+                  color: 'failed'
+                }))
+
+                reject(error)
+              })
+            })
+          }
+
+          const getDetailPromise = getDetail()
+          const getPortraitPromise = getPortrait()
+          if (this.crawlingCount === this.crawlingCountLimit) {
+            // debugger
+            this.crawlingFlag = false
+          } else {
+            this.crawlingCount++
+          }
+          Promise.all([getDetailPromise, getPortraitPromise]).then(responseAll => {
+            console.log(responseAll)
+
+            this.wantSeeData.push(responseAll[0])
+            if (this.crawlingFlag) {
+              this.wantSeeListData[crawlingCount].recordTime = this.$moment(Date.now()).format('hh:mm:ss')
+              loop()
+            }
+
+          }).catch(error => {
+            console.log(error)
+            if (this.crawlingCount === this.crawlingCountLimit) {
+              // debugger
+              this.crawlingFlag = false
+            } else {
+              this.crawlingCount++
+            }
+            if (this.crawlingFlag) {
+              loop()
+            }
+          })
+        }
+
+        loop()
+      },
+      stopCrawling() {
+        this.crawlingFlag = false
+      },
+      save() {
+        if (this.crawlingCount === this.crawlingCountLimit) {
+          console.log(this.wantSeeData)
+          this.$http.post(this.$baseUrl + this.saveMultipleMaoyanWantSeeRequest, this.wantSeeData.reverse()).then(response => {
+            this.$message.success('数据提交成功')
+            this.getTableData()
+            this.stepCrawlFlag = false
+          })
+        } else {
+          this.$message.warring('dsdsdsdsds')
+        }
       }
 
     }
@@ -462,4 +701,32 @@
 <style lang="scss">
   @import '../../styles/edifice.scss';
 
+  .timelineitem {
+    font-size: 15px;
+    padding: 0 0 1px 0;
+
+    i {
+      &.success {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        text-align: center;
+        line-height: 20px;
+        border-radius: 50%;
+        color: #fff;
+        background: #91d929;
+      }
+
+      &.failed {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        text-align: center;
+        line-height: 20px;
+        border-radius: 50%;
+        color: #fff;
+        background: red;
+      }
+    }
+  }
 </style>

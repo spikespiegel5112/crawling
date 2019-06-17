@@ -9,10 +9,11 @@ const MaoyanRecords = require('./models/MaoyanRecords');
 const Dictionaries = require('./models/Dictionaries');
 const HeadersModel = require('./models/HeadersSettings');
 const SettingsModel = require('./models/SettingsModel');
+const MaoyanWantSeeModel = require('./models/MaoyanWantSeeModel');
 
 const errorController = require('./controllers/errorController');
 const crawlerWantSeeMaoyanRoutes = require('./routers/crawlerWantSeeMaoyanRoutes');
-const crawlerRoutes = require('./routers/crawler');
+const crawlerBoxOfficeMaoyanRoutes = require('./routers/crawlerBoxOfficeMaoyanRoutes');
 const headerSettingsRoutes = require('./routers/headerSettings');
 const settingsRoutes = require('./routers/settingsRoutes');
 const dictionaryRoutes = require('./routers/dictionary');
@@ -45,7 +46,7 @@ var corsOptions = {
 	optionsSuccessStatus: 200
 };
 
-app.use('/crawler', cors(corsOptions), crawlerRoutes);
+app.use('/crawlerBoxOfficeMaoyan', cors(corsOptions), crawlerBoxOfficeMaoyanRoutes);
 app.use('/crawlerWantSeeMaoyan', cors(corsOptions), crawlerWantSeeMaoyanRoutes);
 app.use('/headerSettings', cors(corsOptions), headerSettingsRoutes);
 app.use('/settings', cors(corsOptions), settingsRoutes);

@@ -46,6 +46,11 @@ export const constantRouterMap = [{
     name: 'maoyan',
     component: () => import('@/views/crawling/Maoyan'),
     meta: { title: '猫眼爬虫', icon: 'list' }
+  },{
+    path: 'maoyanWantSee',
+    name: 'maoyanWantSee',
+    component: () => import('@/views/crawling/MaoyanWantSee'),
+    meta: { title: '猫眼想看爬虫', icon: 'list' }
   }]
 }, {
   path: '/settings',

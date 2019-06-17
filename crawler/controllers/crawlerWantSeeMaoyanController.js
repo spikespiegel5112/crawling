@@ -1,6 +1,7 @@
 const express = require('express');
+const find  = require('cheerio-eq');
 const crawler = require('crawler');
-const WantSeeMaoyanModel = require('../models/WantSeeMaoyanModel');
+const MaoyanWantSeeModel = require('../models/MaoyanWantSeeModel');
 const SettingsModel = require('../models/SettingsModel');
 
 let headers = {};
@@ -24,7 +25,7 @@ const _crawlPagePromise = (req, res, next) => {
 
 
 		wantSeeDataJSONHeaderSample = {
-			"GET":"/movie/1197814/wantindex?city_tier=0&city_id=0&cityName=%E5%85%A8%E5%9B%BD HTTP/1.1",
+			"GET": "/movie/1197814/wantindex?city_tier=0&city_id=0&cityName=%E5%85%A8%E5%9B%BD HTTP/1.1",
 			"Host": "piaofang.maoyan.com",
 			"Connection": "keep-alive",
 			"Cache-Control": "max-age=0",
@@ -104,7 +105,7 @@ const _createRecord = (requestBody, timestamp) => {
 		_timestamp = Date.now();
 	}
 	return new Promise((resolve, reject) => {
-		MaoyanRecords.create({
+		MaoyanWantSeeModel.create({
 			timestamp: _timestamp,
 			"avgSeatView": requestBody.avgSeatView,
 			"avgShowView": requestBody.avgShowView,
@@ -139,6 +140,46 @@ const _createRecord = (requestBody, timestamp) => {
 	})
 };
 
+const _createMaoyanWantSeeRecord = (requestBody, timestamp) => {
+	let _timestamp = timestamp;
+	console.log('timestamp:   ', timestamp);
+	if (!timestamp) {
+		_timestamp = Date.now();
+	}
+	return new Promise((resolve, reject) => {
+		MaoyanWantSeeModel.create({
+			timestamp: _timestamp,
+			"titleChi": requestBody.titleChi,
+			"title": requestBody.title,
+			"releaseDate": requestBody.releaseDate,
+			"platformEngName": requestBody.platformEngName,
+			"platformChineseName": requestBody.platformChineseName,
+			"platformType": requestBody.platformType,
+			"numWantToSee": requestBody.numWantToSee,
+			"byGenderMale": requestBody.byGenderMale,
+			"byGenderFemale": requestBody.byGenderFemale,
+
+
+			"byAge20": requestBody.byAge20,
+			"byAge20To24": requestBody.byAge20To24,
+			"byAge25To29": requestBody.byAge25To29,
+			"byAge30To34": requestBody.byAge30To34,
+			"byAge35To39": requestBody.byAge35To39,
+			"byAge40": requestBody.byAge40,
+			"byTier1": requestBody.byTier1,
+			"byTier2": requestBody.byTier2,
+			"byTier3": requestBody.byTier3,
+			"byTier4": requestBody.byTier4,
+		}).then(result => {
+			// console(result);
+			resolve(result)
+		}).catch(error => {
+			reject(error)
+		})
+
+	})
+};
+
 const _crawlMovieListPromise = (req, res, next) => {
 	return new Promise((resolve, reject) => {
 		console.log('_crawlMovieListPromise++++++++', req.query);
@@ -168,7 +209,7 @@ const _crawlMovieListPromise = (req, res, next) => {
 	})
 };
 
-const _crawlMovieDetailPromise = (req, res, next) => {
+const _crawlMovieWantSeeDetailPromise = (req, res, next) => {
 	return new Promise(async (resolve, reject) => {
 		console.log('_crawlPagePromise+++++', req.query);
 
@@ -192,10 +233,15 @@ const _crawlMovieDetailPromise = (req, res, next) => {
 				platformChineseName: '猫眼',
 				platformType: 'Web',
 				numWantToSee: $(".movie-baseinfo .block-wish-item.left h2").text(),
-				byGenderMale: $(".movie-baseinfo .block-wish-detail p").text(),
-				byGenderFemale: $(".movie-baseinfo .block-wish-detail p").text()
+				// byGenderMale: $(".movie-baseinfo .block-wish-detail p").filter(index => index === 0)[0].text(),
+				byGenderMale: find($, ".movie-baseinfo .block-wish-detail p:eq(0)").text(),
+
+				// byGenderFemale: $(".movie-baseinfo .block-wish-detail p").filter(index => index === 0)[0].text(),
+				byGenderFemale: find($, ".movie-baseinfo .block-wish-detail p:eq(0)").text(),
+				// request: req.query,
+				// response: response
 			};
-			console.log('_crawlMovieDetailPromise result+++++++++', result);
+			console.log('_crawlMovieWantSeeDetailPromise result+++++++++', result);
 
 			resolve(result)
 
@@ -209,35 +255,47 @@ const _crawlMovieDetailPromise = (req, res, next) => {
 	})
 };
 
-const _crawlMovieWantSeePromise = (req, res, next) => {
+const _crawlMovieWantSeePortraitPromise = (req, res, next) => {
 	return new Promise(async (resolve, reject) => {
-		console.log('_crawlPagePromise+++++', req.query);
+		console.log('_crawlMovieWantSeePortraitPromise+++++', req.query);
+
+		req.query = Object.assign(req.query, {
+			address: encodeURI(req.query.address + '/wantindex?city_tier=0&city_id=0&cityName=全国')
+			// address: req.query.address + '/wantindex?city_tier=0&city_id=0&cityName=全国'
+		});
 
 		try {
 			const response = await _crawlPagePromise(req, res, next);
 
-			console.log('_crawlPagePromise(req, res, next)+++++', req.query);
+			console.log('_crawlMovieWantSeePortraitPromise(req, res, next)+++++', req.query);
 			// res.status(200).json({
 			// 	data: req.query
 			// });
 			// console.log('_crawlPagePromise', response);
 			const $ = response.$;
-			let titleEL = $(".movie-baseinfo .info-title-content");
 			// console.log('$+++++++++', titleEL.text());
 
+			const isEmpty = $(".bar-group .single-bar text").text() === '' ? true : false;
+
 			const result = {
-				byAge20: $(".movie-baseinfo .block-wish-detail p").text(),
-				byAge2024: $(".movie-baseinfo .block-wish-detail p").text(),
-				byAge2529: $(".movie-baseinfo .block-wish-detail p").text(),
-				byAge3034: $(".movie-baseinfo .block-wish-detail p").text(),
-				byAge3539: $(".movie-baseinfo .block-wish-detail p").text(),
-				byAge40: $(".movie-baseinfo .block-wish-detail p").text(),
-				byTier1: $(".movie-baseinfo .block-wish-detail p").text(),
-				byTier2: $(".movie-baseinfo .block-wish-detail p").text(),
-				byTier3: $(".movie-baseinfo .block-wish-detail p").text(),
-				byTier4: $(".movie-baseinfo .block-wish-detail p").text(),
+				data: {
+					byAge20: $(".bar-group .single-bar text").text(),
+					byAge20To24: $(".bar-group .single-bar text").text(),
+					byAge25To29: $(".bar-group .single-bar text").text(),
+					byAge30To34: $(".bar-group .single-bar text").text(),
+					byAge35To39: $(".bar-group .single-bar text").text(),
+					byAge40: $(".bar-group .single-bar text").text(),
+					byTier1: $(".linebars-list .linebars-item .linebars-value").text(),
+					byTier2: $(".linebars-list .linebars-item .linebars-value").text(),
+					byTier3: $(".linebars-list .linebars-item .linebars-value").text(),
+					byTier4: $(".linebars-list .linebars-item .linebars-value").text(),
+				},
+				isEmptyPortrait: isEmpty,
+				address: req.query.address,
+				// request: req.query,
+				// html: response.body
 			};
-			console.log('_crawlMovieDetailPromise result+++++++++', result);
+			console.log('_crawlMovieWantSeeDetailPromise result+++++++++', result);
 
 			resolve(result)
 
@@ -263,10 +321,10 @@ const crawlMovieList = async (req, res, next) => {
 	})
 };
 
-const crawlMovieDetail = async (req, res, next) => {
+const crawlMovieWantSeeDetail = async (req, res, next) => {
 	return new Promise((resolve, reject) => {
-		_crawlMovieDetailPromise(req, res, next).then(response => {
-			console.log('_crawlMovieDetailPromise+++++++++++++++++++++++++++++++', response);
+		_crawlMovieWantSeeDetailPromise(req, res, next).then(response => {
+			console.log('_crawlMovieWantSeeDetailPromise+++++++++++++++++++++++++++++++', response);
 			resolve(response);
 			res.status(200).json({
 				data: response
@@ -278,26 +336,42 @@ const crawlMovieDetail = async (req, res, next) => {
 			});
 		})
 	})
-
 };
 
-const oneKeyMovieDetail = async (req, res, next) => {
+const crawlMovieWantSeePortrait = async (req, res, next) => {
+	return new Promise((resolve, reject) => {
+		_crawlMovieWantSeePortraitPromise(req, res, next).then(response => {
+			console.log('_crawlMovieWantSeePortrait+++++++++++++++++++++++++++++++', response);
+			resolve(response);
+			res.status(200).json({
+				data: response
+			});
+		}).catch(error => {
+			reject(error);
+			res.status(400).json({
+				error: error
+			});
+		})
+	})
+};
+
+const oneKeyMovieWantSee = async (req, res, next) => {
 	let address1 = "https://piaofang.maoyan.com/store";
-	let reqWithAddress1 = Object.assign(req, {
+	let queryWantSeeList = Object.assign(req, {
 		query: {
 			address: address1,
 			headerCode: 'maoyanWantSee'
 		}
 	});
 
-	console.log('reqWithAddress1++++++++++', reqWithAddress1.query);
+	console.log('queryWantSeeList++++++++++', queryWantSeeList.query);
 
-
-	const movieList = await _crawlMovieListPromise(reqWithAddress1, res, next);
+	const movieList = await _crawlMovieListPromise(queryWantSeeList, res, next);
 	let result = [];
-	// console.log('oneKeyMovieDetail movieList++++++++++', movieList);
+	// console.log('oneKeyMovieWantSee movieList++++++++++', movieList);
 
-	let length = movieList.length;
+	// let length = movieList.length;
+	let length = 6;
 	let index = 0;
 
 	const loop = async () => {
@@ -305,33 +379,41 @@ const oneKeyMovieDetail = async (req, res, next) => {
 		item2 = movieList[index].data;
 		let movieId = item2.replace(/[^0-9]/ig, "");
 
-		let address = 'https://piaofang.maoyan.com/movie/' + movieId;
-		let addressWantSee = address + '/wantindex?city_tier=0&city_id=0&cityName=全国';
-		// console.log('address++++++++++++', address);
+		let addressDetail = 'https://piaofang.maoyan.com/movie/' + movieId;
+		let addressWantSee = encodeURI('https://piaofang.maoyan.com/movie/' + movieId + '/wantindex?city_tier=0&city_id=0&cityName=全国');
+		// console.log('addressDetail++++++++++++', addressDetail);
 		// console.log('movieId+++++++++++++++', movieId);
 
-		let reqWithAddress1 = Object.assign(req, {
+		const reqWantSeeDetail = req;
+		const reqWantSeePortrait = req;
+		const queryWantSeeList = {
 			query: {
-				address: address,
+				address: addressDetail,
 				headerCode: 'maoyanWantSeeDetail'
 			}
-		});
+		};
 
-		// let reqWithAddress2 = Object.assign(req, {
-		// 	query: {
-		// 		address: addressWantSee,
-		// 		headerCode: 'maoyanWantSee'
-		// 	}
-		// });
+		const queryWantSeePortrait = {
+			query: {
+				address: addressWantSee,
+				headerCode: 'maoyanWantSeePortrait'
+			}
+		};
+
 		let data = {};
 		let dataWantSee = {};
-		// console.log('index++++++', reqWithAddress1);
+
 		try {
-			data = await _crawlMovieDetailPromise(reqWithAddress1, res, next);
-			// dataWantSee = await _crawlMovieWantSeePromise(reqWithAddress2, res, next);
+			dataWantDetail = await _crawlMovieWantSeeDetailPromise(Object.assign(req, queryWantSeeList), res, next);
+
+			console.log(data);
+
+			dataWantSeePortrait = await _crawlMovieWantSeePortraitPromise(Object.assign(req, queryWantSeePortrait), res, next);
+
 			result.push({
 				movieId: movieId,
-				data: Object.assign(data, dataWantSee)
+				isEmptyPortrait: dataWantSeePortrait.isEmptyPortrait,
+				data: Object.assign(dataWantDetail, dataWantSeePortrait.data)
 			});
 
 			if (index === length - 1) {
@@ -346,28 +428,14 @@ const oneKeyMovieDetail = async (req, res, next) => {
 				loop()
 			}
 		} catch (e) {
-
 			res.status(400).json({
 				error: e
 			});
 		}
-
 	};
 
 	loop()
 
-};
-
-const crawl = async (req, res, next) => {
-	console.log(req.query.address);
-	const movieIndexList = await _extractMovieListPromise(req, res, next);
-	res.status(200).json({
-		// keys: Object.keys(result),
-		// length: result.length,
-		// typeof: result instanceof Array,
-		data: movieIndexList,
-		// body: response.body
-	});
 };
 
 const getListByPagination = (req, res, next) => {
@@ -377,19 +445,19 @@ const getListByPagination = (req, res, next) => {
 		offset: req.query.limit * (req.query.page - 1)
 	};
 
-	MaoyanRecords.findAll({
+	MaoyanWantSeeModel.findAll({
 		offset: pagination.offset,
 		limit: pagination.limit,
 		// order: ['DESC']
 	}).then(async data => {
 		res.status(200).json({
 			pagination: {
-				total: await MaoyanRecords.count(),
+				total: await MaoyanWantSeeModel.count(),
 			},
 			data: data
 		})
 	}).catch(error => {
-		res.status(500).json({
+		res.status(400).json({
 			error: {
 				message: error,
 				req: pagination
@@ -405,7 +473,7 @@ const getCrawlDate = (req, res, next) => {
 		offset: req.query.page * (req.query.page - 1)
 	};
 
-	MaoyanRecords.findAll({
+	MaoyanWantSeeModel.findAll({
 		offset: pagination.offset,
 		limit: pagination.limit
 	}).then(data => {
@@ -414,7 +482,7 @@ const getCrawlDate = (req, res, next) => {
 			data: data
 		})
 	}).catch(error => {
-		res.status(500).json({
+		res.status(400).json({
 			error: {
 				message: error,
 				req: pagination
@@ -430,7 +498,7 @@ const getListByDate = (req, res, next) => {
 		offset: req.query.page * (req.query.page - 1)
 	};
 
-	MaoyanRecords.findAll({
+	MaoyanWantSeeModel.findAll({
 		offset: pagination.offset,
 		limit: pagination.limit
 	}).then(data => {
@@ -439,7 +507,7 @@ const getListByDate = (req, res, next) => {
 			data: data
 		})
 	}).catch(error => {
-		res.status(500).json({
+		res.status(400).json({
 			error: {
 				message: error,
 				req: pagination
@@ -450,32 +518,6 @@ const getListByDate = (req, res, next) => {
 
 const save = (req, res, next) => {
 	// console.log('postAddProduct', req.body);
-	const maoyanData = {
-		"avgSeatView": "3.0%",
-		"avgShowView": "3",
-		"avgViewBox": "39.2",
-		"boxInfo": "46.21",
-		"boxRate": "0.9%",
-		"movieId": "1207959",
-		"movieName": "阿拉丁",
-		"myRefundNumInfo": "--",
-		"myRefundRateInfo": "--",
-		"onlineBoxRate": "--",
-		"refundViewInfo": "--",
-		"refundViewRate": "--",
-		"releaseInfo": "上映14天",
-		"releaseInfoColor": "#666666 1.00",
-		"seatRate": "0.9%",
-		"showInfo": "4701",
-		"showRate": "1.3%",
-		"splitAvgViewBox": "35.7",
-		"splitBoxInfo": "42.00",
-		"splitBoxRate": "0.9%",
-		"splitSumBoxInfo": "2.71亿",
-		"sumBoxInfo": "2.92亿",
-		"viewInfo": "1.1",
-		"viewInfoV2": "1.1万"
-	};
 	const timestamp = Date.now();
 
 	_createRecord(req, timestamp).then(response => {
@@ -483,12 +525,50 @@ const save = (req, res, next) => {
 			data: req
 		})
 	}).catch(error => {
-		res.status(500).json({
+		res.status(400).json({
 			message: error
 		})
 	})
+};
 
+const saveOneMaoyanWantSee = (req, res, next) => {
+	const timestamp = Date.now();
 
+	_createMaoyanWantSeeRecord(req, timestamp).then(response => {
+		res.status(200).json({
+			message: 'success',
+			data: response
+		})
+	}).catch(error => {
+		res.status(400).json({
+			error: error
+		})
+	})
+};
+
+const saveMultipleMaoyanWantSee = (req, res, next) => {
+	const requestBody = req.body;
+	if (!(requestBody instanceof Array)) {
+		res.status(400).json({
+			error: 'not array'
+		})
+	}
+	const timestamp = Date.now();
+
+	requestBody.forEach((item, index) => {
+		_createMaoyanWantSeeRecord(item, timestamp).then(response => {
+			if (index === requestBody.length - 1) {
+				res.status(200).json({
+					data: response
+				})
+			}
+
+		}).catch(error => {
+			res.status(400).json({
+				error: error
+			})
+		})
+	})
 };
 
 
@@ -498,20 +578,37 @@ const crawlAndSave = (req, res, next) => {
 		console.log('_crawlPagePromise', response);
 		const timestamp = Date.now();
 
-		response.data.list.forEach((item, index) => {
-			_createRecord(item, timestamp).then(response2 => {
-				if (index === response.data.list.length - 1) {
+		let count = 0;
+		const loop = () => {
+			_createRecord(response.data.list[count], timestamp).then(response2 => {
+				if (count === response.data.list.length - 1) {
 					res.status(200).json(response);
+				} else {
+					loop();
+					count++
 				}
 			}).catch(error => {
-				res.status(500).json({
+				res.status(400).json({
 					message: error2
 				});
 			})
+		};
 
-		});
+		loop();
+		// response.data.list.forEach((item, index) => {
+		// 	_createRecord(item, timestamp).then(response2 => {
+		// 		if (index === response.data.list.length - 1) {
+		// 			res.status(200).json(response);
+		// 		}
+		// 	}).catch(error => {
+		// 		res.status(400).json({
+		// 			message: error2
+		// 		});
+		// 	})
+		//
+		// });
 	}).catch(error => {
-		res.status(500).json({
+		res.status(400).json({
 			message: error
 		});
 	})
@@ -524,7 +621,7 @@ const deleteRecords = (req, res, next) => {
 	console.log(idBody instanceof Array);
 	if (idBody instanceof Array) {
 		idBody.forEach((item, index) => {
-			MaoyanRecords.findByPk(item).then(async response => {
+			MaoyanWantSeeModel.findByPk(item).then(async response => {
 				const result = await response.destroy();
 				if (index + 1 === req.body.id.length) {
 					res.status(200).json({
@@ -540,7 +637,7 @@ const deleteRecords = (req, res, next) => {
 			})
 		})
 	} else {
-		MaoyanRecords.findByPk(idBody).then(result => {
+		MaoyanWantSeeModel.findByPk(idBody).then(result => {
 			console.log(result);
 			result.destroy().then(() => {
 				if (index + 1 === req.body.id.length) {
@@ -560,11 +657,13 @@ const deleteRecords = (req, res, next) => {
 };
 
 
-exports.crawl = crawl;
 exports.crawlMovieList = crawlMovieList;
-exports.crawlMovieDetail = crawlMovieDetail;
-exports.oneKeyMovieDetail = oneKeyMovieDetail;
+exports.crawlMovieWantSeeDetail = crawlMovieWantSeeDetail;
+exports.crawlMovieWantSeePortrait = crawlMovieWantSeePortrait;
+exports.oneKeyMovieWantSee = oneKeyMovieWantSee;
 exports.save = save;
+exports.saveOneMaoyanWantSee = saveOneMaoyanWantSee;
+exports.saveMultipleMaoyanWantSee = saveMultipleMaoyanWantSee;
 exports.getListByPagination = getListByPagination;
 exports.getListByDate = getListByDate;
 exports.crawlAndSave = crawlAndSave;
