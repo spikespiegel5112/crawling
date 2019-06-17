@@ -1,5 +1,5 @@
 const express = require('express');
-const find  = require('cheerio-eq');
+const find = require('cheerio-eq');
 const crawler = require('crawler');
 const MaoyanWantSeeModel = require('../models/MaoyanWantSeeModel');
 const SettingsModel = require('../models/SettingsModel');
@@ -225,7 +225,7 @@ const _crawlMovieWantSeeDetailPromise = (req, res, next) => {
 			let titleEL = $(".movie-baseinfo .info-title-content");
 			// console.log('$+++++++++', titleEL.text());
 
-			const result = {
+			const rawData = {
 				titleChi: $(".movie-baseinfo .info-title-content").text(),
 				title: $(".movie-baseinfo .info-etitle-content").text(),
 				releaseDate: $(".movie-baseinfo .score-info.ellipsis-1").text(),
@@ -233,13 +233,22 @@ const _crawlMovieWantSeeDetailPromise = (req, res, next) => {
 				platformChineseName: '猫眼',
 				platformType: 'Web',
 				numWantToSee: $(".movie-baseinfo .block-wish-item.left h2").text(),
-				// byGenderMale: $(".movie-baseinfo .block-wish-detail p").filter(index => index === 0)[0].text(),
 				byGenderMale: find($, ".movie-baseinfo .block-wish-detail p:eq(0)").text(),
-
-				// byGenderFemale: $(".movie-baseinfo .block-wish-detail p").filter(index => index === 0)[0].text(),
 				byGenderFemale: find($, ".movie-baseinfo .block-wish-detail p:eq(0)").text(),
 				// request: req.query,
 				// response: response
+			};
+
+			const result = {
+				titleChi: rawData.titleChi,
+				title: rawData.title,
+				releaseDate: rawData.releaseDate,
+				platformEngName: rawData.platformEngName,
+				platformChineseName: rawData.platformChineseName,
+				platformType: rawData.platformType,
+				numWantToSee: rawData.numWantToSee,
+				byGenderMale: rawData.byGenderMale.match(/[1-9]\d*\.\d*|0\.\d*[1-9]\d*$/) ? rawData.byGenderMale.match(/[1-9]\d*\.\d*|0\.\d*[1-9]\d*$/) + '%' : '',
+				byGenderFemale: rawData.byGenderFemale.match(/[[1-9]\d*\.\d*|0\.\d*[1-9]\d*]$/g) ? String(rawData.byGenderFemale.match(/[[1-9]\d*\.\d*|0\.\d*[1-9]\d*]$/g)).split(',')[1] + '%' : ''
 			};
 			console.log('_crawlMovieWantSeeDetailPromise result+++++++++', result);
 
@@ -277,27 +286,38 @@ const _crawlMovieWantSeePortraitPromise = (req, res, next) => {
 
 			const isEmpty = $(".bar-group .single-bar text").text() === '' ? true : false;
 
-			const result = {
-				data: {
-					byAge20: $(".bar-group .single-bar text").text(),
-					byAge20To24: $(".bar-group .single-bar text").text(),
-					byAge25To29: $(".bar-group .single-bar text").text(),
-					byAge30To34: $(".bar-group .single-bar text").text(),
-					byAge35To39: $(".bar-group .single-bar text").text(),
-					byAge40: $(".bar-group .single-bar text").text(),
-					byTier1: $(".linebars-list .linebars-item .linebars-value").text(),
-					byTier2: $(".linebars-list .linebars-item .linebars-value").text(),
-					byTier3: $(".linebars-list .linebars-item .linebars-value").text(),
-					byTier4: $(".linebars-list .linebars-item .linebars-value").text(),
-				},
-				isEmptyPortrait: isEmpty,
-				address: req.query.address,
+			const rawData = {
+
+				byAge20: find($, ".bar-group .single-bar text:eq(0)").text(),
+				byAge20To24: find($, ".bar-group .single-bar text:eq(1)").text(),
+				byAge25To29: find($, ".bar-group .single-bar text:eq(2)").text(),
+				byAge30To34: find($, ".bar-group .single-bar text:eq(3)").text(),
+				byAge35To39: find($, ".bar-group .single-bar text:eq(4)").text(),
+				byAge40: find($, ".bar-group .single-bar text:eq(5)").text(),
+				byTier1: find($, ".linebars-list .linebars-item .linebars-value:eq(0)").text(),
+				byTier2: find($, ".linebars-list .linebars-item .linebars-value:eq(1)").text(),
+				byTier3: find($, ".linebars-list .linebars-item .linebars-value:eq(2)").text(),
+				byTier4: find($, ".linebars-list .linebars-item .linebars-value:eq(3)").text(),
 				// request: req.query,
 				// html: response.body
 			};
+
+			const result = {
+				// byAge20: rawData.byAge20.split('%')[0],
+				byAge20: rawData.byAge20.split('%'),
+				byAge20To24: rawData.byAge20To24.split('%')[1],
+				byAge25To29: rawData.byAge25To29.split('%')[2],
+				byAge30To34: rawData.byAge30To34.split('%')[3],
+				byAge35To39: rawData.byAge35To39.split('%')[4],
+				byAge40: rawData.byAge40.split('%')[5],
+				byTier1: rawData.byTier1.split('%')[0],
+				byTier2: rawData.byTier2.split('%')[1],
+				byTier3: rawData.byTier3.split('%')[2],
+				byTier4: rawData.byTier4.split('%')[3],
+			};
 			console.log('_crawlMovieWantSeeDetailPromise result+++++++++', result);
 
-			resolve(result)
+			resolve(rawData)
 
 		} catch (e) {
 			res.status(400).json({

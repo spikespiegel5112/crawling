@@ -42,8 +42,17 @@
       <el-table-column align="center" label="平台名称（中文）" prop='platformChineseName'></el-table-column>
       <el-table-column align="center" label="平台类型" prop='platformType'></el-table-column>
       <el-table-column align="center" label="想看数量" prop='numWantToSee'></el-table-column>
-      <el-table-column align="center" label="男性受众占比" prop='byGenderMale'></el-table-column>
-      <el-table-column align="center" label="女性受众占比" prop='byGenderFemale'></el-table-column>
+      <el-table-column align="center" label="男性受众占比" prop='byGenderMale'>
+        <!--        <template slot-scope="scope">-->
+        <!--          {{JSON.parse(scope.row.byGenderMale.match(/[1-9]\d*\.\d*|0\.\d*[1-9]\d*$/))+'%'}}-->
+        <!--        </template>-->
+      </el-table-column>
+      <el-table-column align="center" label="女性受众占比" prop='byGenderFemale'>
+        <!--        <template slot-scope="scope">-->
+        <!--          {{scope.row.byGenderFemale.match(/[[1-9]\d*\.\d*|0\.\d*[1-9]\d*]$/g)}}-->
+        <!--          {{String(scope.row.byGenderFemale.match(/[[1-9]\d*\.\d*|0\.\d*[1-9]\d*]$/g)).split(',')[1]}}-->
+        <!--        </template>-->
+      </el-table-column>
       <el-table-column align="center" label="20岁以下占比" prop='byAge20'></el-table-column>
       <el-table-column align="center" label="20到24岁占比" prop='byAge20To24'></el-table-column>
       <el-table-column align="center" label="25到29岁占比" prop='byAge25To29'></el-table-column>
@@ -561,14 +570,14 @@
       },
       async beginToCrawl() {
         this.crawlingCount = 0
-
-        const wantSeeListData = await this.$http.get(this.$baseUrl + this.crawlMovieListRequest, {
+        this.wantSeeData = []
+        let wantSeeListData = await this.$http.get(this.$baseUrl + this.crawlMovieListRequest, {
           params: {
             address: 'https://piaofang.maoyan.com/store',
             headerCode: 'maoyanWantSee'
           }
         })
-        this.crawlingCountLimit = 10
+        this.crawlingCountLimit = 3
         // this.crawlingCountLimit = wantSeeListData.data.length
 
         wantSeeListData.data.forEach((item, index) => {
@@ -628,13 +637,13 @@
                   headerCode: 'maoyanWantSeePortrait'
                 }
               }).then(response1 => {
-                record.portrait = response1.data.data
+                record.portrait = response1.data
 
                 this.$set(this.wantSeeListData, crawlingCount, Object.assign(this.wantSeeListData[crawlingCount], {
                   portraitSuccess: 1,
                   color: 'success'
                 }))
-                resolve(response1.data.data)
+                resolve(response1.data)
               }).catch(error => {
                 this.$set(this.wantSeeListData, crawlingCount, Object.assign(this.wantSeeListData[crawlingCount], {
                   portraitSuccess: 2,
@@ -657,7 +666,10 @@
           Promise.all([getDetailPromise, getPortraitPromise]).then(responseAll => {
             console.log(responseAll)
 
-            this.wantSeeData.push(responseAll[0])
+            this.$set(this.wantSeeData, crawlingCount, Object.assign(responseAll[0], responseAll[1]))
+
+            console.log('wantSeeData', this.wantSeeData)
+
             if (this.crawlingFlag) {
               this.wantSeeListData[crawlingCount].recordTime = this.$moment(Date.now()).format('hh:mm:ss')
               loop()
@@ -685,7 +697,7 @@
       save() {
         if (this.crawlingCount === this.crawlingCountLimit) {
           console.log(this.wantSeeData)
-          this.$http.post(this.$baseUrl + this.saveMultipleMaoyanWantSeeRequest, this.wantSeeData.reverse()).then(response => {
+          this.$http.post(this.$baseUrl + this.saveMultipleMaoyanWantSeeRequest, this.wantSeeData).then(response => {
             this.$message.success('数据提交成功')
             this.getTableData()
             this.stepCrawlFlag = false
