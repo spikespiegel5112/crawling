@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 
 const sequelize = require('../util/database');
 
-const MaoyanRecords = sequelize.define('MaoyanRecords', {
+const MaoyanRecordsJson = sequelize.define('MaoyanRecords', {
 	id: {
 		type: Sequelize.INTEGER,
 		autoIncrement: true,
@@ -116,7 +116,11 @@ const MaoyanRecords = sequelize.define('MaoyanRecords', {
 	viewInfoV2: {
 		type: Sequelize.STRING,
 		allowNull: true
-	}
+	},
+	// 详情字段
+
+
+
 });
 
-module.exports = MaoyanRecords;
+module.exports = MaoyanRecordsJson;

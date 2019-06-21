@@ -1,6 +1,6 @@
 const express = require('express');
 const crawler = require('crawler');
-const MaoyanRecords = require('../models/MaoyanRecords');
+const MaoyanRecords = require('../models/MaoyanRecordsJson');
 const SettingsModel = require('../models/SettingsModel');
 
 

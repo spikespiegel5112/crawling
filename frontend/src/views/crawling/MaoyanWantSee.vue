@@ -112,21 +112,38 @@
     </el-dialog>
     <!--    分步抓取-->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="stepCrawlFlag" width="850px">
-      <el-row type="flex" justify="space-between">
-        <el-col :span="21">
-          {{crawlingFlag}}
-          {{crawlingCount }}
-          {{crawlingCountLimit}}
-          <el-button v-if="!crawlingFlag" type="primary" @click="beginToCrawl">
+      <el-row type="flex" justify="left">
+        <el-col :span="5">
+          <!--          {{crawlingFlag}}-->
+          <!--          {{crawlingCount }}-->
+          <!--          {{crawlingCountLimit}}-->
+          <el-button type="primary" @click="getWantSeeList">
+            {{wantSeeListData.length===0?'获取索引':'重新获取索引'}}
+          </el-button>
+
+
+        </el-col>
+
+        <el-col :span="4">
+          <el-button v-if="!crawlingFlag" :disabled="wantSeeListData.length===0" type="primary" @click="beginToCrawl">
             {{wantSeeListData.length===0?'开始抓取':'重新抓取'}}
           </el-button>
           <el-button v-else type="danger" @click="stopCrawling">停止抓取</el-button>
+        </el-col>
 
+        <el-col :span="14">
+          <!--          {{crawlingCountLimit}}-->
+          <el-input-number v-model="crawlingCountLimit" :min="0"
+                           :max="wantSeeListData.length"></el-input-number>
+          <el-button type="primary" @click="handleChangeCounter">确定</el-button>
+
+        </el-col>
+        <el-col :span="3">
         </el-col>
         <el-col :span="3" style="text-align: right">
           <el-button type="primary" @click="save">保存</el-button>
-
         </el-col>
+
       </el-row>
       <el-row>
         <el-col :span="24">
@@ -148,8 +165,7 @@
               <el-col :span="24">
                 <!--          {{wantSeeListData}}-->
                 <el-timeline>
-
-                  <el-timeline-item v-for="(item, index) in wantSeeListData"
+                  <el-timeline-item v-for="(item, index) in wantSeeListData.filter(item=>!item.disabled)"
                                     :key="index"
                                     :timestamp="item.recordTime"
                                     placement="top"
@@ -165,6 +181,7 @@
                           <i v-else="item.detailSuccess===2" class="el-icon-close failed"></i>
                         </el-col>
                         <el-col :span="4">
+                          {{item.active}}
                           画像: <i v-if="item.portraitSuccess===0" class="el-icon-loading"></i>
                           <i v-else-if="item.portraitSuccess===1" class="el-icon-check success"></i>
                           <i v-else="item.portraitSuccess===2" class="el-icon-close failed"></i>
@@ -568,30 +585,40 @@
 
         })
       },
-      async beginToCrawl() {
-        this.crawlingCount = 0
-        this.wantSeeData = []
-        let wantSeeListData = await this.$http.get(this.$baseUrl + this.crawlMovieListRequest, {
+      async getWantSeeList() {
+        this.$http.get(this.$baseUrl + this.crawlMovieListRequest, {
           params: {
             address: 'https://piaofang.maoyan.com/store',
             headerCode: 'maoyanWantSee'
           }
-        })
-        this.crawlingCountLimit = 3
-        // this.crawlingCountLimit = wantSeeListData.data.length
+        }).then(response => {
+          // this.crawlingCountLimit =
+          console.log(response)
+          this.crawlingCountLimit = response.data.length
 
-        wantSeeListData.data.forEach((item, index) => {
-          if (index < this.crawlingCountLimit) {
-            this.$set(this.wantSeeListData, index, Object.assign(item, {
-              detailSuccess: 0,
-              portraitSuccess: 0,
-              content: 'detailSuccess' + 'portraitSuccess',
-              color: 'sunccess',
-              recordTime: '---'
-            }))
+          this.wantSeeListData = response.data
+          this.wantSeeListData.forEach((item, index) => {
+            if (index < this.crawlingCountLimit) {
+              this.$set(this.wantSeeListData, index, Object.assign(item, {
+                detailSuccess: 0,
+                portraitSuccess: 0,
+                content: 'detailSuccess' + 'portraitSuccess',
+                color: 'sunccess',
+                recordTime: '---',
+                active: true
+              }))
 
-          }
+            }
+          })
+          this.$message.success('获取列表失败')
+        }).catch(error => {
+          this.$message.error(error)
         })
+
+      },
+      async beginToCrawl() {
+        this.crawlingCount = 0
+        this.wantSeeData = []
 
         let result = []
         let record = {}
@@ -600,7 +627,7 @@
         let portraitReadyFlag = false
 
         const loop = () => {
-          let crawlingCount = this.crawlingCount
+          const crawlingCount = this.crawlingCount
           this.crawlingFlag = true
           const movieId = this.wantSeeListData[crawlingCount].movieId
           const getDetail = () => {
@@ -697,7 +724,7 @@
       save() {
         if (this.crawlingCount === this.crawlingCountLimit) {
           console.log(this.wantSeeData)
-          this.$http.post(this.$baseUrl + this.saveMultipleMaoyanWantSeeRequest, this.wantSeeData).then(response => {
+          this.$http.post(this.$baseUrl + this.saveMultipleMaoyanWantSeeRequest, this.wantSeeData.reverse()).then(response => {
             this.$message.success('数据提交成功')
             this.getTableData()
             this.stepCrawlFlag = false
@@ -705,6 +732,13 @@
         } else {
           this.$message.warring('dsdsdsdsds')
         }
+      },
+      handleChangeCounter(value) {
+        this.wantSeeListData.forEach((item, index) => {
+          this.$set(this.wantSeeListData, index, Object.assign(this.wantSeeListData[index], {
+            active: index < this.crawlingCountLimit
+          }))
+        })
       }
 
     }
