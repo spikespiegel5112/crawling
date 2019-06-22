@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const crawlerController = require('../controllers/crawlerMaoyanPresaleRoutes');
+const crawlerController = require('../controllers/crawlerMaoyanPresaleController');
 
 // router.get('/crawl', crawlerController.crawl);
 router.get('/crawlMovieList', crawlerController.crawlMovieList);

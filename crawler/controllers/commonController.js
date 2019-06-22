@@ -62,16 +62,43 @@ const _crawlPagePromise = (req, res, next) => {
 		});
 
 
+		let body = Object.assign(req.body, req.query);
+		let query = query => {
+			let queryKeyList = Object.keys(query);
+			let result = '';
+			if (queryKeyList.length > 0) {
+				result = '?';
+				queryKeyList.forEach((item, index) => {
+					result += item + '=' + query[item];
+					if (index < Object.keys(query).length - 1) {
+						result += '&'
+					}
+				});
+			}
+			return result;
+		};
+
+		console.log('req.method+++++++++++++++', req.method);
+
+		let queryString = '';
+		if (req.method === 'POST') {
+			queryString = query(body['query']);
+		}
+		console.log('body+++++++++++++++', body);
+
+		console.log('query+++++++++++++++', query(body['query']));
 		headers = await SettingsModel.findOne({
 			where: {
-				code: req.query.headerCode
+				code: req.body.headerCode
 			}
 		});
+
+
 		headers = headers._previousDataValues;
-		console.log('crawlerInstance+++++++++++', headers);
+		console.log('req.body.address+++++++++++', req.body.address + queryString);
 
 		crawlerInstance.queue({
-			url: req.query.address,
+			url: req.body.address + queryString,
 			headers: JSON.parse(headers.value),
 			// headers: dataJSONHeadersSample,
 			callback: (error, result, done) => {
@@ -84,7 +111,7 @@ const _crawlPagePromise = (req, res, next) => {
 				} else {
 					// $ = result.$;
 					// console.log('Grabbed', result.body.length, 'bytes');
-					// console.log('$++++++++++++: ', Object.keys(result));
+					// console.log('$++++++++++++: ', result.$);
 					done();
 
 					resolve(result);

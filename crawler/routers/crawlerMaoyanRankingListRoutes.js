@@ -1,19 +1,21 @@
 const express = require('express');
 const router = express.Router();
 
-const crawlerController = require('../controllers/crawlerMaoyanBoxOfficeListController');
+const crawlerMaoyanRankingListController = require('../controllers/crawlerMaoyanRankingListController');
 
-// router.get('/crawl', crawlerController.crawl);
-router.get('/crawlMovieList', crawlerController.crawlMovieList);
-router.get('/crawlMovieWantSeeDetail', crawlerController.crawlMovieWantSeeDetail);
-router.get('/crawlMovieWantSeePortrait', crawlerController.crawlMovieWantSeePortrait);
-router.get('/oneKeyMovieWantSee', crawlerController.oneKeyMovieWantSee);
-router.post('/saveOneMaoyanWantSee', crawlerController.saveOneMaoyanWantSee);
-router.post('/saveMultipleMaoyanWantSee', crawlerController.saveMultipleMaoyanWantSee);
-// router.post('/save', crawlerController.save);
-router.get('/getListByPagination', crawlerController.getListByPagination);
-// router.post('/crawlAndSave', crawlerController.crawlAndSave);
-router.delete('/deleteRecords', crawlerController.deleteRecords);
-router.get('/exportCSV', crawlerController.exportCSV);
+
+// router.get('/crawl', crawlerMaoyanRankingListController.crawl);
+router.get('/crawlRankingList', crawlerMaoyanRankingListController.crawlRankingList);
+
+router.post('/crawlRankingListByYear', crawlerMaoyanRankingListController.crawlRankingListByYear);
+router.get('/crawlBoxOfficeDetail', crawlerMaoyanRankingListController.crawlBoxOfficeDetail);
+router.get('/crawlBoxOfficeRating', crawlerMaoyanRankingListController.crawlBoxOfficeRating);
+router.post('/crawlBoxOfficeWantToSeePortrait', crawlerMaoyanRankingListController.crawlBoxOfficeWantToSeePortrait);
+router.post('/saveOneMaoyanOfficeBoxRecord', crawlerMaoyanRankingListController.saveOneMaoyanOfficeBoxRecord);
+router.post('/save', crawlerMaoyanRankingListController.save);
+router.get('/getListByPagination', crawlerMaoyanRankingListController.getListByPagination);
+router.post('/crawlAndSave', crawlerMaoyanRankingListController.crawlAndSave);
+router.delete('/deleteRecords', crawlerMaoyanRankingListController.deleteRecords);
+router.get('/exportCSV', crawlerMaoyanRankingListController.exportCSV);
 
 module.exports = router;

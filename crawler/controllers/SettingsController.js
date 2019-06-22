@@ -2,6 +2,7 @@ const SettingsModel = require('../models/SettingsModel');
 const uuidv1 = require('uuid/v1');
 
 const getList = (req, res, next) => {
+	console.log('getList++++++++++++', req);
 	let pagination = {};
 	let query = {};
 	if (Object.keys(pagination).length > 0) {

@@ -13,9 +13,10 @@ const MaoyanWantSeeModel = require('./models/MaoyanWantSeeModel');
 const MaoyanPresale = require('./models/MaoyanPresaleModel');
 
 const errorController = require('./controllers/errorController');
+const crawlerMaoyanBoxOfficeRoutes = require('./routers/crawlerMaoyanBoxOfficeRoutes');
 const crawlerMaoyanPresaleRoutes = require('./routers/crawlerMaoyanPresaleRoutes');
 const headerSettingsRoutes = require('./routers/headerSettings');
-const crawlerMaoyanBoxOfficeListRoutes = require('./routers/crawlerMaoyanBoxOfficeListRoutes');
+const crawlerMaoyanRankingListRoutes = require('./routers/crawlerMaoyanRankingListRoutes');
 
 
 const settingsRoutes = require('./routers/settingsRoutes');
@@ -50,8 +51,9 @@ var corsOptions = {
 };
 
 
-app.use('/crawlerMaoyanBoxOfficeList', cors(corsOptions), crawlerMaoyanBoxOfficeListRoutes);
+app.use('/crawlerMaoyanRankingList', cors(corsOptions), crawlerMaoyanRankingListRoutes);
 app.use('/crawlerMaoyanPresale', cors(corsOptions), crawlerMaoyanPresaleRoutes);
+app.use('/crawlerMaoyanBoxOffice', cors(corsOptions), crawlerMaoyanBoxOfficeRoutes);
 app.use('/headerSettings', cors(corsOptions), headerSettingsRoutes);
 app.use('/settings', cors(corsOptions), settingsRoutes);
 app.use('/dictionary', cors(corsOptions), dictionaryRoutes);
