@@ -1,6 +1,7 @@
 const express = require('express');
 const find = require('cheerio-eq');
 const crawler = require('crawler');
+const cheerio = require('cheerio');
 const uuidv1 = require('uuid/v1');
 
 const commonController = require('./commonController');
@@ -121,7 +122,7 @@ const _createMaoyanOfficeBoxRecord = (requestBody, timestamp) => {
 	})
 };
 
-const _createMultipleMaoyanWantSeeRecord = (requestBody, timestamp) => {
+const _createMultipleMaoyanRankingListRecordpromise = (requestBody, timestamp) => {
 	let _timestamp = timestamp;
 	console.log('timestamp:   ', timestamp);
 	if (!timestamp) {
@@ -140,7 +141,7 @@ const _createMultipleMaoyanWantSeeRecord = (requestBody, timestamp) => {
 
 const _crawlRankingListPromise = (req, res, next) => {
 	return new Promise((resolve, reject) => {
-		commonController._crawlPagePromise(req, res, next).then(response => {
+		commonController.crawlPagePromise(req, res, next).then(response => {
 			// console.log('_crawlRankingListPromise++++++++', response);
 
 			const $ = response.$;
@@ -168,50 +169,42 @@ const _crawlRankingListPromise = (req, res, next) => {
 	})
 };
 
-const _crawlBoxOfficeDetailPromise = (req, res, next) => {
+const _crawlRankingListDetailPromise = (req, res, next) => {
 	return new Promise(async (resolve, reject) => {
-		console.log('commonController._crawlPagePromise+++++', req.body);
 
 		try {
-			const response = await commonController._crawlPagePromise(req, res, next);
+			const response = await commonController.crawlPagePromise(req, res, next);
 
-			console.log('commonController._crawlPagePromise(req, res, next)+++++', req.query);
-			res.status(200).json({
-				data: res.body
-			});
-			// console.log('commonController._crawlPagePromise', response);
+			// console.log('commonController.crawlPagePromise(req, res, next)+++++', response.body);
 			const $ = response.$;
-			// console.log('$+++++++++', titleEL.text());
 
 			const rawData = {
 				recordId: uuidv1(),
-				timestamp: _timestamp,
-				movieId: requestBody.movieId,
-				// 详情数据
-				date: requestBody.detail.date,
-				description: requestBody.detail.dasdasdasdas,
 				titleChi: $(".movie-baseinfo .info-title-content").text(),
 				title: $(".movie-baseinfo .info-etitle-content").text(),
 				releaseDate: $(".movie-baseinfo .score-info.ellipsis-1").text(),
 				platformEngName: 'Maoyan',
 				platformChineseName: '猫眼',
 				platformType: 'Web',
+				numWantToSee: $('.score-detail .detail-wish-count').text(),
+				rating: $('.score-block-content .rating-num').text(),
 
 			};
 
 			const result = {
-				movieId: requestBody.movieId,
+				recordId: rawData.recordId,
 				// 详情数据
-				date: rawData.timestamp,
-				description: rawData.description,
 				titleChi: rawData.titleChi,
 				title: rawData.title,
 				releaseDate: rawData.releaseDate,
 				platformEngName: rawData.platformEngName,
 				platformChineseName: rawData.platformChineseName,
 				platformType: rawData.platformType,
+				numWantToSee: rawData.numWantToSee,
+				rating: rawData.rating,
+
 			};
-			console.log('_crawlBoxOfficeDetailPromise result+++++++++', result);
+			console.log('_crawlRankingListDetailPromise result+++++++++', result);
 
 			resolve(result)
 
@@ -225,50 +218,48 @@ const _crawlBoxOfficeDetailPromise = (req, res, next) => {
 	})
 };
 
-const _crawlBoxOfficeRatingPromise = (req, res, next) => {
+const crawlRankingListMoreSections = async (req, res, next) => {
+	_crawlRankingListMoreSectionsPromise(req, res, next).then(response => {
+		console.log('crawlRankingListMoreSections+++++++++++++++++++++++++++++++', response);
+		res.status(200).json({
+			data: response
+		});
+	}).catch(error => {
+		res.status(400).json({
+			error: error
+		});
+	})
+};
+const _crawlRankingListMoreSectionsPromise = (req, res, next) => {
 	return new Promise(async (resolve, reject) => {
-		console.log('commonController._crawlPagePromise+++++', req.body);
-
 		try {
-			const response = await commonController._crawlPagePromise(req, res, next);
+			const response = await commonController.crawlPagePromise(req, res, next);
 
-			console.log('commonController._crawlPagePromise(req, res, next)+++++', req.query);
-			res.status(200).json({
-				data: res.body
+			// console.log('commonController.crawlPagePromise(req, res, next)+++++', response.body);
+			let html = '';
+			// console.log('$+++++++++', cheerio);
+
+			response.body = JSON.parse(response.body);
+			Object.keys(response.body.sectionHTMLs).forEach(item => {
+				console.log(item);
+				html += response.body.sectionHTMLs[item].html;
 			});
-			// console.log('commonController._crawlPagePromise', response);
-			const $ = response.$;
+
+			const $ = cheerio.load(response.body + html);
+
+			// console.log('commonController.crawlPagePromise++++++++++++++', JSON.stringify($(".detail-section")));
 			// console.log('$+++++++++', titleEL.text());
 
 			const rawData = {
-				recordId: uuidv1(),
-				timestamp: _timestamp,
-				movieId: requestBody.movieId,
-				// 详情数据
-				date: requestBody.detail.date,
-				description: requestBody.detail.dasdasdasdas,
-				titleChi: $(".movie-baseinfo .info-title-content").text(),
-				title: $(".movie-baseinfo .info-etitle-content").text(),
-				releaseDate: $(".movie-baseinfo .score-info.ellipsis-1").text(),
-				platformEngName: 'Maoyan',
-				platformChineseName: '猫眼',
-				platformType: 'Web',
-
+				description: $(".detail-section .detail-item .detail-block-content").text(),
 			};
 
 			const result = {
-				movieId: requestBody.movieId,
 				// 详情数据
-				date: rawData.timestamp,
 				description: rawData.description,
-				titleChi: rawData.titleChi,
-				title: rawData.title,
-				releaseDate: rawData.releaseDate,
-				platformEngName: rawData.platformEngName,
-				platformChineseName: rawData.platformChineseName,
-				platformType: rawData.platformType,
 			};
-			console.log('_crawlBoxOfficeDetailPromise result+++++++++', result);
+
+			console.log('_crawlRankingListMoreSectionsPromise result+++++++++', result);
 
 			resolve(result)
 
@@ -282,9 +273,101 @@ const _crawlBoxOfficeRatingPromise = (req, res, next) => {
 	})
 };
 
-const _crawlBoxOfficeWantToSeePortraitPromise = (req, res, next) => {
+const crawlRankingListRating = async (req, res, next) => {
+	_crawlRankingListRatingPromise(req, res, next).then(response => {
+		console.log('_crawlRankingListRatingPromise+++++++++++++++++++++++++++++++', response);
+		res.status(200).json({
+			data: response
+		});
+	}).catch(error => {
+		res.status(400).json({
+			error: error
+		});
+	})
+};
+const _crawlRankingListRatingPromise = (req, res, next) => {
 	return new Promise(async (resolve, reject) => {
-		console.log('_crawlBoxOfficeWantToSeePortraitPromise+++++', req.query);
+		console.log('commonController.crawlPagePromise+++++', req.body);
+
+		try {
+			const response = await commonController.crawlPagePromise(req, res, next);
+
+
+
+			let requestBody = response.body.replace('&#x', '\\u');
+
+			// cheerio.load(resquestBody);
+
+			console.log('commonController.crawlPagePromise(req, res, next)+++++', req.query);
+
+			// console.log('commonController.crawlPagePromise', response);
+			const $ = response.$;
+			res.status(200).json({
+				data: requestBody
+			});
+			let aaa = $('.persona-gender-male .persona-item-value .cs').html().toString();
+			// res.status(200).json({
+			// 	data: aaa.replace(/&#x/g, "\\u").replace(/\\/g,"\u"),
+			// });
+			// console.log('$+++++++++', titleEL.text());
+			const rawData = {
+				// rating: $('.score-num .cs').text(),
+				rating1To2: find($, '.movie-comments .distribute-item:eq(0) .distribute-val').text(),
+				rating3To4: find($, '.movie-comments .distribute-item:eq(1) .distribute-val').text(),
+				rating5To6: find($, '.movie-comments .distribute-item:eq(2) .distribute-val').text(),
+				rating7To8: find($, '.movie-comments .distribute-item:eq(3) .distribute-val').text(),
+				rating9To10: find($, '.movie-comments .distribute-item:eq(4) .distribute-val').text(),
+				ratingByGenderMale: $('.persona-gender-male .persona-item-value .cs').html().replace(/&#x/g, '\\u'),
+				ratingByGenderFemale: $('.persona-gender-female .persona-item-value .cs').text(),
+				// ratingByAge20: $('.score-num .cs').text(),
+				// ratingByAge20To24: $('.score-num .cs').text(),
+				// ratingByAge25To29: $('.score-num .cs').text(),
+				// ratingByAge30To34: $('.score-num .cs').text(),
+				// ratingByAge35To39: $('.score-num .cs').text(),
+				// ratingByAge40: $('.score-num .cs').text(),
+				// ratingByTier1: $('.score-num .cs').text(),
+				// ratingByTier2: $('.score-num .cs').text(),
+				// ratingByTier3: $('.score-num .cs').text(),
+				// ratingByTier4: $('.score-num .cs').text(),
+			};
+
+			const result = {
+				rating: rawData.rating,
+				rating1To2: rawData.rating1To2,
+				rating3To4: rawData.rating3To4,
+				rating5To6: rawData.rating5To6,
+				rating7To8: rawData.rating7To8,
+				rating9To10: rawData.rating9To10,
+				ratingByGenderMale: rawData.ratingByGenderMale,
+				ratingByGenderFemale: rawData.ratingByGenderFemale,
+				// ratingByAge20: rawData.ratingByAge20,
+				// ratingByAge20To24: rawData.ratingByAge20To24,
+				// ratingByAge25To29: rawData.ratingByAge25To29,
+				// ratingByAge30To34: rawData.ratingByAge30To34,
+				// ratingByAge35To39: rawData.ratingByAge35To39,
+				// ratingByAge40: rawData.ratingByAge40,
+				// ratingByTier1: rawData.ratingByTier1,
+				// ratingByTier2: rawData.ratingByTier2,
+				// ratingByTier3: rawData.ratingByTier3,
+				// ratingByTier4: rawData.ratingByTier4,
+			};
+			console.log('_crawlRankingListDetailPromise result+++++++++', result);
+
+			resolve(result)
+
+		} catch (e) {
+			res.status(400).json({
+				error: e
+			});
+			reject(e)
+		}
+
+	})
+};
+
+const _crawlRankingListWantToSeePortraitPromise = (req, res, next) => {
+	return new Promise(async (resolve, reject) => {
+		console.log('_crawlRankingListWantToSeePortraitPromise+++++', req.query);
 
 		req.query = Object.assign(req.query, {
 			address: encodeURI(req.query.address + '/wantindex?city_tier=0&city_id=0&cityName=全国')
@@ -292,13 +375,13 @@ const _crawlBoxOfficeWantToSeePortraitPromise = (req, res, next) => {
 		});
 
 		try {
-			const response = await commonController._crawlPagePromise(req, res, next);
+			const response = await commonController.crawlPagePromise(req, res, next);
 
-			console.log('_crawlBoxOfficeWantToSeePortraitPromise(req, res, next)+++++', req.query);
+			console.log('_crawlRankingListWantToSeePortraitPromise(req, res, next)+++++', req.query);
 			// res.status(200).json({
 			// 	data: req.query
 			// });
-			// console.log('commonController._crawlPagePromise', response);
+			// console.log('commonController.crawlPagePromise', response);
 			const $ = response.$;
 			// console.log('$+++++++++', titleEL.text());
 
@@ -333,7 +416,7 @@ const _crawlBoxOfficeWantToSeePortraitPromise = (req, res, next) => {
 				byTier3: rawData.byTier3.split('%')[2],
 				byTier4: rawData.byTier4.split('%')[3],
 			};
-			console.log('_crawlBoxOfficeDetailPromise result+++++++++', result);
+			console.log('_crawlRankingListDetailPromise result+++++++++', result);
 
 			resolve(rawData)
 
@@ -349,7 +432,7 @@ const _crawlBoxOfficeWantToSeePortraitPromise = (req, res, next) => {
 
 const crawlRankingList = async (req, res, next) => {
 	console.log('req++++++++++++++++', req.method);
-	commonController._crawlPagePromise(req, res, next).then(response => {
+	commonController.crawlPagePromise(req, res, next).then(response => {
 
 
 		res.status(200).json(response);
@@ -362,9 +445,9 @@ const crawlRankingList = async (req, res, next) => {
 };
 
 const crawlRankingListByYear = async (req, res, next) => {
-	commonController._crawlPagePromise(req, res, next).then(response => {
+	commonController.crawlPagePromise(req, res, next).then(response => {
 		console.log('responseA+++++++++++++', response.yearlist);
-		res.status(200).json(Object.keys(response));
+		// res.status(200).json(response);
 		// res.status(200).json(response.body);
 
 		const $ = response.$;
@@ -393,7 +476,9 @@ const crawlRankingListByYear = async (req, res, next) => {
 				result[index].title = listItem.find('.first-line')[item].children[0].data
 			}
 		});
-		res.status(200).json(result);
+		res.status(200).json({
+			data: result
+		});
 	}).catch(error => {
 		res.status(400).json({
 			error: error.toString()
@@ -403,7 +488,7 @@ const crawlRankingListByYear = async (req, res, next) => {
 
 const _crawlRankingListbyYearPromise = async (req, res, next) => {
 	return new Promise((resolve, reject) => {
-		commonController._crawlPagePromise(req, res, next).then(response => {
+		commonController.crawlPagePromise(req, res, next).then(response => {
 			resolve(response)
 			// res.status(200).json(response);
 		}).catch(error => {
@@ -416,33 +501,14 @@ const _crawlRankingListbyYearPromise = async (req, res, next) => {
 };
 
 
-const crawlBoxOfficeDetail = async (req, res, next) => {
+const crawlRankingListDetail = async (req, res, next) => {
 	return new Promise((resolve, reject) => {
-		_crawlBoxOfficeDetailPromise(req, res, next).then(response => {
-			console.log('_crawlBoxOfficeDetailPromise+++++++++++++++++++++++++++++++', response);
-			resolve(response);
+		_crawlRankingListDetailPromise(req, res, next).then(response => {
+			console.log('_crawlRankingListDetailPromise+++++++++++++++++++++++++++++++', response);
 			res.status(200).json({
 				data: response
 			});
 		}).catch(error => {
-			reject(error);
-			res.status(400).json({
-				error: error
-			});
-		})
-	})
-};
-
-const crawlBoxOfficeRating = async (req, res, next) => {
-	return new Promise((resolve, reject) => {
-		_crawlBoxOfficeRatingPromise(req, res, next).then(response => {
-			console.log('_crawlBoxOfficeDetailPromise+++++++++++++++++++++++++++++++', response);
-			resolve(response);
-			res.status(200).json({
-				data: response
-			});
-		}).catch(error => {
-			reject(error);
 			res.status(400).json({
 				error: error
 			});
@@ -451,10 +517,10 @@ const crawlBoxOfficeRating = async (req, res, next) => {
 };
 
 
-const crawlBoxOfficeWantToSeePortrait = async (req, res, next) => {
+const crawlRankingListWantToSeePortrait = async (req, res, next) => {
 	return new Promise((resolve, reject) => {
-		_crawlBoxOfficeWantToSeePortraitPromise(req, res, next).then(response => {
-			console.log('_crawlBoxOfficeWantToSeePortrait+++++++++++++++++++++++++++++++', response);
+		_crawlRankingListWantToSeePortraitPromise(req, res, next).then(response => {
+			console.log('_crawlRankingListWantToSeePortrait+++++++++++++++++++++++++++++++', response);
 			resolve(response);
 			res.status(200).json({
 				data: response
@@ -547,7 +613,7 @@ const getListByDate = (req, res, next) => {
 	})
 };
 
-const save = (req, res, next) => {
+const saveMultipleMovieData = (req, res, next) => {
 	// console.log('postAddProduct', req.body);
 	const timestamp = Date.now();
 
@@ -577,7 +643,7 @@ const saveOneMaoyanOfficeBoxRecord = (req, res, next) => {
 	})
 };
 
-const saveMultipleMaoyanOfficeBoxRecord = (req, res, next) => {
+const saveMultipleMaoyanRankingListRecord = (req, res, next) => {
 	let requestBody = req.body;
 	if (!(requestBody instanceof Array)) {
 		res.status(400).json({
@@ -590,7 +656,7 @@ const saveMultipleMaoyanOfficeBoxRecord = (req, res, next) => {
 			timestamp: timestamp
 		})
 	});
-	_createMultipleMaoyanWantSeeRecord(requestBody, timestamp).then(response => {
+	_createMultipleMaoyanRankingListRecordpromise(requestBody, timestamp).then(response => {
 		res.status(200).json({
 			data: response
 		})
@@ -610,8 +676,8 @@ const saveMultipleMaoyanOfficeBoxRecord = (req, res, next) => {
 
 const crawlAndSave = (req, res, next) => {
 	const address = req.query.address;
-	commonController._crawlPagePromise(req, res).then(response => {
-		console.log('commonController._crawlPagePromise', response);
+	commonController.crawlPagePromise(req, res).then(response => {
+		console.log('commonController.crawlPagePromise', response);
 		const timestamp = Date.now();
 
 		let count = 0;
@@ -732,17 +798,35 @@ const exportCSV = (req, res, getTitle, rows, fileName) => {
 	})
 };
 
+const fontParser = (req, res, next) => {
+	fs.readFile(req.query.address, function (err, contents) {
+		if (err) throw err;
+		woff2Parser(contents).then(function (result) {
+			console.log(result);
+			res.status(200).json({
+				data: result
+			})
+		}).catch(error => {
+			res.status(400).json({
+				data: result
+			})
+		})
+	});
+};
+
 
 exports.crawlRankingList = crawlRankingList;
 exports.crawlRankingListByYear = crawlRankingListByYear;
-exports.crawlBoxOfficeDetail = crawlBoxOfficeDetail;
-exports.crawlBoxOfficeRating = crawlBoxOfficeRating;
-exports.crawlBoxOfficeWantToSeePortrait = crawlBoxOfficeWantToSeePortrait;
-exports.save = save;
+exports.crawlRankingListDetail = crawlRankingListDetail;
+exports.crawlRankingListMoreSections = crawlRankingListMoreSections;
+exports.crawlRankingListRating = crawlRankingListRating;
+exports.crawlRankingListWantToSeePortrait = crawlRankingListWantToSeePortrait;
 exports.saveOneMaoyanOfficeBoxRecord = saveOneMaoyanOfficeBoxRecord;
-exports.saveMultipleMaoyanOfficeBoxRecord = saveMultipleMaoyanOfficeBoxRecord;
+exports.saveMultipleMaoyanRankingListRecord = saveMultipleMaoyanRankingListRecord;
 exports.getListByPagination = getListByPagination;
 exports.getListByDate = getListByDate;
 exports.crawlAndSave = crawlAndSave;
 exports.deleteRecords = deleteRecords;
 exports.exportCSV = exportCSV;
+
+exports.fontParser = fontParser;

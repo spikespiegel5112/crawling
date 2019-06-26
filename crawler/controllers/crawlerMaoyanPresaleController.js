@@ -11,7 +11,7 @@ const fs = require('fs');
 let headers = {};
 
 let dataJSONHeadersSample = {};
-const _crawlPagePromise = (req, res, next) => {
+const crawlPagePromise = (req, res, next) => {
 	return new Promise(async (resolve, reject) => {
 		let $ = {};
 		dataJSONHeadersSample = {
@@ -204,7 +204,7 @@ const _createMultipleMaoyanPresaleRecord = (requestBody, timestamp) => {
 const _crawlMovieListPromise = (req, res, next) => {
 	return new Promise((resolve, reject) => {
 		console.log('_crawlMovieListPromise++++++++', req.query);
-		_crawlPagePromise(req, res, next).then(response => {
+		crawlPagePromise(req, res, next).then(response => {
 			const $ = response.$;
 			let result = [];
 			let titleEL = $("#movie-list section article");
@@ -232,16 +232,16 @@ const _crawlMovieListPromise = (req, res, next) => {
 
 const _crawlMoviePresaleDetailPromise = (req, res, next) => {
 	return new Promise(async (resolve, reject) => {
-		console.log('_crawlPagePromise+++++', req.query);
+		console.log('crawlPagePromise+++++', req.query);
 
 		try {
-			const response = await _crawlPagePromise(req, res, next);
+			const response = await crawlPagePromise(req, res, next);
 
-			console.log('_crawlPagePromise(req, res, next)+++++', req.query);
+			console.log('crawlPagePromise(req, res, next)+++++', req.query);
 			// res.status(200).json({
 			// 	data: req.query
 			// });
-			// console.log('_crawlPagePromise', response);
+			// console.log('crawlPagePromise', response);
 			const $ = response.$;
 			// console.log('$+++++++++', titleEL.text());
 
@@ -294,13 +294,13 @@ const _crawlMoviePresalePortraitPromise = (req, res, next) => {
 		});
 
 		try {
-			const response = await _crawlPagePromise(req, res, next);
+			const response = await crawlPagePromise(req, res, next);
 
 			console.log('_crawlMoviePresalePortraitPromise(req, res, next)+++++', req.query);
 			// res.status(200).json({
 			// 	data: req.query
 			// });
-			// console.log('_crawlPagePromise', response);
+			// console.log('crawlPagePromise', response);
 			const $ = response.$;
 			// console.log('$+++++++++', titleEL.text());
 
@@ -619,8 +619,8 @@ const saveMultipleMaoyanPresale = (req, res, next) => {
 
 const crawlAndSave = (req, res, next) => {
 	const address = req.query.address;
-	_crawlPagePromise(req, res).then(response => {
-		console.log('_crawlPagePromise', response);
+	crawlPagePromise(req, res).then(response => {
+		console.log('crawlPagePromise', response);
 		const timestamp = Date.now();
 
 		let count = 0;

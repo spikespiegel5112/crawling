@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../util/database');
 
-const MaoyanRecordModel = sequelize.define('MaoyanRecord', {
+const MaoyanRecordModel = sequelize.define('MaoyanRecords', {
 	id: {
 		type: Sequelize.INTEGER,
 		autoIncrement: true,
@@ -54,6 +54,10 @@ const MaoyanRecordModel = sequelize.define('MaoyanRecord', {
 		allowNull: true
 	},
 	// 评分数据
+	numOfRating:{
+		type: Sequelize.STRING,
+		allowNull: true
+	},
 	rating: {
 		type: Sequelize.STRING,
 		allowNull: true
@@ -75,6 +79,54 @@ const MaoyanRecordModel = sequelize.define('MaoyanRecord', {
 		allowNull: true
 	},
 	rating9To10: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+	ratingByGenderMale: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+	ratingByGenderFemale: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+	ratingByAge20: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+	ratingByAge20To24: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+	ratingByAge25To29: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+	ratingByAge30To34: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+	ratingByAge35To39: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+	ratingByAge40: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+	ratingByTier1: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+	ratingByTier2: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+	ratingByTier3: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+	ratingByTier4: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},

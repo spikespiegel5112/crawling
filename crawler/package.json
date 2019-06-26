@@ -10,19 +10,28 @@
   "author": "spikespiegel <583288277@qq.com>",
   "license": "MIT",
   "dependencies": {
+    "atob": "^2.1.2",
     "body-parser": "^1.19.0",
+    "btoa": "^1.2.1",
+    "cheerio": "^1.0.0-rc.3",
     "cheerio-eq": "^1.0.1",
     "cors": "^2.8.5",
     "crawler": "^1.2.1",
     "express": "^4.17.1",
     "fast-csv": "^3.0.1",
+    "font-cmap": "^1.0.1",
     "json2csv": "^4.5.1",
     "mysql2": "^1.6.5",
     "object.observe": "^0.2.6",
+    "opentype": "^0.1.2",
+    "opentype.js": "^1.1.0",
     "sequelize": "^5.8.7",
     "sequelize-cli": "^5.4.0",
     "sequelize-to-json": "^0.10.3",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "whacko": "^0.19.1",
+    "woff-parser": "^2.0.0",
+    "woff2-parser": "^1.0.0"
   },
   "devDependencies": {
     "nodemon": "^1.19.1"
