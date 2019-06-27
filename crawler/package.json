@@ -5,12 +5,15 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
+    "start": "nodemon --inspect app.js",
+    "inspect": "nodemon --debug-brk --inspect app.js"
   },
   "author": "spikespiegel <583288277@qq.com>",
   "license": "MIT",
   "dependencies": {
     "atob": "^2.1.2",
+    "base64-arraybuffer-converter": "^1.0.3",
+    "base64-to-uint8array": "^1.0.0",
     "body-parser": "^1.19.0",
     "btoa": "^1.2.1",
     "cheerio": "^1.0.0-rc.3",

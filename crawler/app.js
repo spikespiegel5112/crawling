@@ -12,14 +12,12 @@ const SettingsModel = require('./models/SettingsModel');
 const MaoyanWantSeeModel = require('./models/MaoyanWantSeeModel');
 const MaoyanPresale = require('./models/MaoyanPresaleModel');
 
-const commonRoutes = require('./routers/commonRoutes');
 const errorController = require('./controllers/errorController');
+const commonRoutes = require('./routers/commonRoutes');
 const crawlerMaoyanBoxOfficeRoutes = require('./routers/crawlerMaoyanBoxOfficeRoutes');
 const crawlerMaoyanPresaleRoutes = require('./routers/crawlerMaoyanPresaleRoutes');
 const headerSettingsRoutes = require('./routers/headerSettings');
 const crawlerMaoyanRankingListRoutes = require('./routers/crawlerMaoyanRankingListRoutes');
-
-
 const settingsRoutes = require('./routers/settingsRoutes');
 const dictionaryRoutes = require('./routers/dictionary');
 
@@ -60,7 +58,7 @@ app.use('/settings', cors(corsOptions), settingsRoutes);
 app.use('/dictionary', cors(corsOptions), dictionaryRoutes);
 app.use('/common', cors(corsOptions), commonRoutes);
 
-app.use(errorController.get404);
+// app.use('*', errorController.get404);
 
 sequelize.sync().then(result => {
 	app.listen(3000);
