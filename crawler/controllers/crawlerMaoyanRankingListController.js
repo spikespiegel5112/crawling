@@ -285,50 +285,53 @@ const crawlRankingListRating = async (req, res, next) => {
 		});
 	})
 };
-const _crawlRankingListRatingPromise = (req, res, next) => {
+const _crawlRankingListRatingPromise = async (req, res, next) => {
 	return new Promise(async (resolve, reject) => {
 		console.log('commonController.crawlPagePromise+++++', req.body);
 
 		try {
 			const response = await commonController.crawlPagePromise(req, res, next);
 
-
-
 			let requestBody = response.body.replace('&#x', '\\u');
-
-			// cheerio.load(resquestBody);
-
+			// cheero.load(resquestBody);
 			console.log('commonController.crawlPagePromise(req, res, next)+++++', req.query);
-
 			// console.log('commonController.crawlPagePromise', response);
 			const $ = response.$;
-			res.status(200).json({
-				data: requestBody
-			});
-			let aaa = $('.persona-gender-male .persona-item-value .cs').html().toString();
 			// res.status(200).json({
-			// 	data: aaa.replace(/&#x/g, "\\u").replace(/\\/g,"\u"),
+			// 	data: requestBody
 			// });
-			// console.log('$+++++++++', titleEL.text());
+
+
+			const base64 = $('#js-nuwa').html().match(/(?<=src:url\().+.(?=\)\sformat\("woff"\))/)[0];
+
+
+			const getRatingByGender = selector => {
+				let result = selector.html().replace('.', '').split(';');
+				return result.filter((item, index) => index < result.length - 2).map(item => {
+					return item + ';'
+				}).join('')
+			};
+
 			const rawData = {
-				// rating: $('.score-num .cs').text(),
+				rating: await commonController.parseDecimal($('.score-num .cs').html(), base64),
 				rating1To2: find($, '.movie-comments .distribute-item:eq(0) .distribute-val').text(),
 				rating3To4: find($, '.movie-comments .distribute-item:eq(1) .distribute-val').text(),
 				rating5To6: find($, '.movie-comments .distribute-item:eq(2) .distribute-val').text(),
 				rating7To8: find($, '.movie-comments .distribute-item:eq(3) .distribute-val').text(),
 				rating9To10: find($, '.movie-comments .distribute-item:eq(4) .distribute-val').text(),
-				ratingByGenderMale: $('.persona-gender-male .persona-item-value .cs').html().replace(/&#x/g, '\\u'),
-				ratingByGenderFemale: $('.persona-gender-female .persona-item-value .cs').text(),
-				// ratingByAge20: $('.score-num .cs').text(),
-				// ratingByAge20To24: $('.score-num .cs').text(),
-				// ratingByAge25To29: $('.score-num .cs').text(),
-				// ratingByAge30To34: $('.score-num .cs').text(),
-				// ratingByAge35To39: $('.score-num .cs').text(),
-				// ratingByAge40: $('.score-num .cs').text(),
-				// ratingByTier1: $('.score-num .cs').text(),
-				// ratingByTier2: $('.score-num .cs').text(),
-				// ratingByTier3: $('.score-num .cs').text(),
-				// ratingByTier4: $('.score-num .cs').text(),
+				ratingByGenderMale: await commonController.parseDecimal(getRatingByGender($('.persona-gender-male .persona-item-value .cs')), base64),
+				ratingByGenderFemale: await commonController.parseDecimal(getRatingByGender($('.persona-gender-female .persona-item-value .cs')), base64),
+
+				ratingByAge20: await commonController.parseDecimal(getRatingByGender(find($, '.persona-item-value:eq(2) .cs')), base64),
+				ratingByAge20To24: await commonController.parseDecimal(getRatingByGender(find($, '.persona-item-value:eq(3) .cs')), base64),
+				ratingByAge25To29: await commonController.parseDecimal(getRatingByGender(find($, '.persona-item-value:eq(4) .cs')), base64),
+				ratingByAge30To34: await commonController.parseDecimal(getRatingByGender(find($, '.persona-item-value:eq(5) .cs')), base64),
+				ratingByAge35To39: await commonController.parseDecimal(getRatingByGender(find($, '.persona-item-value:eq(6) .cs')), base64),
+				ratingByAge40: await commonController.parseDecimal(getRatingByGender(find($, '.persona-item-value:eq(7) .cs')), base64),
+				ratingByTier1: await commonController.parseDecimal(getRatingByGender(find($, '.persona-item-value:eq(8) .cs')), base64),
+				ratingByTier2: await commonController.parseDecimal(getRatingByGender(find($, '.persona-item-value:eq(9) .cs')), base64),
+				ratingByTier3: await commonController.parseDecimal(getRatingByGender(find($, '.persona-item-value:eq(10) .cs')), base64),
+				ratingByTier4: await commonController.parseDecimal(getRatingByGender(find($, '.persona-item-value:eq(11) .cs')), base64),
 			};
 
 			const result = {
@@ -340,16 +343,16 @@ const _crawlRankingListRatingPromise = (req, res, next) => {
 				rating9To10: rawData.rating9To10,
 				ratingByGenderMale: rawData.ratingByGenderMale,
 				ratingByGenderFemale: rawData.ratingByGenderFemale,
-				// ratingByAge20: rawData.ratingByAge20,
-				// ratingByAge20To24: rawData.ratingByAge20To24,
-				// ratingByAge25To29: rawData.ratingByAge25To29,
-				// ratingByAge30To34: rawData.ratingByAge30To34,
-				// ratingByAge35To39: rawData.ratingByAge35To39,
-				// ratingByAge40: rawData.ratingByAge40,
-				// ratingByTier1: rawData.ratingByTier1,
-				// ratingByTier2: rawData.ratingByTier2,
-				// ratingByTier3: rawData.ratingByTier3,
-				// ratingByTier4: rawData.ratingByTier4,
+				ratingByAge20: rawData.ratingByAge20,
+				ratingByAge20To24: rawData.ratingByAge20To24,
+				ratingByAge25To29: rawData.ratingByAge25To29,
+				ratingByAge30To34: rawData.ratingByAge30To34,
+				ratingByAge35To39: rawData.ratingByAge35To39,
+				ratingByAge40: rawData.ratingByAge40,
+				ratingByTier1: rawData.ratingByTier1,
+				ratingByTier2: rawData.ratingByTier2,
+				ratingByTier3: rawData.ratingByTier3,
+				ratingByTier4: rawData.ratingByTier4,
 			};
 			console.log('_crawlRankingListDetailPromise result+++++++++', result);
 
@@ -364,6 +367,8 @@ const _crawlRankingListRatingPromise = (req, res, next) => {
 
 	})
 };
+
+
 
 const _crawlRankingListWantToSeePortraitPromise = (req, res, next) => {
 	return new Promise(async (resolve, reject) => {
