@@ -8,7 +8,7 @@ const MaoyanRecordModel = sequelize.define('MaoyanRecords', {
 		allowNull: true,
 		primaryKey: true
 	},
-	recordId:{
+	recordId: {
 		type: Sequelize.STRING,
 		allowNull: false
 	},
@@ -54,7 +54,7 @@ const MaoyanRecordModel = sequelize.define('MaoyanRecords', {
 		allowNull: true
 	},
 	// 评分数据
-	numOfRating:{
+	numOfRating: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
@@ -130,6 +130,8 @@ const MaoyanRecordModel = sequelize.define('MaoyanRecords', {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
+
+
 	// 想看数据
 	numWantToSee: {
 		type: Sequelize.STRING,
@@ -185,94 +187,138 @@ const MaoyanRecordModel = sequelize.define('MaoyanRecords', {
 	},
 
 
+	// 票房
 
-
-	// 内地票房
+	// 上座率
 	avgSeatView: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
+	// 场均人次
 	avgShowView: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
+	//
 	avgViewBox: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
+	// 综合票房（万）
 	boxInfo: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
+	// 票房占比
 	boxRate: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
+	//
 	myRefundNumInfo: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
+	//
 	myRefundRateInfo: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
+	//
 	onlineBoxRate: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
+	//
 	refundViewInfo: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
+	//
 	refundViewRate: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
+	// 上映天数
 	releaseInfo: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
+	//
 	releaseInfoColor: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
+	// 上座率
 	seatRate: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
+	// 拍片场次
 	showInfo: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
+	// 排片占比
 	showRate: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
+	//
 	splitAvgViewBox: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
+	//
 	splitBoxInfo: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
+	// 票房占比
 	splitBoxRate: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
+	//
 	splitSumBoxInfo: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
+	// 总票房
 	sumBoxInfo: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
+	//
 	viewInfo: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
+	//
 	viewInfoV2: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+
+	// 预售数据
+
+	// 预售票房
+	preSaleBoxInfo: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+	// 预售排片占比
+	preSaleShowRate: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+	// 预售排片场次
+	preSaleShowInfo: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+	// 首日预售票房
+	preSaleDayOneBoxInfo: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},

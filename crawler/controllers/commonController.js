@@ -477,16 +477,35 @@ const _parseUnicodeValue = (data, base64) => {
 
 	});
 };
-
+const _trimData = selector => {
+	let result = selector.html().replace('.', '').split(';');
+	return result.filter((item, index) => index < result.length - 2).map(item => {
+		return item + ';'
+	}).join('')
+};
 const parseDecimal = (data, base64) => {
 	return new Promise((resolve, reject) => {
+		data = data.trim();
 		let result;
+		let dotIndex = '';
+		data.split('&#x').forEach((item, index) => {
+			if (item.split('').filter(item2 => item2 === '.').length > 0) {
+				dotIndex = index
+			}
+		});
 		data = data.replace('.', '');
-		// console.log("_parseDecimal($(\'.score-num .cs\').html())", await _parseUnicodeValue(data));
 
 		_parseUnicodeValue(data, base64).then(async response => {
-			resolve(response.map(item => item.value).join('.'));
+			result = response.map((item, index) => {
+				if (index === dotIndex - 1) {
+					return item.value + '.';
+				} else {
+					return item.value
+				}
+			}).join('');
+			resolve(result);
 
+			// resolve(response.map(item => item.value));
 		}).catch(error => {
 			reject('_parseDecimal error');
 		})

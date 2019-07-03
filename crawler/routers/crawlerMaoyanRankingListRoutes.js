@@ -8,11 +8,17 @@ const crawlerMaoyanRankingListController = require('../controllers/crawlerMaoyan
 router.get('/crawlRankingList', crawlerMaoyanRankingListController.crawlRankingList);
 
 router.post('/crawlRankingListByYear', crawlerMaoyanRankingListController.crawlRankingListByYear);
+router.get('/crawlRankingListBoxOfficeDetail', crawlerMaoyanRankingListController.crawlRankingListBoxOfficeDetail);
+router.get('/crawlRankingListBoxOfficeGlobal', crawlerMaoyanRankingListController.crawlRankingListBoxOfficeGlobal);
+router.get('/crawlRankingListBoxOfficePremiere', crawlerMaoyanRankingListController.crawlRankingListBoxOfficePremiere);
+
 router.get('/crawlRankingListDetail', crawlerMaoyanRankingListController.crawlRankingListDetail);
 router.get('/crawlRankingListMoreSections', crawlerMaoyanRankingListController.crawlRankingListMoreSections);
 router.get('/crawlRankingListRating', crawlerMaoyanRankingListController.crawlRankingListRating);
-router.post('/crawlRankingListWantToSeePortrait', crawlerMaoyanRankingListController.crawlRankingListWantToSeePortrait);
-router.post('/saveOneMaoyanOfficeBoxRecord', crawlerMaoyanRankingListController.saveOneMaoyanOfficeBoxRecord);
+router.get('/crawlRankingListPreSale', crawlerMaoyanRankingListController.crawlRankingListPreSale);
+
+router.get('/crawlRankingListWantToSeePortrait', crawlerMaoyanRankingListController.crawlRankingListWantToSeePortrait);
+router.post('/saveOneRankingListRecord', crawlerMaoyanRankingListController.saveOneRankingListRecord);
 router.post('/saveMultipleMaoyanRankingListRecord', crawlerMaoyanRankingListController.saveMultipleMaoyanRankingListRecord);
 router.get('/getListByPagination', crawlerMaoyanRankingListController.getListByPagination);
 router.post('/crawlAndSave', crawlerMaoyanRankingListController.crawlAndSave);

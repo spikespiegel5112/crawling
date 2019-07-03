@@ -17,7 +17,7 @@ const _createRecord = (requestBody, timestamp) => {
 	let _timestamp = timestamp;
 	requestBody = requestBody.body;
 
-	console.log('timestamp:   ', timestamp);
+	// console.log('timestamp:   ', timestamp);
 	console.log('requestBody:   ', requestBody);
 	if (!timestamp) {
 		_timestamp = Date.now();
@@ -36,6 +36,7 @@ const _createRecord = (requestBody, timestamp) => {
 			platformChineseName: requestBody.detail.platformChineseName,
 			platformType: requestBody.detail.platformType,
 			description: requestBody.detail.dasdasdasdas,
+			numWantToSee: requestBody.detail.numWantToSee,
 
 			// 评分数据
 			rating: requestBody.rating.rating,
@@ -45,7 +46,6 @@ const _createRecord = (requestBody, timestamp) => {
 			rating7To8: requestBody.rating.rating7To8,
 			rating9To10: requestBody.rating.rating9To10,
 			// 想看数据
-			numWantToSee: requestBody.wantToSee.numWantToSee,
 			wantToSeeByGenderMale: requestBody.wantToSee.wantToSeeByGenderMale,
 			wantToSeeByGenderFemale: requestBody.wantToSee.wantToSeeByGenderFemale,
 			wantToSeeByAge20: requestBody.wantToSee.wantToSeeByAge20,
@@ -93,7 +93,7 @@ const _createRecord = (requestBody, timestamp) => {
 	})
 };
 
-const _createMaoyanOfficeBoxRecord = (requestBody, timestamp) => {
+const _createOneRankingListRecord = (requestBody, timestamp) => {
 	let _timestamp = timestamp;
 	console.log('timestamp:   ', timestamp);
 	if (!timestamp) {
@@ -102,16 +102,58 @@ const _createMaoyanOfficeBoxRecord = (requestBody, timestamp) => {
 	return new Promise((resolve, reject) => {
 		MaoyanRecordModel.create({
 			timestamp: _timestamp,
-			"titleChi": requestBody.titleChi,
-			"title": requestBody.title,
-			"releaseDate": requestBody.releaseDate,
-			"platformEngName": requestBody.platformEngName,
-			"platformChineseName": requestBody.platformChineseName,
-			"platformType": requestBody.platformType,
-			date: requestBody.date,
+			"movieId": requestBody.movieId,
+			// 详情数据
+			"titleChi": requestBody.detail.titleChi,
+			"title": requestBody.detail.title,
+			"releaseDate": requestBody.detail.releaseDate,
+			"platformEngName": requestBody.detail.platformEngName,
+			"platformChineseName": requestBody.detail.platformChineseName,
+			"platformType": requestBody.detail.platformType,
+			date: requestBody.detail.date,
+			numWantToSee: requestBody.detail.dasdasdasdas,
+			rating: requestBody.detail.dasdasdasdas,
+
+			// 下方版块数据
 			description: requestBody.dasdasdasdas,
 
+			// 评分数据
+			rating1To2: requestBody.rating.rating1To2,
+			rating3To4: requestBody.rating.rating3To4,
+			rating5To6: requestBody.rating.rating5To6,
+			rating7To8: requestBody.rating.rating7To8,
+			rating9To10: requestBody.rating.rating9To10,
+			ratingByGenderMale: requestBody.rating.ratingByGenderMale,
+			ratingByGenderFemale: requestBody.rating.ratingByGenderFemale,
+			ratingByAge20: requestBody.rating.ratingByAge20,
+			ratingByAge20To24: requestBody.rating.ratingByAge20To24,
+			ratingByAge25To29: requestBody.rating.ratingByAge25To29,
+			ratingByAge30To34: requestBody.rating.ratingByAge30To34,
+			ratingByAge35To39: requestBody.rating.ratingByAge35To39,
+			ratingByAge40: requestBody.rating.ratingByAge40,
+			ratingByTier1: requestBody.rating.ratingByTier1,
+			ratingByTier2: requestBody.rating.ratingByTier2,
+			ratingByTier3: requestBody.rating.ratingByTier3,
+			ratingByTier4: requestBody.rating.ratingByTier4,
 
+			// 想看数据
+			wantToSeeByGenderMale: requestBody.wantToSee.wantToSeeByGenderMale,
+			wantToSeeByGenderFemale: requestBody.wantToSee.wantToSeeByGenderFemale,
+			wantToSeeByAge20: requestBody.wantToSee.wantToSeeByAge20,
+			wantToSeeByAge20To24: requestBody.wantToSee.wantToSeeByAge20To24,
+			wantToSeeByAge25To29: requestBody.wantToSee.wantToSeeByAge25To29,
+			wantToSeeByAge30To34: requestBody.wantToSee.wantToSeeByAge30To34,
+			wantToSeeByAge35To39: requestBody.wantToSee.wantToSeeByAge35To39,
+			wantToSeeByAge40: requestBody.wantToSee.wantToSeeByAge40,
+			wantToSeeByTier1: requestBody.wantToSee.wantToSeeByTier1,
+			wantToSeeByTier2: requestBody.wantToSee.wantToSeeByTier2,
+			wantToSeeByTier3: requestBody.wantToSee.wantToSeeByTier3,
+			wantToSeeByTier4: requestBody.wantToSee.wantToSeeByTier4,
+			// 预售数据
+			preSaleBoxInfo: requestBody.preSale.preSaleBoxInfo,
+			preSaleShowRate: requestBody.preSale.preSaleShowRate,
+			preSaleShowInfo: requestBody.preSale.preSaleShowInfo,
+			preSaleDayOneBoxInfo: requestBody.preSale.preSaleDayOneBoxInfo,
 		}).then(result => {
 			// console(result);
 			resolve(result)
@@ -122,7 +164,7 @@ const _createMaoyanOfficeBoxRecord = (requestBody, timestamp) => {
 	})
 };
 
-const _createMultipleMaoyanRankingListRecordpromise = (requestBody, timestamp) => {
+const _createMultipleMaoyanRankingListRecordPromise = (requestBody, timestamp) => {
 	let _timestamp = timestamp;
 	console.log('timestamp:   ', timestamp);
 	if (!timestamp) {
@@ -139,6 +181,7 @@ const _createMultipleMaoyanRankingListRecordpromise = (requestBody, timestamp) =
 	})
 };
 
+
 const _crawlRankingListPromise = (req, res, next) => {
 	return new Promise((resolve, reject) => {
 		commonController.crawlPagePromise(req, res, next).then(response => {
@@ -153,9 +196,10 @@ const _crawlRankingListPromise = (req, res, next) => {
 					// console.log('item+++++++', Number(item));
 					let itemValue = titleEL[item].attribs['data-com'];
 					result.push({
+						title: find($, '#ranks-list .row:eq(' + item + ') .first-line').text(),
+						movieId: itemValue.replace(/[^0-9]/ig, ""),
 						data: itemValue,
 						indexOf: itemValue.indexOf('/movie/'),
-						movieId: itemValue.replace(/[^0-9]/ig, "")
 					})
 
 				}
@@ -188,6 +232,7 @@ const _crawlRankingListDetailPromise = (req, res, next) => {
 				platformType: 'Web',
 				numWantToSee: $('.score-detail .detail-wish-count').text(),
 				rating: $('.score-block-content .rating-num').text(),
+				preSaleBoxInfo: find($, ".info-presell-block .info-detail-col:eq(0) .detail-num").text(),
 
 			};
 
@@ -202,6 +247,7 @@ const _crawlRankingListDetailPromise = (req, res, next) => {
 				platformType: rawData.platformType,
 				numWantToSee: rawData.numWantToSee,
 				rating: rawData.rating,
+				preSaleBoxInfo: rawData.preSaleBoxInfo
 
 			};
 			console.log('_crawlRankingListDetailPromise result+++++++++', result);
@@ -273,6 +319,52 @@ const _crawlRankingListMoreSectionsPromise = (req, res, next) => {
 	})
 };
 
+const _trimData = selector => {
+	let result = selector.html().replace('.', '').split(';');
+	return result.filter((item, index) => index < result.length - 2).map(item => {
+		return item + ';'
+	}).join('')
+};
+
+const crawlRankingListBoxOfficeDetail = async (req, res, next) => {
+	_crawlRankingListBoxOfficeDetailPromise(req, res, next).then(response => {
+		console.log('_crawlRankingListRatingPromise+++++++++++++++++++++++++++++++', response);
+		res.status(200).json({
+			data: response
+		});
+	}).catch(error => {
+		res.status(400).json({
+			error: error
+		});
+	})
+};
+
+const crawlRankingListBoxOfficeGlobal = async (req, res, next) => {
+	_crawlRankingListBoxOfficeGlobalPromise(req, res, next).then(response => {
+		console.log('_crawlRankingListBoxOfficeGlobalPromise+++++++++++++++++++++++++++++++', response);
+		res.status(200).json({
+			data: response
+		});
+	}).catch(error => {
+		res.status(400).json({
+			error: error
+		});
+	})
+};
+
+const crawlRankingListBoxOfficePremiere = async (req, res, next) => {
+	_crawlRankingListBoxOfficePremierePromise(req, res, next).then(response => {
+		console.log('_crawlRankingListBoxOfficeGlobalPromise+++++++++++++++++++++++++++++++', response);
+		res.status(200).json({
+			data: response
+		});
+	}).catch(error => {
+		res.status(400).json({
+			error: error
+		});
+	})
+};
+
 const crawlRankingListRating = async (req, res, next) => {
 	_crawlRankingListRatingPromise(req, res, next).then(response => {
 		console.log('_crawlRankingListRatingPromise+++++++++++++++++++++++++++++++', response);
@@ -285,6 +377,212 @@ const crawlRankingListRating = async (req, res, next) => {
 		});
 	})
 };
+
+const crawlRankingListPreSale = async (req, res, next) => {
+	_crawlRankingListPreSalePromise(req, res, next).then(response => {
+		console.log('_crawlRankingListRatingPromise+++++++++++++++++++++++++++++++', response);
+		res.status(200).json({
+			data: response
+		});
+	}).catch(error => {
+		res.status(400).json({
+			error: error
+		});
+	})
+};
+
+const _crawlRankingListPreSalePromise = async (req, res, next) => {
+	return new Promise(async (resolve, reject) => {
+		console.log('commonController.crawlPagePromise+++++', req.body);
+
+		try {
+			const response = await commonController.crawlPagePromise(req, res, next);
+
+			let requestBody = response.body.replace('&#x', '\\u');
+			// cheero.load(resquestBody);
+			console.log('commonController.crawlPagePromise(req, res, next)+++++', req.query);
+			// console.log('commonController.crawlPagePromise', response);
+			const $ = response.$;
+
+
+			const base64 = $('#js-nuwa').html().match(/(?<=src:url\().+.(?=\)\sformat\("woff"\))/)[0];
+			res.status(200).json({
+				data: base64
+			});
+
+			const rawData = {
+				preSaleBoxInfo: find($, '.box-item:eq(0) .box-num').text() + find($, '.box-item:eq(0) .box-unit').text(),
+				// 预售排片占比
+				preSaleShowRate: find($, '.box-item:eq(1) .box-num').text(),
+				// 预售排片场次
+				preSaleShowInfo: find($, '.box-item:eq(2) .box-num').text(),
+				// 首日预售票房
+				preSaleDayOneBoxInfo: find($, '.box-item:eq(3) .box-num').text()
+			};
+
+			const result = {
+				preSaleBoxInfo: rawData.preSaleBoxInfo,
+				preSaleShowRate: rawData.preSaleShowRate,
+				preSaleShowInfo: rawData.preSaleShowInfo,
+				preSaleDayOneBoxInfo: rawData.preSaleDayOneBoxInfo,
+			};
+			console.log('_crawlRankingListDetailPromise result+++++++++', result);
+
+			resolve(result)
+
+		} catch (e) {
+			res.status(400).json({
+				error: e
+			});
+			reject(e)
+		}
+
+	})
+};
+
+const _crawlRankingListBoxOfficeDetailPromise = async (req, res, next) => {
+	return new Promise(async (resolve, reject) => {
+
+		try {
+			const response = await commonController.crawlPagePromise(req, res, next);
+
+			// cheero.load(resquestBody);
+			console.log('_crawlRankingListBoxOfficePromise+++++', req.query);
+			// console.log('commonController.crawlPagePromise', response);
+			const $ = response.$;
+			// res.status(200).json({
+			// 	data: response.body
+			// });
+
+
+			const base64 = $('#js-nuwa').html().match(/(?<=src:url\().+.(?=\)\sformat\("woff"\))/)[0];
+
+
+			const rawData = {
+				boxInfo: await commonController.parseDecimal(find($, '.box-summary:eq(0) .box-item:eq(0) .box-num .cs').html(), base64) + find($, '.box-summary:eq(0) .box-item:eq(0) .box-unit').text(),
+				boxInfoFirstWeek: await commonController.parseDecimal(find($, '.box-summary:eq(0) .box-item:eq(1) .box-num .cs').html(), base64) + find($, '.box-summary:eq(0) .box-item:eq(1) .box-unit').text(),
+				boxInfoFirstDay: await commonController.parseDecimal(find($, '.box-summary:eq(0) .box-item:eq(1) .box-num .cs').html(), base64) + find($, '.box-summary:eq(0) .box-item:eq(2) .box-unit').text(),
+				splitBoxInfo: await commonController.parseDecimal(find($, '.box-summary:eq(1) .box-item:eq(0) .box-num .cs').html(), base64) + find($, '.box-summary:eq(1) .box-item:eq(0) .box-unit').text(),
+				splitBoxInfoFirstWeek: await commonController.parseDecimal(find($, '.box-summary:eq(1) .box-item:eq(1) .box-num .cs').html(), base64) + find($, '.box-summary:eq(1) .box-item:eq(1) .box-unit').text(),
+				splitBoxInfoFirstDay: await commonController.parseDecimal(find($, '.box-summary:eq(1) .box-item:eq(1) .box-num .cs').html(), base64) + find($, '.box-summary:eq(1) .box-item:eq(2) .box-unit').text(),
+
+				avgSeatView: '',
+				avgShowView: '',
+				avgViewBox: '',
+				boxRate: '',
+				myRefundNumInfo: '',
+				myRefundRateInfo: '',
+				onlineBoxRate: '',
+				refundViewInfo: '',
+				refundViewRate: '',
+				releaseInfo: '',
+				releaseInfoColor: '',
+				seatRate: '',
+				showInfo: '',
+				showRate: '',
+				splitAvgViewBox: '',
+				splitBoxRate: '',
+				splitSumBoxInfo: '',
+				sumBoxInfo: '',
+				viewInfo: '',
+				viewInfoV2: ''
+			};
+
+			const result = {
+				boxInfo: rawData.boxInfo,
+				boxInfoFirstWeek: rawData.boxInfoFirstWeek,
+				boxInfoFirstDay: rawData.boxInfoFirstDay,
+				splitBoxInfo: rawData.splitBoxInfo,
+				splitBoxInfoFirstWeek: rawData.splitBoxInfoFirstWeek,
+				splitBoxInfoFirstDay: rawData.splitBoxInfoFirstDay,
+				avgSeatView: '',
+				avgShowView: '',
+				avgViewBox: '',
+				boxRate: '',
+				myRefundNumInfo: '',
+				myRefundRateInfo: '',
+				onlineBoxRate: '',
+				refundViewInfo: '',
+				refundViewRate: '',
+				releaseInfo: '',
+				releaseInfoColor: '',
+				seatRate: '',
+				showInfo: '',
+				showRate: '',
+				splitAvgViewBox: '',
+				splitBoxRate: '',
+				splitSumBoxInfo: '',
+				sumBoxInfo: '',
+				viewInfo: '',
+				viewInfoV2: ''
+			};
+			console.log('_crawlRankingListDetailPromise result+++++++++', result);
+
+			resolve(result)
+
+		} catch (e) {
+			reject(e)
+		}
+
+	})
+};
+
+const _crawlRankingListBoxOfficeGlobalPromise = async (req, res, next) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			const response = await commonController.crawlPagePromise(req, res, next);
+
+			console.log('_crawlRankingListBoxOfficeGlobalPromise+++++', req.query);
+			// console.log('commonController.crawlPagePromise', response);
+			const $ = response.$;
+			// const base64 = $('#js-nuwa').html().match(/(?<=src:url\().+.(?=\)\sformat\("woff"\))/)[0];
+
+			const rawData = {
+				boxInfo: $('.na.desc .value span').text()
+			};
+			const result = {
+				boxInfo: rawData.boxInfo,
+			};
+			console.log('_crawlRankingListBoxOfficeGlobalPromise result+++++++++', result);
+
+			resolve(result)
+		} catch (e) {
+			reject(e)
+		}
+
+	})
+};
+
+const _crawlRankingListBoxOfficePremierePromise = async (req, res, next) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			const response = await commonController.crawlPagePromise(req, res, next);
+
+			console.log('_crawlRankingListBoxOfficeGlobalPromise+++++', req.query);
+			// console.log('commonController.crawlPagePromise', response);
+			const $ = response.$;
+			// const base64 = $('#js-nuwa').html().match(/(?<=src:url\().+.(?=\)\sformat\("woff"\))/)[0];
+
+			const rawData = {
+				preSaleBoxInfo: find($, '.box-summary .box-item:eq(0) .box-num').text() + find($, '.box-summary .box-item:eq(0) .box-unit').text(),
+				preSaleBoxInfoRate: find($, '.box-summary .box-item:eq(1) .box-num').text(),
+				showInfo: find($, '.box-summary .box-item:eq(2) .box-num').text() + find($, '.box-summary .box-item:eq(2) .box-unit').text()
+			};
+			const result = {
+				preSaleBoxInfo: rawData.preSaleBoxInfo,
+				preSaleBoxInfoRate: rawData.preSaleBoxInfoRate,
+				preSaleShowInfo: rawData.showInfo,
+			};
+			console.log('_crawlRankingListBoxOfficeGlobalPromise result+++++++++', result);
+
+			resolve(result)
+		} catch (e) {
+			reject(e)
+		}
+
+	})
+};
+
 const _crawlRankingListRatingPromise = async (req, res, next) => {
 	return new Promise(async (resolve, reject) => {
 		console.log('commonController.crawlPagePromise+++++', req.body);
@@ -305,13 +603,6 @@ const _crawlRankingListRatingPromise = async (req, res, next) => {
 			const base64 = $('#js-nuwa').html().match(/(?<=src:url\().+.(?=\)\sformat\("woff"\))/)[0];
 
 
-			const getRatingByGender = selector => {
-				let result = selector.html().replace('.', '').split(';');
-				return result.filter((item, index) => index < result.length - 2).map(item => {
-					return item + ';'
-				}).join('')
-			};
-
 			const rawData = {
 				rating: await commonController.parseDecimal($('.score-num .cs').html(), base64),
 				rating1To2: find($, '.movie-comments .distribute-item:eq(0) .distribute-val').text(),
@@ -319,19 +610,19 @@ const _crawlRankingListRatingPromise = async (req, res, next) => {
 				rating5To6: find($, '.movie-comments .distribute-item:eq(2) .distribute-val').text(),
 				rating7To8: find($, '.movie-comments .distribute-item:eq(3) .distribute-val').text(),
 				rating9To10: find($, '.movie-comments .distribute-item:eq(4) .distribute-val').text(),
-				ratingByGenderMale: await commonController.parseDecimal(getRatingByGender($('.persona-gender-male .persona-item-value .cs')), base64),
-				ratingByGenderFemale: await commonController.parseDecimal(getRatingByGender($('.persona-gender-female .persona-item-value .cs')), base64),
+				ratingByGenderMale: await commonController.parseDecimal(_trimData($('.persona-gender-male .persona-item-value .cs')), base64),
+				ratingByGenderFemale: await commonController.parseDecimal(_trimData($('.persona-gender-female .persona-item-value .cs')), base64),
 
-				ratingByAge20: await commonController.parseDecimal(getRatingByGender(find($, '.persona-item-value:eq(2) .cs')), base64),
-				ratingByAge20To24: await commonController.parseDecimal(getRatingByGender(find($, '.persona-item-value:eq(3) .cs')), base64),
-				ratingByAge25To29: await commonController.parseDecimal(getRatingByGender(find($, '.persona-item-value:eq(4) .cs')), base64),
-				ratingByAge30To34: await commonController.parseDecimal(getRatingByGender(find($, '.persona-item-value:eq(5) .cs')), base64),
-				ratingByAge35To39: await commonController.parseDecimal(getRatingByGender(find($, '.persona-item-value:eq(6) .cs')), base64),
-				ratingByAge40: await commonController.parseDecimal(getRatingByGender(find($, '.persona-item-value:eq(7) .cs')), base64),
-				ratingByTier1: await commonController.parseDecimal(getRatingByGender(find($, '.persona-item-value:eq(8) .cs')), base64),
-				ratingByTier2: await commonController.parseDecimal(getRatingByGender(find($, '.persona-item-value:eq(9) .cs')), base64),
-				ratingByTier3: await commonController.parseDecimal(getRatingByGender(find($, '.persona-item-value:eq(10) .cs')), base64),
-				ratingByTier4: await commonController.parseDecimal(getRatingByGender(find($, '.persona-item-value:eq(11) .cs')), base64),
+				ratingByAge20: await commonController.parseDecimal(_trimData(find($, '.persona-item-value:eq(2) .cs')), base64),
+				ratingByAge20To24: await commonController.parseDecimal(_trimData(find($, '.persona-item-value:eq(3) .cs')), base64),
+				ratingByAge25To29: await commonController.parseDecimal(_trimData(find($, '.persona-item-value:eq(4) .cs')), base64),
+				ratingByAge30To34: await commonController.parseDecimal(_trimData(find($, '.persona-item-value:eq(5) .cs')), base64),
+				ratingByAge35To39: await commonController.parseDecimal(_trimData(find($, '.persona-item-value:eq(6) .cs')), base64),
+				ratingByAge40: await commonController.parseDecimal(_trimData(find($, '.persona-item-value:eq(7) .cs')), base64),
+				ratingByTier1: await commonController.parseDecimal(_trimData(find($, '.persona-item-value:eq(8) .cs')), base64),
+				ratingByTier2: await commonController.parseDecimal(_trimData(find($, '.persona-item-value:eq(9) .cs')), base64),
+				ratingByTier3: await commonController.parseDecimal(_trimData(find($, '.persona-item-value:eq(10) .cs')), base64),
+				ratingByTier4: await commonController.parseDecimal(_trimData(find($, '.persona-item-value:eq(11) .cs')), base64),
 			};
 
 			const result = {
@@ -369,7 +660,6 @@ const _crawlRankingListRatingPromise = async (req, res, next) => {
 };
 
 
-
 const _crawlRankingListWantToSeePortraitPromise = (req, res, next) => {
 	return new Promise(async (resolve, reject) => {
 		console.log('_crawlRankingListWantToSeePortraitPromise+++++', req.query);
@@ -390,36 +680,40 @@ const _crawlRankingListWantToSeePortraitPromise = (req, res, next) => {
 			const $ = response.$;
 			// console.log('$+++++++++', titleEL.text());
 
+			const base64 = $('#js-nuwa').html().match(/(?<=src:url\().+.(?=\)\sformat\("woff"\))/)[0];
+
 			const isEmpty = $(".bar-group .single-bar text").text() === '' ? true : false;
 
 			const rawData = {
-
-				byAge20: find($, ".bar-group .single-bar text:eq(0)").text(),
-				byAge20To24: find($, ".bar-group .single-bar text:eq(1)").text(),
-				byAge25To29: find($, ".bar-group .single-bar text:eq(2)").text(),
-				byAge30To34: find($, ".bar-group .single-bar text:eq(3)").text(),
-				byAge35To39: find($, ".bar-group .single-bar text:eq(4)").text(),
-				byAge40: find($, ".bar-group .single-bar text:eq(5)").text(),
-				byTier1: find($, ".linebars-list .linebars-item .linebars-value:eq(0)").text(),
-				byTier2: find($, ".linebars-list .linebars-item .linebars-value:eq(1)").text(),
-				byTier3: find($, ".linebars-list .linebars-item .linebars-value:eq(2)").text(),
-				byTier4: find($, ".linebars-list .linebars-item .linebars-value:eq(3)").text(),
+				wantToSeeByGenderMale: await commonController.parseDecimal(_trimData(find($, '.stackcolumn-desc .cs:eq(0)')), base64),
+				wantToSeeByGenderFemale: await commonController.parseDecimal(_trimData(find($, '.stackcolumn-desc .cs:eq(1)')), base64),
+				wantToSeeByAge20: find($, ".bar-group .single-bar text:eq(0)").text().replace('%', ''),
+				wantToSeeByAge20To24: find($, ".bar-group .single-bar text:eq(1)").text().replace('%', ''),
+				wantToSeeByAge25To29: find($, ".bar-group .single-bar text:eq(2)").text().replace('%', ''),
+				wantToSeeByAge30To34: find($, ".bar-group .single-bar text:eq(3)").text().replace('%', ''),
+				wantToSeeByAge35To39: find($, ".bar-group .single-bar text:eq(4)").text().replace('%', ''),
+				wantToSeeByAge40: find($, ".bar-group .single-bar text:eq(5)").text().replace('%', ''),
+				wantToSeeByTier1: find($, ".linebars-list .linebars-item .linebars-value:eq(0)").text().replace('%', ''),
+				wantToSeeByTier2: find($, ".linebars-list .linebars-item .linebars-value:eq(1)").text().replace('%', ''),
+				wantToSeeByTier3: find($, ".linebars-list .linebars-item .linebars-value:eq(2)").text().replace('%', ''),
+				wantToSeeByTier4: find($, ".linebars-list .linebars-item .linebars-value:eq(3)").text().replace('%', ''),
 				// request: req.query,
 				// html: response.body
 			};
 
 			const result = {
-				// byAge20: rawData.byAge20.split('%')[0],
-				byAge20: rawData.byAge20.split('%'),
-				byAge20To24: rawData.byAge20To24.split('%')[1],
-				byAge25To29: rawData.byAge25To29.split('%')[2],
-				byAge30To34: rawData.byAge30To34.split('%')[3],
-				byAge35To39: rawData.byAge35To39.split('%')[4],
-				byAge40: rawData.byAge40.split('%')[5],
-				byTier1: rawData.byTier1.split('%')[0],
-				byTier2: rawData.byTier2.split('%')[1],
-				byTier3: rawData.byTier3.split('%')[2],
-				byTier4: rawData.byTier4.split('%')[3],
+				wantToSeeByGenderMale: rawData.wantToSeeByGenderMale,
+				wantToSeeByGenderFemale: rawData.wantToSeeByGenderFemale,
+				wantToSeeByAge20: rawData.wantToSeeByAge20,
+				wantToSeeByAge20To24: rawData.wantToSeeByAge20To24,
+				wantToSeeByAge25To29: rawData.wantToSeeByAge25To29,
+				wantToSeeByAge30To34: rawData.wantToSeeByAge30To34,
+				wantToSeeByAge35To39: rawData.wantToSeeByAge35To39,
+				wantToSeeByAge40: rawData.wantToSeeByAge40,
+				wantToSeeByTier1: rawData.wantToSeeByTier1,
+				wantToSeeByTier2: rawData.wantToSeeByTier2,
+				wantToSeeByTier3: rawData.wantToSeeByTier3,
+				wantToSeeByTier4: rawData.wantToSeeByTier4,
 			};
 			console.log('_crawlRankingListDetailPromise result+++++++++', result);
 
@@ -437,52 +731,22 @@ const _crawlRankingListWantToSeePortraitPromise = (req, res, next) => {
 
 const crawlRankingList = async (req, res, next) => {
 	console.log('req++++++++++++++++', req.method);
-	commonController.crawlPagePromise(req, res, next).then(response => {
-
-
+	_crawlRankingListPromise(req, res, next).then(response => {
 		res.status(200).json(response);
+
 	}).catch(error => {
 		res.status(400).json({
 			message: error.toString()
 		});
 	})
 
+
 };
 
 const crawlRankingListByYear = async (req, res, next) => {
-	commonController.crawlPagePromise(req, res, next).then(response => {
-		console.log('responseA+++++++++++++', response.yearlist);
-		// res.status(200).json(response);
-		// res.status(200).json(response.body);
-
-		const $ = response.$;
-
-		let result = [];
-		let listItem = $('#ranks-list .row');
-
-		console.log('#ranks-list .row .first-line+++++++++++++++++', typeof listItem);
-		// console.log('#ranks-list .row .first-line+++++++++++++++++', $('#ranks-list .row').text().length);
-
-		Object.keys(listItem).forEach((item, index) => {
-			if (Number(item).toString() !== 'NaN') {
-				let itemValue = listItem[item].attribs['data-com'];
-
-				result.push({
-					// data: itemValue,
-					movieId: itemValue.replace(/[^0-9]/ig, ""),
-					title: listItem.find('.first-line').text(),
-				})
-				// result.push($('#ranks-list .row'))
-			}
-		});
-		Object.keys(listItem.find('.first-line')).forEach((item, index) => {
-			if (Number(item).toString() !== 'NaN') {
-				// console.log(listItem.find('.first-line')[item].children[0].data);
-				result[index].title = listItem.find('.first-line')[item].children[0].data
-			}
-		});
+	_crawlRankingListbyYearPromise(req, res, next).then(response => {
 		res.status(200).json({
-			data: result
+			data: response
 		});
 	}).catch(error => {
 		res.status(400).json({
@@ -494,13 +758,40 @@ const crawlRankingListByYear = async (req, res, next) => {
 const _crawlRankingListbyYearPromise = async (req, res, next) => {
 	return new Promise((resolve, reject) => {
 		commonController.crawlPagePromise(req, res, next).then(response => {
-			resolve(response)
+			console.log('responseA+++++++++++++', response.yearlist);
 			// res.status(200).json(response);
+			// res.status(200).json(response.body);
+
+			const $ = response.$;
+
+			let result = [];
+			let listItem = $('#ranks-list .row');
+
+			console.log('#ranks-list .row .first-line+++++++++++++++++', typeof listItem);
+			// console.log('#ranks-list .row .first-line+++++++++++++++++', $('#ranks-list .row').text().length);
+
+			Object.keys(listItem).forEach((item, index) => {
+				if (Number(item).toString() !== 'NaN') {
+					let itemValue = listItem[item].attribs['data-com'];
+
+					result.push({
+						// data: itemValue,
+						movieId: itemValue.replace(/[^0-9]/ig, ""),
+						title: listItem.find('.first-line').text(),
+					})
+					// result.push($('#ranks-list .row'))
+				}
+			});
+			Object.keys(listItem.find('.first-line')).forEach((item, index) => {
+				if (Number(item).toString() !== 'NaN') {
+					// console.log(listItem.find('.first-line')[item].children[0].data);
+					result[index].title = listItem.find('.first-line')[item].children[0].data
+				}
+			});
+			resolve(result)
+
 		}).catch(error => {
 			reject(error)
-			// res.status(400).json({
-			// 	message: error.toString()
-			// });
 		})
 	})
 };
@@ -633,10 +924,10 @@ const saveMultipleMovieData = (req, res, next) => {
 	})
 };
 
-const saveOneMaoyanOfficeBoxRecord = (req, res, next) => {
+const saveOneRankingListRecord = (req, res, next) => {
 	const timestamp = Date.now();
 
-	_createMaoyanOfficeBoxRecord(req, timestamp).then(response => {
+	_createRecord(req, timestamp).then(response => {
 		res.status(200).json({
 			message: 'success',
 			data: response
@@ -661,7 +952,7 @@ const saveMultipleMaoyanRankingListRecord = (req, res, next) => {
 			timestamp: timestamp
 		})
 	});
-	_createMultipleMaoyanRankingListRecordpromise(requestBody, timestamp).then(response => {
+	_createMultipleMaoyanRankingListRecordPromise(requestBody, timestamp).then(response => {
 		res.status(200).json({
 			data: response
 		})
@@ -823,10 +1114,15 @@ const fontParser = (req, res, next) => {
 exports.crawlRankingList = crawlRankingList;
 exports.crawlRankingListByYear = crawlRankingListByYear;
 exports.crawlRankingListDetail = crawlRankingListDetail;
+exports.crawlRankingListBoxOfficeDetail = crawlRankingListBoxOfficeDetail;
+exports.crawlRankingListBoxOfficeGlobal = crawlRankingListBoxOfficeGlobal;
+exports.crawlRankingListBoxOfficePremiere = crawlRankingListBoxOfficePremiere;
+
 exports.crawlRankingListMoreSections = crawlRankingListMoreSections;
 exports.crawlRankingListRating = crawlRankingListRating;
+exports.crawlRankingListPreSale = crawlRankingListPreSale;
 exports.crawlRankingListWantToSeePortrait = crawlRankingListWantToSeePortrait;
-exports.saveOneMaoyanOfficeBoxRecord = saveOneMaoyanOfficeBoxRecord;
+exports.saveOneRankingListRecord = saveOneRankingListRecord;
 exports.saveMultipleMaoyanRankingListRecord = saveMultipleMaoyanRankingListRecord;
 exports.getListByPagination = getListByPagination;
 exports.getListByDate = getListByDate;
