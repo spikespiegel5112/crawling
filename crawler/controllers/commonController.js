@@ -36,7 +36,7 @@ const crawlPagePromise = (req, res, next) => {
 		};
 
 		let crawlerInstance = new crawler({
-			maxConnections: 10,
+			maxConnections: 100,
 			// rateLimit: 3000,
 
 			// This will be called for each crawled page
@@ -353,6 +353,10 @@ const getDecodeFontValue = async (req, res, next) => {
 
 const decodeFontValue = (unicode, base64) => {
 	return new Promise(async (resolve, reject) => {
+		const fontDictionaryUrl = './data/fontDictionary.json';
+
+		const fontDictionaryData = await _fileReader(fontDictionaryUrl);
+
 		try {
 			let selectedUnicode = unicode;
 			// selectedUnicode = selectedUnicode.replace('&#x', '');
@@ -362,19 +366,17 @@ const decodeFontValue = (unicode, base64) => {
 			let fontFIleBuffer;
 
 			console.log('selectedUnicode++++++++++', selectedUnicode);
-			const fontDictionaryUrl = './data/fontDictionary.json';
 			const base64Data = base64;
 
 
 			let fontData = _getOpenTypeDataFromBase64(base64);
 
 
-			glyphData = _getPathData(fontData);
+			let glyphData = _getPathData(fontData);
 			console.log('_getOpenTypeDataFromBase64 response+++++++', glyphData);
 
 
 			// const pathData = _getPathData(fontData);
-			const fontDictionaryData = await _fileReader(fontDictionaryUrl);
 			console.log('fontDictionaryData+++++++++', fontDictionaryData);
 
 			let result = '?';
@@ -395,7 +397,7 @@ const decodeFontValue = (unicode, base64) => {
 						count++;
 					}
 				});
-				if ((count >= 3 || count >= item3.points.length) && count !== 0) {
+				if ((count >= 1 || count >= item3.points.length) && count !== 0) {
 					return true
 				}
 			});
@@ -456,7 +458,7 @@ const _parseUnicodeValue = (data, base64) => {
 							resolve(result);
 							// return result
 						} else {
-							console.log("await commonController.decodeFontValue(item, base64)", await decodeFontValue(item, base64));
+							// console.log("await commonController.decodeFontValue(item, base64)", await decodeFontValue(item, base64));
 							count++;
 							loop(base64);
 

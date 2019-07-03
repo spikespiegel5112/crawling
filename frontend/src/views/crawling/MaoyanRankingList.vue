@@ -172,9 +172,8 @@
           <el-row type="flex" justify="left">
 
             <el-col :span="14">
-              <!--          {{rankListCountLimit}}-->
-              <el-input-number v-model="rankListCountLimit" :min="0"
-                               :max="rankingListData.length"></el-input-number>
+              <!--          {{rankingListCountLimit}}-->
+              <el-input-number v-model="rankingListCountLimit" :min="0"></el-input-number>
               <el-button type="primary" @click="handleChangeCounter">确定</el-button>
 
             </el-col>
@@ -210,24 +209,31 @@
                                         class="timelineitem"
                       >
                         <el-card shadow="hover">
-                          <el-row>`
+                          <el-row>
                             <el-col :span="1" style="text-align: left">第{{index+1}}条</el-col>
                             <el-col :span="1" style="text-align: left">{{item.movieId}}</el-col>
                             <el-col :span="4" style="text-align: left">{{item.title}}</el-col>
-                            <el-col :span="4">
+                            <el-col :span="1">
                               详情: <i v-if="item.detailSuccess===0" class=""></i>
                               <i v-else-if="item.detailSuccess===1" class="el-icon-check success"></i>
                               <i v-else="item.detailSuccess===2" class="el-icon-close failed"></i>
                             </el-col>
-                            <el-col :span="4">
-                              描述: <i v-if="item.descriptionSuccess===0" class=""></i>
-                              <i v-else-if="item.descriptionSuccess===1" class="el-icon-check success"></i>
-                              <i v-else="item.descriptionSuccess===2" class="el-icon-close failed"></i>
+                            <el-col :span="1">
+                              更多: <i v-if="item.moreSectionsSuccess===0" class=""></i>
+                              <i v-else-if="item.moreSectionsSuccess===1" class="el-icon-check success"></i>
+                              <i v-else="item.moreSectionsSuccess===2" class="el-icon-close failed"></i>
                             </el-col>
-                            <el-col :span="4">
-                              画像: <i v-if="item.portraitSuccess===0" class=""></i>
-                              <i v-else-if="item.portraitSuccess===1" class="el-icon-check success"></i>
-                              <i v-else="item.portraitSuccess===2" class="el-icon-close failed"></i>
+                            <el-col :span="1">
+                              评分: <i v-if="item.ratingSuccess===0" class=""></i>
+                              <i v-else-if="item.ratingSuccess===1" class="el-icon-check success"></i>
+                              <i v-else="item.ratingSuccess===2" class="el-icon-close failed"></i>
+                            </el-col>
+
+                            <el-col :span="1">
+                              想看: <i v-if="item.rankingListWantToSeePortraitSuccess===0" class=""></i>
+                              <i v-else-if="item.rankingListWantToSeePortraitSuccess===1"
+                                 class="el-icon-check success"></i>
+                              <i v-else="item.rankingListWantToSeePortraitSuccess===2" class="el-icon-close failed"></i>
                             </el-col>
                           </el-row>
                         </el-card>
@@ -244,7 +250,7 @@
         <!--        <el-col :span="12">-->
         <!--          <el-row type="flex" justify="left">-->
         <!--            <el-col :span="14">-->
-        <!--              &lt;!&ndash;          {{rankListCountLimit}}&ndash;&gt;-->
+        <!--              &lt;!&ndash;          {{rankingListCountLimit}}&ndash;&gt;-->
         <!--              <el-input-number v-model="presaleCountLimit" :min="0"-->
         <!--                               :max="presaleListData.length"></el-input-number>-->
         <!--              <el-button type="primary" @click="handleChangeCounter">确定</el-button>-->
@@ -289,9 +295,9 @@
         <!--                            </el-col>-->
         <!--                            <el-col :span="4">-->
         <!--                              {{item.active}}-->
-        <!--                              画像: <i v-if="item.portraitSuccess===0" class=""></i>-->
-        <!--                              <i v-else-if="item.portraitSuccess===1" class="el-icon-check success"></i>-->
-        <!--                              <i v-else="item.portraitSuccess===2" class="el-icon-close failed"></i>-->
+        <!--                              画像: <i v-if="item.rankingListWantToSeePortraitSuccess===0" class=""></i>-->
+        <!--                              <i v-else-if="item.rankingListWantToSeePortraitSuccess===1" class="el-icon-check success"></i>-->
+        <!--                              <i v-else="item.rankingListWantToSeePortraitSuccess===2" class="el-icon-close failed"></i>-->
         <!--                            </el-col>-->
         <!--                          </el-row>-->
         <!--                        </el-card>-->
@@ -334,13 +340,15 @@
         crawlRankinglistDetailRequest: 'crawlerMaoyanRankingList/crawlRankinglistDetail',
         crawlRankingListMoreSectionsRequest: 'crawlerMaoyanRankingList/crawlRankingListMoreSections',
         crawlRankingListRatingRequest: 'crawlerMaoyanRankingList/crawlRankingListRating',
-        crawlMoviePresaleDetailRequest: 'crawlerMaoyanPresale/crawlMoviePresaleDetail',
-        crawlMoviePresalePortraitRequest: 'crawlerMaoyanPresale/crawlMoviePresalePortrait',
+        crawlRankingListWantToSeePortraitRequest: 'crawlerMaoyanRankingList/crawlRankingListWantToSeePortrait',
+
+        crawlMoviePreSaleDetailRequest: 'crawlerMaoyanPreSale/crawlMoviePreSaleDetail',
+        crawlMoviePreSalePortraitRequest: 'crawlerMaoyanPreSale/crawlMoviePreSalePortrait',
         deleteRecordRequest: 'crawlerMaoyanRankingList/deleteRecords',
         getSettingsRequest: 'settings/getList',
 
         crawlRankingListByYearRequest: 'crawlerMaoyanRankingList/crawlRankingListByYear',
-        crawlPresaleMovieListRequest: 'crawlerMaoyanPresale/crawlMovieList',
+        crawlPreSaleMovieListRequest: 'crawlerMaoyanPreSale/crawlMovieList',
         saveMultipleMaoyanRankingListRecordRequest: 'crawlerMaoyanRankingList/saveMultipleMaoyanRankingListRecord',
         crawlerSettingFlag: false,
         crawlerSetting: {
@@ -437,7 +445,7 @@
         crawlingCount: 0,
         presaleListData: [],
         crawlingFlag: false,
-        rankListCountLimit: 0,
+        rankingListCountLimit: 0,
         presaleCountLimit: 0
 
       }
@@ -707,10 +715,10 @@
         })
       },
       getAllCrawlingIndex() {
-        const getRankingList = this.getRankingList()
-        const getPresaleList = this.getPresaleList()
+        const getRankingListPromise = this.getRankingList()
+        const getPreSaleListPromise = this.getPreSaleList()
 
-        Promise.all([getRankingList, getPresaleList]).then(responseAll => {
+        Promise.all([getRankingListPromise, getPreSaleListPromise]).then(responseAll => {
           console.log(responseAll)
         }).catch(error => {
           console.log(error)
@@ -732,27 +740,57 @@
           this.$http.post(this.$baseUrl + this.crawlRankingListByYearRequest, {
             address: 'https://piaofang.maoyan.com/rankings/year',
             headerCode: 'maoyanRankingList',
+            limit: this.rankingListCountLimit,
             query: {
               year: '2019',
-              limit: '100',
               tab: '1'
             }
           }, {
-            timeout: 15000
+            timeout: 20000
           }).then(response => {
-            // this.rankListCountLimit =
+            this.rankingListCountLimit = response.data.length
             console.log(response)
-            this.rankListCountLimit = response.data.length
 
             this.rankingListData = response.data
-            this.rankingListData.forEach((item, index) => {
-              if (index < this.rankListCountLimit) {
-                this.$set(this.rankingListData, index, Object.assign(item, {
-                  title: item.title,
+            response.data.forEach((item, index) => {
+              this.$set(this.rankingListData, index, Object.assign(item, {
+                title: item.title,
+                detailSuccess: 0,
+                rankingListWantToSeePortraitSuccess: 0,
+                moreSectionsSuccess: 0,
+                content: 'detailSuccess' + 'rankingListWantToSeePortraitSuccess',
+                color: 'sunccess',
+                recordTime: '---',
+                active: true
+              }))
+            })
+            resolve(this.rankingListData)
+            this.$message.success('获取电影排名列表成功')
+          }).catch(error => {
+            this.$message.error(error)
+            reject(error)
+          })
+        })
+
+      },
+      async getDetailData() {
+        return new Promise((resolve, reject) => {
+          this.$http.get(this.$baseUrl + this.crawlPreSaleMovieListRequest, {
+            params: {
+              address: 'https://piaofang.maoyan.com/store',
+              headerCode: 'maoyanPreSale'
+            }
+          }).then(response => {
+            console.log(response)
+            this.presaleCountLimit = response.data.length
+
+            this.presaleListData = response.data
+            response.data.forEach((item, index) => {
+              if (index < this.presaleCountLimit) {
+                this.$set(this.presaleListData, index, Object.assign(item, {
                   detailSuccess: 0,
-                  portraitSuccess: 0,
-                  descriptionSuccess: 0,
-                  content: 'detailSuccess' + 'portraitSuccess',
+                  rankingListWantToSeePortraitSuccess: 0,
+                  content: ['detailSuccess', 'rankingListWantToSeePortraitSuccess'],
                   color: 'sunccess',
                   recordTime: '---',
                   active: true
@@ -760,18 +798,20 @@
 
               }
             })
-            this.$message.success('获取电影排名列表成功')
+            this.$message.success('获取预售列表成功')
+            resolve(this.presaleListData)
           }).catch(error => {
             this.$message.error(error)
+            reject(error)
           })
         })
 
       },
-      async getDetailData() {
-        this.$http.get(this.$baseUrl + this.crawlPresaleMovieListRequest, {
+      async getPreSaleList() {
+        this.$http.get(this.$baseUrl + this.crawlPreSaleMovieListRequest, {
           params: {
             address: 'https://piaofang.maoyan.com/store',
-            headerCode: 'maoyanPresale'
+            headerCode: 'maoyanPreSale'
           }
         }).then(response => {
           console.log(response)
@@ -782,38 +822,11 @@
             if (index < this.presaleCountLimit) {
               this.$set(this.presaleListData, index, Object.assign(item, {
                 detailSuccess: 0,
-                portraitSuccess: 0,
-                content: 'detailSuccess' + 'portraitSuccess',
-                color: 'sunccess',
-                recordTime: '---',
-                active: true
-              }))
-
-            }
-          })
-          this.$message.success('获取预售列表成功')
-        }).catch(error => {
-          this.$message.error(error)
-        })
-
-      },
-      async getPresaleList() {
-        this.$http.get(this.$baseUrl + this.crawlPresaleMovieListRequest, {
-          params: {
-            address: 'https://piaofang.maoyan.com/store',
-            headerCode: 'maoyanPresale'
-          }
-        }).then(response => {
-          console.log(response)
-          this.presaleCountLimit = response.data.length
-
-          this.presaleListData = response.data
-          this.presaleListData.forEach((item, index) => {
-            if (index < this.presaleCountLimit) {
-              this.$set(this.presaleListData, index, Object.assign(item, {
-                detailSuccess: 0,
-                portraitSuccess: 0,
-                content: 'detailSuccess' + 'portraitSuccess',
+                ratingSuccess: 0,
+                moreSectionsSuccess: 0,
+                rankingListWantToSeePortraitSuccess: 0,
+                preSaleWantToSeePortraitSuccess: 0,
+                content: 'detailSuccess' + 'preSaleWantToSeePortraitSuccess',
                 color: 'sunccess',
                 recordTime: '---',
                 active: true
@@ -848,7 +861,8 @@
                 params: {
                   address: 'https://piaofang.maoyan.com/movie/' + movieId,
                   headerCode: 'rankingListDetailHeader'
-                }
+                },
+                timeout: 20000
               }).then(response1 => {
                 record.detail = response1.data
 
@@ -879,17 +893,46 @@
                 record.detail = response1.data
 
                 this.$set(this.rankingListData, crawlingCount, Object.assign(this.rankingListData[crawlingCount], {
-                  detailSuccess: 1
+                  moreSectionsSuccess: 1
                 }))
 
                 resolve(response1.data)
               }).catch(error => {
 
                 this.$set(this.rankingListData, crawlingCount, Object.assign(this.rankingListData[crawlingCount], {
-                  detailSuccess: 2
+                  moreSectionsSuccess: 2
                 }))
                 reject(error)
 
+              })
+            })
+          }
+
+          const getRankingListWantToSeePortrait = () => {
+            return new Promise((resolve, reject) => {
+              this.$http.get(this.$baseUrl + this.crawlRankingListWantToSeePortraitRequest, {
+                params: {
+                  address: 'https://piaofang.maoyan.com/movie/' + movieId + '/wantindex?wkwebview=1%26city_tier=0%26city_id=0%26cityName=%E5%85%A8%E5%9B%BD',
+                  headerCode: 'rankingListDetailHeader'
+                },
+                timeout: 20000
+              }).then(response1 => {
+                record.portrait = response1.data
+
+                console.log('getRankingListWantToSeePortrait', response1.data)
+                // debugger
+                this.$set(this.presaleListData, crawlingCount, Object.assign(this.presaleListData[crawlingCount], {
+                  rankingListWantToSeePortraitSuccess: 1,
+                  color: 'success'
+                }))
+                resolve(response1.data)
+              }).catch(error => {
+                this.$set(this.presaleListData, crawlingCount, Object.assign(this.presaleListData[crawlingCount], {
+                  rankingListWantToSeePortraitSuccess: 2,
+                  color: 'failed'
+                }))
+
+                reject(error)
               })
             })
           }
@@ -900,66 +943,45 @@
                 params: {
                   address: 'https://piaofang.maoyan.com/movie/' + movieId + '/audienceRating?usePageCache=true',
                   headerCode: 'rankingListDetailHeader'
-                }
+                },
+                timeout: 300000
               }).then(response1 => {
-                record.detail = response1.data
+                record.rating = response1.data
 
                 this.$set(this.rankingListData, crawlingCount, Object.assign(this.rankingListData[crawlingCount], {
-                  detailSuccess: 1
-                }))
-
-                resolve(response1.data)
-              }).catch(error => {
-
-                this.$set(this.rankingListData, crawlingCount, Object.assign(this.rankingListData[crawlingCount], {
-                  detailSuccess: 2
-                }))
-                reject(error)
-
-              })
-            })
-          }
-
-          const getWantToSeePortrait = () => {
-            return new Promise((resolve, reject) => {
-              this.$http.get(this.$baseUrl + this.crawlMoviePresalePortraitRequest, {
-                params: {
-                  address: 'https://piaofang.maoyan.com/movie/' + movieId,
-                  headerCode: 'maoyanPresalePortrait'
-                }
-              }).then(response1 => {
-                record.portrait = response1.data
-
-                this.$set(this.presaleListData, crawlingCount, Object.assign(this.presaleListData[crawlingCount], {
-                  portraitSuccess: 1,
+                  ratingSuccess: 1,
                   color: 'success'
                 }))
+
                 resolve(response1.data)
               }).catch(error => {
-                this.$set(this.presaleListData, crawlingCount, Object.assign(this.presaleListData[crawlingCount], {
-                  portraitSuccess: 2,
+
+                this.$set(this.rankingListData, crawlingCount, Object.assign(this.rankingListData[crawlingCount], {
+                  ratingSuccess: 2,
                   color: 'failed'
                 }))
-
                 reject(error)
+
               })
             })
           }
 
           const getDetailPromise = getDetail()
-          // const getWantToSeePortraitPromise = getWantToSeePortrait()
-          // const getMoreSectionsPromise = getMoreSections()
+          const getRankingListWantToSeePortraitPromise = getRankingListWantToSeePortrait()
           const getRankingListRatingPromise = getRankingListRating()
-          if (this.crawlingCount === this.rankListCountLimit) {
+
+          const getMoreSectionsPromise = getMoreSections()
+          if (this.crawlingCount === this.rankingListCountLimit) {
             // debugger
             this.crawlingFlag = false
+            this.crawlingCount = 0
           } else {
             this.crawlingCount++
           }
-          Promise.all([getDetailPromise, getRankingListRatingPromise]).then(responseAll => {
+          Promise.all([getDetailPromise, getRankingListWantToSeePortraitPromise, getRankingListRatingPromise]).then(responseAll => {
             console.log(responseAll)
 
-            this.$set(this.wantSeeData, crawlingCount, Object.assign(responseAll[0],responseAll[1]))
+            this.$set(this.wantSeeData, crawlingCount, Object.assign(responseAll[0], responseAll[1], responseAll[2]))
 
             console.log('wantSeeData', this.wantSeeData)
 
@@ -970,7 +992,7 @@
 
           }).catch(error => {
             console.log(error)
-            if (this.crawlingCount === this.rankListCountLimit) {
+            if (this.crawlingCount === this.rankingListData.length) {
               // debugger
               this.crawlingFlag = false
             } else {
@@ -984,7 +1006,7 @@
 
         loop()
       },
-      async beginToCrawlPresale() {
+      async beginToCrawlPreSale() {
         this.crawlingCount = 0
         this.wantSeeData = []
 
@@ -1000,10 +1022,10 @@
           const movieId = this.presaleListData[crawlingCount].movieId
           const getDetail = () => {
             return new Promise((resolve, reject) => {
-              this.$http.get(this.$baseUrl + this.crawlMoviePresaleDetailRequest, {
+              this.$http.get(this.$baseUrl + this.crawlMoviePreSaleDetailRequest, {
                 params: {
                   address: 'https://piaofang.maoyan.com/movie/' + movieId,
-                  headerCode: 'maoyanPresale'
+                  headerCode: 'maoyanPreSale'
                 }
               }).then(response1 => {
                 record.detail = response1.data
@@ -1024,24 +1046,25 @@
             })
           }
 
-          const getWantToSeePortrait = () => {
+          const getPreSaleWantToSeePortrait = () => {
             return new Promise((resolve, reject) => {
-              this.$http.get(this.$baseUrl + this.crawlMoviePresalePortraitRequest, {
+              this.$http.get(this.$baseUrl + this.crawlMoviePreSalePortraitRequest, {
                 params: {
-                  address: 'https://piaofang.maoyan.com/movie/' + movieId,
-                  headerCode: 'maoyanPresalePortrait'
+                  address: 'https://piaofang.maoyan.com/movie/' + movieId + '/wantindex?wkwebview=1%26city_tier=0%26city_id=0%26cityName=%E5%85%A8%E5%9B%BD',
+                  headerCode: 'rankingListDetailHeader'
                 }
+
               }).then(response1 => {
                 record.portrait = response1.data
 
                 this.$set(this.presaleListData, crawlingCount, Object.assign(this.presaleListData[crawlingCount], {
-                  portraitSuccess: 1,
+                  rankingListWantToSeePortraitSuccess: 1,
                   color: 'success'
                 }))
                 resolve(response1.data)
               }).catch(error => {
                 this.$set(this.presaleListData, crawlingCount, Object.assign(this.presaleListData[crawlingCount], {
-                  portraitSuccess: 2,
+                  rankingListWantToSeePortraitSuccess: 2,
                   color: 'failed'
                 }))
 
@@ -1051,14 +1074,14 @@
           }
 
           const getDetailPromise = getDetail()
-          const getWantToSeePortraitPromise = getWantToSeePortrait()
-          if (this.crawlingCount === this.rankListCountLimit) {
+          const getPreSaleWantToSeePortraitPromise = getPreSaleWantToSeePortrait()
+          if (this.crawlingCount === this.rankingListCountLimit) {
             // debugger
             this.crawlingFlag = false
           } else {
             this.crawlingCount++
           }
-          Promise.all([getDetailPromise, getWantToSeePortraitPromise]).then(responseAll => {
+          Promise.all([getDetailPromise, getPreSaleWantToSeePortraitPromise]).then(responseAll => {
             console.log(responseAll)
 
             this.$set(this.wantSeeData, crawlingCount, Object.assign(responseAll[0], responseAll[1]))
@@ -1072,7 +1095,7 @@
 
           }).catch(error => {
             console.log(error)
-            if (this.crawlingCount === this.rankListCountLimit) {
+            if (this.crawlingCount === this.rankingListCountLimit) {
               // debugger
               this.crawlingFlag = false
             } else {
@@ -1090,7 +1113,7 @@
         this.crawlingFlag = false
       },
       save() {
-        if (this.crawlingCount === this.rankListCountLimit) {
+        if (this.crawlingCount === this.rankingListCountLimit) {
           console.log(this.wantSeeData)
           this.$http.post(this.$baseUrl + this.saveMultipleMaoyanRankingListRecordRequest, this.wantSeeData.reverse()).then(response => {
             this.$message.success('数据提交成功')
@@ -1104,7 +1127,7 @@
       handleChangeCounter(value) {
         this.presaleListData.forEach((item, index) => {
           this.$set(this.presaleListData, index, Object.assign(this.presaleListData[index], {
-            active: index < this.rankListCountLimit
+            active: index < this.rankingListCountLimit
           }))
         })
       }

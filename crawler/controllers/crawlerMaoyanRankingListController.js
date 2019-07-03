@@ -190,18 +190,30 @@ const _crawlRankingListPromise = (req, res, next) => {
 			const $ = response.$;
 			let result = [];
 			let titleEL = $("#ranks-list .row");
-			Object.keys(titleEL).forEach(item => {
+			let limit = Number(req.query.limit);
+			// res.status(200).json({
+			// 	limit:limit
+			// });
+
+			let offset = 0;
+			Object.keys(titleEL).forEach((item, index) => {
 				// console.log('item+++++++', item);
 				if (Number(item).toString() !== 'NaN') {
 					// console.log('item+++++++', Number(item));
-					let itemValue = titleEL[item].attribs['data-com'];
-					result.push({
-						title: find($, '#ranks-list .row:eq(' + item + ') .first-line').text(),
-						movieId: itemValue.replace(/[^0-9]/ig, ""),
-						data: itemValue,
-						indexOf: itemValue.indexOf('/movie/'),
-					})
+					if (index - offset < limit || limit === 'NaN' || limit === '' || limit === undefined) {
+						let itemValue = titleEL[item].attribs['data-com'];
+						result.push({
+							title: find($, '#ranks-list .row:eq(' + item + ') .first-line').text(),
+							movieId: itemValue.replace(/[^0-9]/ig, ""),
+							data: itemValue,
+							indexOf: itemValue.indexOf('/movie/'),
+						})
 
+					}
+
+
+				} else {
+					offset++;
 				}
 			});
 			// console.log('titleEL+++++++++', titleEL.options);
@@ -720,10 +732,11 @@ const _crawlRankingListWantToSeePortraitPromise = (req, res, next) => {
 			resolve(rawData)
 
 		} catch (e) {
+			reject(e);
+
 			res.status(400).json({
 				error: e
 			});
-			reject(e)
 		}
 
 	})
@@ -766,28 +779,46 @@ const _crawlRankingListbyYearPromise = async (req, res, next) => {
 
 			let result = [];
 			let listItem = $('#ranks-list .row');
+			let limit = req.body.limit;
+			let offset = 0;
+
 
 			console.log('#ranks-list .row .first-line+++++++++++++++++', typeof listItem);
 			// console.log('#ranks-list .row .first-line+++++++++++++++++', $('#ranks-list .row').text().length);
 
 			Object.keys(listItem).forEach((item, index) => {
 				if (Number(item).toString() !== 'NaN') {
-					let itemValue = listItem[item].attribs['data-com'];
+					index = index - offset;
+					if (index < Number(limit) || Number(limit) === 0 || limit === '' || limit === undefined) {
 
-					result.push({
-						// data: itemValue,
-						movieId: itemValue.replace(/[^0-9]/ig, ""),
-						title: listItem.find('.first-line').text(),
-					})
-					// result.push($('#ranks-list .row'))
+						let itemValue = listItem[item].attribs['data-com'];
+
+						result.push({
+							// data: itemValue,
+							movieId: itemValue.replace(/[^0-9]/ig, ""),
+							title: listItem.find('.first-line').text(),
+						})
+						// result.push($('#ranks-list .row'))
+					}
+
+				} else {
+					offset++
 				}
+
 			});
+			offset = 0;
 			Object.keys(listItem.find('.first-line')).forEach((item, index) => {
 				if (Number(item).toString() !== 'NaN') {
-					// console.log(listItem.find('.first-line')[item].children[0].data);
-					result[index].title = listItem.find('.first-line')[item].children[0].data
+					index = index - offset;
+					if (index < Number(limit) || Number(limit) === 0 || limit === '' || limit === undefined) {
+						// console.log(listItem.find('.first-line')[item].children[0].data);
+						result[index].title = listItem.find('.first-line')[item].children[0].data
+					}
+				} else {
+					offset++
 				}
 			});
+			offset = 0;
 			resolve(result)
 
 		}).catch(error => {
