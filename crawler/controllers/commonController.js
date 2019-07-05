@@ -373,34 +373,37 @@ const decodeFontValue = (unicode, base64) => {
 
 
 			let glyphData = _getPathData(fontData);
-			console.log('_getOpenTypeDataFromBase64 response+++++++', glyphData);
+			// console.log('_getOpenTypeDataFromBase64 response+++++++', glyphData);
 
 
 			// const pathData = _getPathData(fontData);
-			console.log('fontDictionaryData+++++++++', fontDictionaryData);
+			// console.log('fontDictionaryData+++++++++', fontDictionaryData);
 
 			let result = '?';
 			let matchCount = 0;
 
-			let selectedGlyphObject = glyphData.find(item1 => item1.name.replace('uni', '').toLowerCase() === selectedUnicode);
+			let selectedGlyphObject = glyphData.find(item1 => item1.name.replace('uni', '').toLowerCase() === selectedUnicode) || '';
 
 			console.log('selectedGlyphObject+++++++++', selectedGlyphObject);
-			console.log('fontDictionaryData+++++++++', fontDictionaryData);
-			const matchedResult = fontDictionaryData.find(item3 => {
-				let count = 0;
-
-				item3.points.forEach((item4, index4) => {
-					if (item4.lastPointOfContour === selectedGlyphObject.points[index4].lastPointOfContour &&
-						item4.onCurve === selectedGlyphObject.points[index4].onCurve &&
-						item4.x === selectedGlyphObject.points[index4].x &&
-						item4.y === selectedGlyphObject.points[index4].y) {
-						count++;
+			// console.log('fontDictionaryData+++++++++', fontDictionaryData);
+			let matchedResult = '';
+			if (selectedGlyphObject !== '') {
+				matchedResult = fontDictionaryData.find(item3 => {
+					let count = 0;
+					item3.points.forEach((item4, index4) => {
+						if (item4.lastPointOfContour === selectedGlyphObject.points[index4].lastPointOfContour &&
+							item4.onCurve === selectedGlyphObject.points[index4].onCurve &&
+							item4.x === selectedGlyphObject.points[index4].x &&
+							item4.y === selectedGlyphObject.points[index4].y) {
+							count++;
+						}
+					});
+					if ((count >= 1 || count >= item3.points.length) && count !== 0) {
+						return true
 					}
+
 				});
-				if ((count >= 1 || count >= item3.points.length) && count !== 0) {
-					return true
-				}
-			});
+			}
 
 			resolve({
 				selectedUnicode: selectedUnicode,

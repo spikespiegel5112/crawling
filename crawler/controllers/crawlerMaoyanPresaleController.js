@@ -1,7 +1,7 @@
 const express = require('express');
 const find = require('cheerio-eq');
 const crawler = require('crawler');
-const MaoyanPresaleModel = require('../models/MaoyanPresaleModel');
+const MaoyanPreSaleModel = require('../models/MaoyanPreSaleModel');
 const SettingsModel = require('../models/SettingsModel');
 const {AsyncParser} = require('json2csv');
 const fastCsv = require('fast-csv');
@@ -28,7 +28,7 @@ const crawlPagePromise = (req, res, next) => {
 		};
 
 
-		PresaleDataJSONHeaderSample = {
+		PreSaleDataJSONHeaderSample = {
 			"GET": "/movie/1197814/wantindex?city_tier=0&city_id=0&cityName=%E5%85%A8%E5%9B%BD HTTP/1.1",
 			"Host": "piaofang.maoyan.com",
 			"Connection": "keep-alive",
@@ -109,7 +109,7 @@ const _createRecord = (requestBody, timestamp) => {
 		_timestamp = Date.now();
 	}
 	return new Promise((resolve, reject) => {
-		MaoyanPresaleModel.create({
+		MaoyanPreSaleModel.create({
 			timestamp: _timestamp,
 			"avgSeatView": requestBody.avgSeatView,
 			"avgShowView": requestBody.avgShowView,
@@ -144,14 +144,14 @@ const _createRecord = (requestBody, timestamp) => {
 	})
 };
 
-const _createMaoyanPresaleRecord = (requestBody, timestamp) => {
+const _createMaoyanPreSaleRecord = (requestBody, timestamp) => {
 	let _timestamp = timestamp;
 	console.log('timestamp:   ', timestamp);
 	if (!timestamp) {
 		_timestamp = Date.now();
 	}
 	return new Promise((resolve, reject) => {
-		MaoyanPresaleModel.create({
+		MaoyanPreSaleModel.create({
 			timestamp: _timestamp,
 			"titleChi": requestBody.titleChi,
 			"title": requestBody.title,
@@ -184,14 +184,14 @@ const _createMaoyanPresaleRecord = (requestBody, timestamp) => {
 	})
 };
 
-const _createMultipleMaoyanPresaleRecord = (requestBody, timestamp) => {
+const _createMultipleMaoyanPreSaleRecord = (requestBody, timestamp) => {
 	let _timestamp = timestamp;
 	console.log('timestamp:   ', timestamp);
 	if (!timestamp) {
 		_timestamp = Date.now();
 	}
 	return new Promise((resolve, reject) => {
-		MaoyanPresaleModel.bulkCreate(requestBody).then(result => {
+		MaoyanPreSaleModel.bulkCreate(requestBody).then(result => {
 			// console(result);
 			resolve(result)
 		}).catch(error => {
@@ -208,15 +208,15 @@ const _crawlMovieListPromise = (req, res, next) => {
 			const $ = response.$;
 			let result = [];
 			let titleEL = $("#movie-list section article");
-			Object.keys(titleEL).forEach(item => {
+			Object.keys(titleEL).forEach((item, index) => {
 				// console.log('item+++++++', item);
 				if (Number(item).toString() !== 'NaN') {
 					// console.log('item+++++++', Number(item));
 					let itemValue = titleEL[item].attribs['data-com'];
 					result.push({
-						data: itemValue,
 						indexOf: itemValue.indexOf('/movie/'),
-						movieId: itemValue.replace(/[^0-9]/ig, "")
+						movieId: itemValue.replace(/[^0-9]/ig, ""),
+						title: find($, "#movie-list section article:eq(" + index + ") .title").text()
 					})
 
 				}
@@ -230,7 +230,7 @@ const _crawlMovieListPromise = (req, res, next) => {
 	})
 };
 
-const _crawlMoviePresaleDetailPromise = (req, res, next) => {
+const _crawlMoviePreSaleDetailPromise = (req, res, next) => {
 	return new Promise(async (resolve, reject) => {
 		console.log('crawlPagePromise+++++', req.query);
 
@@ -270,7 +270,7 @@ const _crawlMoviePresaleDetailPromise = (req, res, next) => {
 				byGenderMale: rawData.byGenderMale.match(/[1-9]\d*\.\d*|0\.\d*[1-9]\d*$/) ? rawData.byGenderMale.match(/[1-9]\d*\.\d*|0\.\d*[1-9]\d*$/) + '%' : '',
 				byGenderFemale: rawData.byGenderFemale.match(/[[1-9]\d*\.\d*|0\.\d*[1-9]\d*]$/g) ? String(rawData.byGenderFemale.match(/[[1-9]\d*\.\d*|0\.\d*[1-9]\d*]$/g)).split(',')[1] + '%' : ''
 			};
-			console.log('_crawlMoviePresaleDetailPromise result+++++++++', result);
+			console.log('_crawlMoviePreSaleDetailPromise result+++++++++', result);
 
 			resolve(result)
 
@@ -284,9 +284,9 @@ const _crawlMoviePresaleDetailPromise = (req, res, next) => {
 	})
 };
 
-const _crawlMoviePresalePortraitPromise = (req, res, next) => {
+const _crawlMoviePreSalePortraitPromise = (req, res, next) => {
 	return new Promise(async (resolve, reject) => {
-		console.log('_crawlMoviePresalePortraitPromise+++++', req.query);
+		console.log('_crawlMoviePreSalePortraitPromise+++++', req.query);
 
 		req.query = Object.assign(req.query, {
 			address: encodeURI(req.query.address + '/wantindex?city_tier=0&city_id=0&cityName=全国')
@@ -296,7 +296,7 @@ const _crawlMoviePresalePortraitPromise = (req, res, next) => {
 		try {
 			const response = await crawlPagePromise(req, res, next);
 
-			console.log('_crawlMoviePresalePortraitPromise(req, res, next)+++++', req.query);
+			console.log('_crawlMoviePreSalePortraitPromise(req, res, next)+++++', req.query);
 			// res.status(200).json({
 			// 	data: req.query
 			// });
@@ -335,7 +335,7 @@ const _crawlMoviePresalePortraitPromise = (req, res, next) => {
 				byTier3: rawData.byTier3.split('%')[2],
 				byTier4: rawData.byTier4.split('%')[3],
 			};
-			console.log('_crawlMoviePresaleDetailPromise result+++++++++', result);
+			console.log('_crawlMoviePreSaleDetailPromise result+++++++++', result);
 
 			resolve(rawData)
 
@@ -361,10 +361,10 @@ const crawlMovieList = async (req, res, next) => {
 	})
 };
 
-const crawlMoviePresaleDetail = async (req, res, next) => {
+const crawlMoviePreSaleDetail = async (req, res, next) => {
 	return new Promise((resolve, reject) => {
-		_crawlMoviePresaleDetailPromise(req, res, next).then(response => {
-			console.log('_crawlMoviePresaleDetailPromise+++++++++++++++++++++++++++++++', response);
+		_crawlMoviePreSaleDetailPromise(req, res, next).then(response => {
+			console.log('_crawlMoviePreSaleDetailPromise+++++++++++++++++++++++++++++++', response);
 			resolve(response);
 			res.status(200).json({
 				data: response
@@ -378,10 +378,10 @@ const crawlMoviePresaleDetail = async (req, res, next) => {
 	})
 };
 
-const crawlMoviePresalePortrait = async (req, res, next) => {
+const crawlMoviePreSalePortrait = async (req, res, next) => {
 	return new Promise((resolve, reject) => {
-		_crawlMoviePresalePortraitPromise(req, res, next).then(response => {
-			console.log('_crawlMoviePresalePortrait+++++++++++++++++++++++++++++++', response);
+		_crawlMoviePreSalePortraitPromise(req, res, next).then(response => {
+			console.log('_crawlMoviePreSalePortrait+++++++++++++++++++++++++++++++', response);
 			resolve(response);
 			res.status(200).json({
 				data: response
@@ -395,20 +395,20 @@ const crawlMoviePresalePortrait = async (req, res, next) => {
 	})
 };
 
-const oneKeyMoviePresale = async (req, res, next) => {
+const oneKeyMoviePreSale = async (req, res, next) => {
 	let address1 = "https://piaofang.maoyan.com/store";
-	let queryPresaleList = Object.assign(req, {
+	let queryPreSaleList = Object.assign(req, {
 		query: {
 			address: address1,
-			headerCode: 'maoyanPresale'
+			headerCode: 'maoyanPreSale'
 		}
 	});
 
-	console.log('queryPresaleList++++++++++', queryPresaleList.query);
+	console.log('queryPreSaleList++++++++++', queryPreSaleList.query);
 
-	const movieList = await _crawlMovieListPromise(queryPresaleList, res, next);
+	const movieList = await _crawlMovieListPromise(queryPreSaleList, res, next);
 	let result = [];
-	// console.log('oneKeyMoviePresale movieList++++++++++', movieList);
+	// console.log('oneKeyMoviePreSale movieList++++++++++', movieList);
 
 	// let length = movieList.length;
 	let length = 6;
@@ -420,40 +420,40 @@ const oneKeyMoviePresale = async (req, res, next) => {
 		let movieId = item2.replace(/[^0-9]/ig, "");
 
 		let addressDetail = 'https://piaofang.maoyan.com/movie/' + movieId;
-		let addressPresale = encodeURI('https://piaofang.maoyan.com/movie/' + movieId + '/wantindex?city_tier=0&city_id=0&cityName=全国');
+		let addressPreSale = encodeURI('https://piaofang.maoyan.com/movie/' + movieId + '/wantindex?city_tier=0&city_id=0&cityName=全国');
 		// console.log('addressDetail++++++++++++', addressDetail);
 		// console.log('movieId+++++++++++++++', movieId);
 
-		const reqPresaleDetail = req;
-		const reqPresalePortrait = req;
-		const queryPresaleList = {
+		const reqPreSaleDetail = req;
+		const reqPreSalePortrait = req;
+		const queryPreSaleList = {
 			query: {
 				address: addressDetail,
-				headerCode: 'maoyanPresaleDetail'
+				headerCode: 'maoyanPreSaleDetail'
 			}
 		};
 
-		const queryPresalePortrait = {
+		const queryPreSalePortrait = {
 			query: {
-				address: addressPresale,
-				headerCode: 'maoyanPresalePortrait'
+				address: addressPreSale,
+				headerCode: 'maoyanPreSalePortrait'
 			}
 		};
 
 		let data = {};
-		let dataPresale = {};
+		let dataPreSale = {};
 
 		try {
-			dataWantDetail = await _crawlMoviePresaleDetailPromise(Object.assign(req, queryPresaleList), res, next);
+			dataWantDetail = await _crawlMoviePreSaleDetailPromise(Object.assign(req, queryPreSaleList), res, next);
 
 			console.log(data);
 
-			dataPresalePortrait = await _crawlMoviePresalePortraitPromise(Object.assign(req, queryPresalePortrait), res, next);
+			dataPreSalePortrait = await _crawlMoviePreSalePortraitPromise(Object.assign(req, queryPreSalePortrait), res, next);
 
 			result.push({
 				movieId: movieId,
-				isEmptyPortrait: dataPresalePortrait.isEmptyPortrait,
-				data: Object.assign(dataWantDetail, dataPresalePortrait.data)
+				isEmptyPortrait: dataPreSalePortrait.isEmptyPortrait,
+				data: Object.assign(dataWantDetail, dataPreSalePortrait.data)
 			});
 
 			if (index === length - 1) {
@@ -485,14 +485,14 @@ const getListByPagination = (req, res, next) => {
 		offset: req.query.limit * (req.query.page - 1)
 	};
 
-	MaoyanPresaleModel.findAll({
+	MaoyanPreSaleModel.findAll({
 		offset: pagination.offset,
 		limit: pagination.limit,
 		// order: ['DESC']
 	}).then(async data => {
 		res.status(200).json({
 			pagination: {
-				total: await MaoyanPresaleModel.count(),
+				total: await MaoyanPreSaleModel.count(),
 			},
 			data: data
 		})
@@ -513,7 +513,7 @@ const getCrawlDate = (req, res, next) => {
 		offset: req.query.page * (req.query.page - 1)
 	};
 
-	MaoyanPresaleModel.findAll({
+	MaoyanPreSaleModel.findAll({
 		offset: pagination.offset,
 		limit: pagination.limit
 	}).then(data => {
@@ -538,7 +538,7 @@ const getListByDate = (req, res, next) => {
 		offset: req.query.page * (req.query.page - 1)
 	};
 
-	MaoyanPresaleModel.findAll({
+	MaoyanPreSaleModel.findAll({
 		offset: pagination.offset,
 		limit: pagination.limit
 	}).then(data => {
@@ -571,10 +571,10 @@ const save = (req, res, next) => {
 	})
 };
 
-const saveOneMaoyanPresale = (req, res, next) => {
+const saveOneMaoyanPreSale = (req, res, next) => {
 	const timestamp = Date.now();
 
-	_createMaoyanPresaleRecord(req, timestamp).then(response => {
+	_createMaoyanPreSaleRecord(req, timestamp).then(response => {
 		res.status(200).json({
 			message: 'success',
 			data: response
@@ -586,7 +586,7 @@ const saveOneMaoyanPresale = (req, res, next) => {
 	})
 };
 
-const saveMultipleMaoyanPresale = (req, res, next) => {
+const saveMultipleMaoyanPreSale = (req, res, next) => {
 	let requestBody = req.body;
 	if (!(requestBody instanceof Array)) {
 		res.status(400).json({
@@ -599,7 +599,7 @@ const saveMultipleMaoyanPresale = (req, res, next) => {
 			timestamp: timestamp
 		})
 	});
-	_createMultipleMaoyanPresaleRecord(requestBody, timestamp).then(response => {
+	_createMultipleMaoyanPreSaleRecord(requestBody, timestamp).then(response => {
 		res.status(200).json({
 			data: response
 		})
@@ -666,7 +666,7 @@ const deleteRecords = (req, res, next) => {
 	console.log(idBody instanceof Array);
 	if (idBody instanceof Array) {
 		idBody.forEach((item, index) => {
-			MaoyanPresaleModel.findByPk(item).then(async response => {
+			MaoyanPreSaleModel.findByPk(item).then(async response => {
 				const result = await response.destroy();
 				if (index + 1 === req.body.id.length) {
 					res.status(200).json({
@@ -682,7 +682,7 @@ const deleteRecords = (req, res, next) => {
 			})
 		})
 	} else {
-		MaoyanPresaleModel.findByPk(idBody).then(result => {
+		MaoyanPreSaleModel.findByPk(idBody).then(result => {
 			console.log(result);
 			result.destroy().then(() => {
 				if (index + 1 === req.body.id.length) {
@@ -702,7 +702,7 @@ const deleteRecords = (req, res, next) => {
 };
 
 const exportCSV = (req, res, getTitle, rows, fileName) => {
-	MaoyanPresaleModel.findAll().then(response => {
+	MaoyanPreSaleModel.findAll().then(response => {
 		// console.log(res.json(response));
 		try {
 			if (sname == 'JSON') {
@@ -743,12 +743,12 @@ const exportCSV = (req, res, getTitle, rows, fileName) => {
 
 
 exports.crawlMovieList = crawlMovieList;
-exports.crawlMoviePresaleDetail = crawlMoviePresaleDetail;
-exports.crawlMoviePresalePortrait = crawlMoviePresalePortrait;
-exports.oneKeyMoviePresale = oneKeyMoviePresale;
+exports.crawlMoviePreSaleDetail = crawlMoviePreSaleDetail;
+exports.crawlMoviePreSalePortrait = crawlMoviePreSalePortrait;
+exports.oneKeyMoviePreSale = oneKeyMoviePreSale;
 exports.save = save;
-exports.saveOneMaoyanPresale = saveOneMaoyanPresale;
-exports.saveMultipleMaoyanPresale = saveMultipleMaoyanPresale;
+exports.saveOneMaoyanPreSale = saveOneMaoyanPreSale;
+exports.saveMultipleMaoyanPreSale = saveMultipleMaoyanPreSale;
 exports.getListByPagination = getListByPagination;
 exports.getListByDate = getListByDate;
 exports.crawlAndSave = crawlAndSave;

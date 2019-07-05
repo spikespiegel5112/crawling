@@ -1,15 +1,15 @@
 const express = require('express');
 const router = express.Router();
 
-const crawlerController = require('../controllers/crawlerMaoyanPresaleController');
+const crawlerController = require('../controllers/crawlerMaoyanPreSaleController');
 
 // router.get('/crawl', crawlerController.crawl);
 router.get('/crawlMovieList', crawlerController.crawlMovieList);
-router.get('/crawlMoviePresaleDetail', crawlerController.crawlMoviePresaleDetail);
-router.get('/crawlMoviePresalePortrait', crawlerController.crawlMoviePresalePortrait);
-router.get('/oneKeyMoviePresale', crawlerController.oneKeyMoviePresale);
-router.post('/saveOneMaoyanPresale', crawlerController.saveOneMaoyanPresale);
-router.post('/saveMultipleMaoyanPresale', crawlerController.saveMultipleMaoyanPresale);
+router.get('/crawlMoviePreSaleDetail', crawlerController.crawlMoviePreSaleDetail);
+router.get('/crawlMoviePreSalePortrait', crawlerController.crawlMoviePreSalePortrait);
+router.get('/oneKeyMoviePreSale', crawlerController.oneKeyMoviePreSale);
+router.post('/saveOneMaoyanPreSale', crawlerController.saveOneMaoyanPreSale);
+router.post('/saveMultipleMaoyanPreSale', crawlerController.saveMultipleMaoyanPreSale);
 // router.post('/save', crawlerController.save);
 router.get('/getListByPagination', crawlerController.getListByPagination);
 // router.post('/crawlAndSave', crawlerController.crawlAndSave);

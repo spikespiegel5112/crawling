@@ -42,17 +42,29 @@
       <el-table-column align="center" label="平台名称（中文）" prop='platformChineseName'></el-table-column>
       <el-table-column align="center" label="平台类型" prop='platformType'></el-table-column>
       <el-table-column align="center" label="想看数量" prop='numWantToSee'></el-table-column>
+      <el-table-column align="center" label="评分人数" prop='numOfRating'></el-table-column>
+      <el-table-column align="center" label="描述" prop='description'>
+        <template slot-scope="scope">
+          <el-button @click="checkDescription(scope)">查看</el-button>
+        </template>
+      </el-table-column>
 
 
       <el-table-column align="center" label="总评分" prop='rating'></el-table-column>
-      <el-table-column align="center" label="1到2分占比" prop='rating1To2'></el-table-column>
-      <el-table-column align="center" label="4到4分占比" prop='rating3To4'></el-table-column>
-      <el-table-column align="center" label="5到6分占比" prop='rating5To6'></el-table-column>
-      <el-table-column align="center" label="7到8分占比" prop='rating7To8'></el-table-column>
-      <el-table-column align="center" label="9到10分占比" prop='rating9To10'></el-table-column>
-      <el-table-column align="center" label="9到10分占比" prop='rating9To10'></el-table-column>
-      <el-table-column align="center" label="9到10分占比" prop='rating9To10'></el-table-column>
-
+      <el-table-column align="center" label="评分1到2分占比" prop='rating1To2'></el-table-column>
+      <el-table-column align="center" label="评分4到4分占比" prop='rating3To4'></el-table-column>
+      <el-table-column align="center" label="评分5到6分占比" prop='rating5To6'></el-table-column>
+      <el-table-column align="center" label="评分7到8分占比" prop='rating7To8'></el-table-column>
+      <el-table-column align="center" label="评分9到10分占比" prop='rating9To10'></el-table-column>
+      <el-table-column align="center" label="评分20岁以下占比" prop='ratingByAge20'></el-table-column>
+      <el-table-column align="center" label="评分20到24岁占比" prop='ratingByAge20To24'></el-table-column>
+      <el-table-column align="center" label="评分25到29岁占比" prop='ratingByAge25To29'></el-table-column>
+      <el-table-column align="center" label="评分30到34岁占比" prop='ratingByAge30To34'></el-table-column>
+      <el-table-column align="center" label="评分35到39岁占比" prop='ratingByAge35To39'></el-table-column>
+      <el-table-column align="center" label="评分一线城市占比" prop='ratingByTier1'></el-table-column>
+      <el-table-column align="center" label="评分二线城市占比" prop='ratingByTier2'></el-table-column>
+      <el-table-column align="center" label="评分三线城市占比" prop='ratingByTier3'></el-table-column>
+      <el-table-column align="center" label="评分四线城市占比" prop='ratingByTier4'></el-table-column>
 
       <el-table-column align="center" label="想看男性受众占比" prop='wantToSeeByGenderMale'>
         <!--        <template slot-scope="scope">-->
@@ -65,16 +77,24 @@
         <!--          {{String(scope.row.byGenderFemale.match(/[[1-9]\d*\.\d*|0\.\d*[1-9]\d*]$/g)).split(',')[1]}}-->
         <!--        </template>-->
       </el-table-column>
-      <el-table-column align="center" label="20岁以下占比" prop='wantToSeeByAge20'></el-table-column>
-      <el-table-column align="center" label="20到24岁占比" prop='wantToSeeByAge20To24'></el-table-column>
-      <el-table-column align="center" label="25到29岁占比" prop='wantToSeeByAge25To29'></el-table-column>
-      <el-table-column align="center" label="30到34岁占比" prop='wantToSeeByAge30To34'></el-table-column>
-      <el-table-column align="center" label="35到39岁占比" prop='wantToSeeByAge35To39'></el-table-column>
-      <el-table-column align="center" label="40岁以上占比" prop='wantToSeeByAge40'></el-table-column>
-      <el-table-column align="center" label="一线城市占比" prop='wantToSeeByTier1'></el-table-column>
-      <el-table-column align="center" label="二线城市占比" prop='wantToSeeByTier2'></el-table-column>
-      <el-table-column align="center" label="三线城市占比" prop='wantToSeeByTier3'></el-table-column>
-      <el-table-column align="center" label="四线城市占比" prop='wantToSeeByTier4'></el-table-column>
+      <el-table-column align="center" label="想看20岁以下占比" prop='wantToSeeByAge20'></el-table-column>
+      <el-table-column align="center" label="想看20到24岁占比" prop='wantToSeeByAge20To24'></el-table-column>
+      <el-table-column align="center" label="想看25到29岁占比" prop='wantToSeeByAge25To29'></el-table-column>
+      <el-table-column align="center" label="想看30到34岁占比" prop='wantToSeeByAge30To34'></el-table-column>
+      <el-table-column align="center" label="想看35到39岁占比" prop='wantToSeeByAge35To39'></el-table-column>
+      <el-table-column align="center" label="想看40岁以上占比" prop='wantToSeeByAge40'></el-table-column>
+      <el-table-column align="center" label="想看一线城市占比" prop='wantToSeeByTier1'></el-table-column>
+      <el-table-column align="center" label="想看二线城市占比" prop='wantToSeeByTier2'></el-table-column>
+      <el-table-column align="center" label="想看三线城市占比" prop='wantToSeeByTier3'></el-table-column>
+      <el-table-column align="center" label="想看四线城市占比" prop='wantToSeeByTier4'></el-table-column>
+
+      <el-table-column align="center" label="预售票房" prop='preSaleBoxInfo'></el-table-column>
+      <el-table-column align="center" label="预售排片占比" prop='preSaleShowRate'></el-table-column>
+      <el-table-column align="center" label="预售排片场次" prop='preSaleShowInfo'></el-table-column>
+
+      <el-table-column align="center" label="全球票房（美元）" prop='globalBoxInfo'></el-table-column>
+      <el-table-column align="center" label="北美票房（美元）" prop='northAmericaBoxInfo'></el-table-column>
+      <el-table-column align="center" label="IMDb评分" prop='imdbRating'></el-table-column>
 
 
       <el-table-column align="center" label="平均上座率" prop='avgSeatView'></el-table-column>
@@ -151,12 +171,12 @@
       <el-row :gutter="1">
         <el-col :span="2">
           <el-button type="primary" @click="getAllCrawlingIndex">
-            {{presaleListData.length===0?'获取索引':'重新获取索引'}}
+            {{preSaleWantToSeeListData.length===0?'获取索引':'重新获取索引'}}
           </el-button>
         </el-col>
         <el-col :span="2">
-          <el-button v-if="!crawlingFlag" :disabled="presaleListData.length===0" type="primary"
-                     @click="beginToCrawMovieData">
+          <el-button v-if="!crawlingFlag" :disabled="preSaleWantToSeeListData.length===0" type="primary"
+                     @click="beginToCrawRankingListMovieData">
             {{crawlingCount===0?'开始抓取':'重新抓取'}}
           </el-button>
           <el-button v-else type="danger" @click="stopCrawling">停止抓取</el-button>
@@ -201,7 +221,7 @@
                 </el-divider>
                 <el-row type="flex" justify="left">
                   <el-col :span="24">
-                    <!--          {{presaleListData}}-->
+                    <!--          {{preSaleWantToSeeListData}}-->
                     <el-timeline :style="clawerStyle">
                       <el-timeline-item v-for="(item, index) in rankingListData.filter(item=>!item.disabled)"
                                         :key="index"
@@ -237,6 +257,19 @@
                                  class="el-icon-check success"></i>
                               <i v-else="item.rankingListWantToSeePortraitSuccess===2" class="el-icon-close failed"></i>
                             </el-col>
+                            <el-col :span="2">
+                              首映日票房: <i v-if="item.rankingListWantToSeePortraitSuccess===0" class=""></i>
+                              <i v-else-if="item.rankingListWantToSeePortraitSuccess===1"
+                                 class="el-icon-check success"></i>
+                              <i v-else="item.rankingListWantToSeePortraitSuccess===2" class="el-icon-close failed"></i>
+                            </el-col>
+                            <el-col :span="2">
+                              全球票房: <i v-if="item.rankingListBoxOfficeGlobalSuccess===0" class=""></i>
+                              <i v-else-if="item.rankingListBoxOfficeGlobalSuccess===1"
+                                 class="el-icon-check success"></i>
+                              <i v-else="item.rankingListBoxOfficeGlobalSuccess===2" class="el-icon-close failed"></i>
+                            </el-col>
+
                           </el-row>
                         </el-card>
 
@@ -249,71 +282,7 @@
             </el-col>
           </el-row>
         </el-col>
-        <!--        <el-col :span="12">-->
-        <!--          <el-row type="flex" justify="left">-->
-        <!--            <el-col :span="14">-->
-        <!--              &lt;!&ndash;          {{rankingListCountLimit}}&ndash;&gt;-->
-        <!--              <el-input-number v-model="presaleCountLimit" :min="0"-->
-        <!--                               :max="presaleListData.length"></el-input-number>-->
-        <!--              <el-button type="primary" @click="handleChangeCounter">确定</el-button>-->
 
-        <!--            </el-col>-->
-
-        <!--          </el-row>-->
-        <!--          <el-row>-->
-        <!--            <el-col :span="24">-->
-        <!--              <el-card shadow="never">-->
-        <!--                <el-progress :text-inside="true" :stroke-width="20"-->
-        <!--                             :percentage="presaleListData.length!==0?Math.floor(crawlingCount/presaleListData.length*100):0"-->
-        <!--                             status="success"></el-progress>-->
-        <!--                <el-divider>-->
-        <!--                  <el-row>-->
-        <!--                    <el-col v-if="presaleListData.length>0&&crawlingCount<presaleListData.length" :span="24">-->
-        <!--                      共有{{presaleListData.length}}条数据，正在抓取第{{crawlingCount}}条...-->
-        <!--                    </el-col>-->
-        <!--                    <el-col v-else :span="24">-->
-        <!--                      共有{{presaleListData.length}}条数据，抓取完毕-->
-        <!--                    </el-col>-->
-        <!--                  </el-row>-->
-        <!--                </el-divider>-->
-        <!--                <el-row class="" type="flex" justify="left">-->
-        <!--                  <el-col :span="24">-->
-        <!--                    &lt;!&ndash;          {{presaleListData}}&ndash;&gt;-->
-        <!--                    <el-timeline :style="clawerStyle">-->
-        <!--                      <el-timeline-item v-for="(item, index) in presaleListData.filter(item=>!item.disabled)"-->
-        <!--                                        :key="index"-->
-        <!--                                        :timestamp="item.recordTime"-->
-        <!--                                        placement="top"-->
-        <!--                                        :color="item.color==='success'?'#91d929':'#e4e7ed'"-->
-        <!--                                        class="timelineitem"-->
-        <!--                      >-->
-        <!--                        <el-card shadow="hover">-->
-        <!--                          <el-row>-->
-        <!--                            <el-col :span="3" style="text-align: left">第{{index+1}}条</el-col>-->
-        <!--                            <el-col :span="4">-->
-        <!--                              详情: <i v-if="item.detailSuccess===0" class=""></i>-->
-        <!--                              <i v-else-if="item.detailSuccess===1" class="el-icon-check success"></i>-->
-        <!--                              <i v-else="item.detailSuccess===2" class="el-icon-close failed"></i>-->
-        <!--                            </el-col>-->
-        <!--                            <el-col :span="4">-->
-        <!--                              {{item.active}}-->
-        <!--                              画像: <i v-if="item.rankingListWantToSeePortraitSuccess===0" class=""></i>-->
-        <!--                              <i v-else-if="item.rankingListWantToSeePortraitSuccess===1" class="el-icon-check success"></i>-->
-        <!--                              <i v-else="item.rankingListWantToSeePortraitSuccess===2" class="el-icon-close failed"></i>-->
-        <!--                            </el-col>-->
-        <!--                          </el-row>-->
-        <!--                        </el-card>-->
-
-
-        <!--                      </el-timeline-item>-->
-        <!--                    </el-timeline>-->
-        <!--                  </el-col>-->
-        <!--                </el-row>-->
-
-        <!--              </el-card>-->
-        <!--            </el-col>-->
-        <!--          </el-row>-->
-        <!--        </el-col>-->
       </el-row>
 
 
@@ -343,6 +312,8 @@
         crawlRankingListMoreSectionsRequest: 'crawlerMaoyanRankingList/crawlRankingListMoreSections',
         crawlRankingListRatingRequest: 'crawlerMaoyanRankingList/crawlRankingListRating',
         crawlRankingListWantToSeePortraitRequest: 'crawlerMaoyanRankingList/crawlRankingListWantToSeePortrait',
+        crawlRankingListBoxOfficeBoxPremiereRequest: 'crawlerMaoyanRankingList/crawlRankingListBoxOfficeBoxPremiere',
+        crawlRankingListBoxOfficeGlobalRequest: 'crawlerMaoyanRankingList/crawlRankingListBoxOfficeGlobal',
 
         crawlMoviePreSaleDetailRequest: 'crawlerMaoyanPreSale/crawlMoviePreSaleDetail',
         crawlMoviePreSalePortraitRequest: 'crawlerMaoyanPreSale/crawlMoviePreSalePortrait',
@@ -445,7 +416,8 @@
         rankingListMovieData: [],
         rankingListData: [],
         crawlingCount: 0,
-        presaleListData: [],
+        preSaleWantToSeeListData: [],
+        preSaleWantToSeeListMovieData: [],
         crawlingFlag: false,
         rankingListCountLimit: 0,
         presaleCountLimit: 0
@@ -700,7 +672,7 @@
           console.log(response)
           this.loading = false
           // this.total = response.total;
-          let result = []
+          const result = []
           if (response.data.length !== 0) {
             response.data.forEach((item, index) => {
               result.push(Object.assign(item, {
@@ -749,10 +721,10 @@
             console.log(response)
             this.presaleCountLimit = response.data.length
 
-            this.presaleListData = response.data
+            this.preSaleWantToSeeListData = response.data
             response.data.forEach((item, index) => {
               if (index < this.presaleCountLimit) {
-                this.$set(this.presaleListData, index, Object.assign(item, {
+                this.$set(this.preSaleWantToSeeListData, index, Object.assign(item, {
                   detailSuccess: 0,
                   content: ['detailSuccess', 'rankingListWantToSeePortraitSuccess'],
                   color: 'sunccess',
@@ -763,7 +735,7 @@
               }
             })
             this.$message.success('获取预售列表成功')
-            resolve(this.presaleListData)
+            resolve(this.preSaleWantToSeeListData)
           }).catch(error => {
             this.$message.error(error)
             reject(error)
@@ -781,10 +753,10 @@
           console.log(response)
           this.presaleCountLimit = response.data.length
 
-          this.presaleListData = response.data
-          this.presaleListData.forEach((item, index) => {
+          this.preSaleWantToSeeListData = response.data
+          this.preSaleWantToSeeListData.forEach((item, index) => {
             if (index < this.presaleCountLimit) {
-              this.$set(this.presaleListData, index, Object.assign(item, {
+              this.$set(this.preSaleWantToSeeListData, index, Object.assign(item, {
                 preSaleWantToSeePortraitSuccess: 0,
                 content: 'detailSuccess' + 'preSaleWantToSeePortraitSuccess',
                 color: 'sunccess',
@@ -824,6 +796,7 @@
                 rankingListRatingSuccess: 0,
                 rankingListWantToSeePortraitSuccess: 0,
                 moreSectionsSuccess: 0,
+                rankingListBoxOfficeGlobalSuccess: 0,
                 content: 'detailSuccess' + 'rankingListWantToSeePortraitSuccess',
                 color: 'sunccess',
                 recordTime: '---',
@@ -839,7 +812,7 @@
         })
 
       },
-      async beginToCrawMovieData() {
+      async beginToCrawRankingListMovieData() {
         this.crawlingCount = 0
         this.rankingListMovieData = []
 
@@ -848,14 +821,6 @@
 
         let detailReadyFlag = false
         let portraitReadyFlag = false
-
-        this.rankingListData.forEach(item => {
-          item.color = ''
-          item.detailSuccess = 0
-          item.rankingListRatingSuccess = 0
-          item.rankingListWantToSeePortraitSuccess = 0
-          item.moreSectionsSuccess = 0
-        })
 
         const loop = () => {
           const crawlingCount = this.crawlingCount
@@ -873,7 +838,10 @@
                 timeout: 20000
               }).then(response1 => {
                 record.detail = response1.data
-
+                response1.data = Object.assign({
+                  movieId: movieId
+                }, response1.data)
+                // debugger
                 this.$set(this.rankingListData, crawlingCount, Object.assign(this.rankingListData[crawlingCount], {
                   detailSuccess: 1
                 }))
@@ -890,7 +858,7 @@
             })
           }
 
-          const getMoreSections = () => {
+          const getDetaiMoreSections = () => {
             return new Promise((resolve, reject) => {
               this.$http.get(this.$baseUrl + this.crawlRankingListMoreSectionsRequest, {
                 params: {
@@ -898,7 +866,7 @@
                   headerCode: 'rankingListDetailHeader'
                 }
               }).then(response1 => {
-                record.detail = response1.data
+                record.detailMoreSections = response1.data
 
                 this.$set(this.rankingListData, crawlingCount, Object.assign(this.rankingListData[crawlingCount], {
                   moreSectionsSuccess: 1
@@ -931,13 +899,13 @@
                 // debugger
                 this.$set(this.rankingListData, crawlingCount, Object.assign(this.rankingListData[crawlingCount], {
                   rankingListWantToSeePortraitSuccess: 1
-                  // color: 'success'
+
                 }))
                 resolve(response1.data)
               }).catch(error => {
                 this.$set(this.rankingListData, crawlingCount, Object.assign(this.rankingListData[crawlingCount], {
                   rankingListWantToSeePortraitSuccess: 2
-                  // color: 'failed'
+
                 }))
 
                 reject(error)
@@ -958,7 +926,7 @@
 
                 this.$set(this.rankingListData, crawlingCount, Object.assign(this.rankingListData[crawlingCount], {
                   rankingListRatingSuccess: 1
-                  // color: 'success'
+
                 }))
 
                 resolve(response1.data)
@@ -966,7 +934,65 @@
 
                 this.$set(this.rankingListData, crawlingCount, Object.assign(this.rankingListData[crawlingCount], {
                   rankingListRatingSuccess: 2
-                  // color: 'failed'
+
+                }))
+                reject(error)
+
+              })
+            })
+          }
+
+          const getRankingListPremiereBox = () => {
+            return new Promise((resolve, reject) => {
+              this.$http.get(this.$baseUrl + this.crawlRankingListBoxOfficeBoxPremiereRequest, {
+                params: {
+                  address: 'https://piaofang.maoyan.com/movie/' + movieId + '/premierebox',
+                  headerCode: 'rankingListDetailHeader'
+                },
+                timeout: 300000
+              }).then(response1 => {
+                record.rating = response1.data
+
+                this.$set(this.rankingListData, crawlingCount, Object.assign(this.rankingListData[crawlingCount], {
+                  RankingListPemiereBoxSuccess: 1
+
+                }))
+
+                resolve(response1.data)
+              }).catch(error => {
+
+                this.$set(this.rankingListData, crawlingCount, Object.assign(this.rankingListData[crawlingCount], {
+                  RankingListPemiereBoxSuccess: 2
+
+                }))
+                reject(error)
+
+              })
+            })
+          }
+
+          const getRankingListBoxOfficeGlobal = () => {
+            return new Promise((resolve, reject) => {
+              this.$http.get(this.$baseUrl + this.crawlRankingListBoxOfficeGlobalRequest, {
+                params: {
+                  address: 'https://piaofang.maoyan.com/movie/' + movieId + '/boxshowna',
+                  headerCode: 'rankingListDetailHeader'
+                },
+                timeout: 300000
+              }).then(response1 => {
+                record.rating = response1.data
+
+                this.$set(this.rankingListData, crawlingCount, Object.assign(this.rankingListData[crawlingCount], {
+                  rankingListBoxOfficeGlobalSuccess: 1
+
+                }))
+
+                resolve(response1.data)
+              }).catch(error => {
+
+                this.$set(this.rankingListData, crawlingCount, Object.assign(this.rankingListData[crawlingCount], {
+                  rankingListBoxOfficeGlobalSuccess: 2
+
                 }))
                 reject(error)
 
@@ -977,13 +1003,15 @@
           const getDetailPromise = getDetail()
           const getRankingListWantToSeePortraitPromise = getRankingListWantToSeePortrait()
           const getRankingListRatingPromise = getRankingListRating()
-          const getMoreSectionsPromise = getMoreSections()
+          const getMoreSectionsPromise = getDetaiMoreSections()
+          const getRankingListPremiereBoxPromise = getRankingListPremiereBox()
+          const getRankingListBoxOfficeGlobalPromise = getRankingListBoxOfficeGlobal()
 
-          Promise.all([getDetailPromise, getMoreSectionsPromise, getRankingListRatingPromise, getRankingListWantToSeePortraitPromise]).then(responseAll => {
-            console.log(responseAll)
+          Promise.all([getDetailPromise, getMoreSectionsPromise, getRankingListRatingPromise, getRankingListWantToSeePortraitPromise, getRankingListPremiereBoxPromise, getRankingListBoxOfficeGlobalPromise]).then(responseAll => {
+            console.log('responseAll', responseAll)
 
             this.rankingListData[crawlingCount].color = 'success'
-            this.$set(this.rankingListMovieData, crawlingCount, Object.assign(responseAll[0], responseAll[1], responseAll[2], responseAll[3]))
+            this.$set(this.rankingListMovieData, crawlingCount, Object.assign(responseAll[0], responseAll[1], responseAll[2], responseAll[3], responseAll[4], responseAll[5]))
 
             console.log('rankingListMovieData', this.rankingListMovieData)
             if (this.crawlingCount === this.rankingListCountLimit) {
@@ -994,7 +1022,7 @@
               this.crawlingCount++
             }
             if (this.crawlingFlag) {
-              this.presaleListData[crawlingCount].recordTime = this.$moment(Date.now()).format('hh:mm:ss')
+              this.rankingListData[crawlingCount].recordTime = this.$moment(Date.now()).format('hh:mm:ss')
               loop()
             }
 
@@ -1011,12 +1039,12 @@
             }
           })
         }
-
         loop()
       },
+
       async beginToCrawlPreSale() {
         this.crawlingCount = 0
-        this.rankingListMovieData = []
+        this.preSaleWantToSeeListData = []
 
         let result = []
         let record = {}
@@ -1027,7 +1055,7 @@
         const loop = () => {
           const crawlingCount = this.crawlingCount
           this.crawlingFlag = true
-          const movieId = this.presaleListData[crawlingCount].movieId
+          const movieId = this.preSaleWantToSeeListData[crawlingCount].movieId
           const getDetail = () => {
             return new Promise((resolve, reject) => {
               this.$http.get(this.$baseUrl + this.crawlMoviePreSaleDetailRequest, {
@@ -1038,14 +1066,14 @@
               }).then(response1 => {
                 record.detail = response1.data
 
-                this.$set(this.presaleListData, crawlingCount, Object.assign(this.presaleListData[crawlingCount], {
+                this.$set(this.preSaleWantToSeeListData, crawlingCount, Object.assign(this.preSaleWantToSeeListData[crawlingCount], {
                   detailSuccess: 1
                 }))
 
                 resolve(response1.data)
               }).catch(error => {
 
-                this.$set(this.presaleListData, crawlingCount, Object.assign(this.presaleListData[crawlingCount], {
+                this.$set(this.preSaleWantToSeeListData, crawlingCount, Object.assign(this.preSaleWantToSeeListData[crawlingCount], {
                   detailSuccess: 2
                 }))
                 reject(error)
@@ -1065,13 +1093,13 @@
               }).then(response1 => {
                 record.portrait = response1.data
 
-                this.$set(this.presaleListData, crawlingCount, Object.assign(this.presaleListData[crawlingCount], {
+                this.$set(this.preSaleWantToSeeListData, crawlingCount, Object.assign(this.preSaleWantToSeeListData[crawlingCount], {
                   rankingListWantToSeePortraitSuccess: 1,
                   color: 'success'
                 }))
                 resolve(response1.data)
               }).catch(error => {
-                this.$set(this.presaleListData, crawlingCount, Object.assign(this.presaleListData[crawlingCount], {
+                this.$set(this.preSaleWantToSeeListData, crawlingCount, Object.assign(this.preSaleWantToSeeListData[crawlingCount], {
                   rankingListWantToSeePortraitSuccess: 2,
                   color: 'failed'
                 }))
@@ -1092,12 +1120,12 @@
           Promise.all([getDetailPromise, getPreSaleWantToSeePortraitPromise]).then(responseAll => {
             console.log(responseAll)
 
-            this.$set(this.rankingListMovieData, crawlingCount, Object.assign(responseAll[0], responseAll[1]))
+            this.$set(this.preSaleWantToSeeListData, crawlingCount, Object.assign(responseAll[0], responseAll[1]))
 
-            console.log('rankingListMovieData', this.rankingListMovieData)
+            console.log('rankingListMovieData', this.preSaleWantToSeeListData)
 
             if (this.crawlingFlag) {
-              this.presaleListData[crawlingCount].recordTime = this.$moment(Date.now()).format('hh:mm:ss')
+              this.preSaleWantToSeeListData[crawlingCount].recordTime = this.$moment(Date.now()).format('hh:mm:ss')
               loop()
             }
 
@@ -1123,7 +1151,8 @@
       save() {
         if (this.crawlingCount === this.rankingListCountLimit) {
           console.log(this.rankingListMovieData)
-          this.$http.post(this.$baseUrl + this.saveMultipleMaoyanRankingListRecordRequest, this.rankingListMovieData.reverse()).then(response => {
+          debugger
+          this.$http.post(this.$baseUrl + this.saveMultipleMaoyanRankingListRecordRequest, this.rankingListMovieData).then(response => {
             this.$message.success('数据提交成功')
             this.getTableData()
             this.stepCrawlFlag = false
@@ -1133,10 +1162,18 @@
         }
       },
       handleChangeCounter(value) {
-        this.presaleListData.forEach((item, index) => {
-          this.$set(this.presaleListData, index, Object.assign(this.presaleListData[index], {
+        this.preSaleWantToSeeListData.forEach((item, index) => {
+          this.$set(this.preSaleWantToSeeListData, index, Object.assign(this.preSaleWantToSeeListData[index], {
             active: index < this.rankingListCountLimit
           }))
+        })
+      },
+      checkDescription(scope) {
+        this.$alert(scope.row.description, '电影描述', {
+          confirmButtonText: '关闭',
+          closeOnClickModal: true,
+          callback: action => {
+          }
         })
       }
 

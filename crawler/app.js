@@ -15,7 +15,7 @@ const MaoyanPresale = require('./models/MaoyanPresaleModel');
 const errorController = require('./controllers/errorController');
 const commonRoutes = require('./routers/commonRoutes');
 const crawlerMaoyanBoxOfficeRoutes = require('./routers/crawlerMaoyanBoxOfficeRoutes');
-const crawlerMaoyanPresaleRoutes = require('./routers/crawlerMaoyanPresaleRoutes');
+const crawlerMaoyanPreSaleRoutes = require('./routers/crawlerMaoyanPreSaleRoutes');
 const headerSettingsRoutes = require('./routers/headerSettings');
 const crawlerMaoyanRankingListRoutes = require('./routers/crawlerMaoyanRankingListRoutes');
 const settingsRoutes = require('./routers/settingsRoutes');
@@ -51,7 +51,7 @@ var corsOptions = {
 
 
 app.use('/crawlerMaoyanRankingList', cors(corsOptions), crawlerMaoyanRankingListRoutes);
-app.use('/crawlerMaoyanPresale', cors(corsOptions), crawlerMaoyanPresaleRoutes);
+app.use('/crawlerMaoyanPreSale', cors(corsOptions), crawlerMaoyanPreSaleRoutes);
 app.use('/crawlerMaoyanBoxOffice', cors(corsOptions), crawlerMaoyanBoxOfficeRoutes);
 app.use('/headerSettings', cors(corsOptions), headerSettingsRoutes);
 app.use('/settings', cors(corsOptions), settingsRoutes);

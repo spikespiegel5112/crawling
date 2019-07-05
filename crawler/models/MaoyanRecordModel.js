@@ -49,6 +49,7 @@ const MaoyanRecordModel = sequelize.define('MaoyanRecords', {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
+	// 详情数据更多部分
 	description: {
 		type: Sequelize.STRING,
 		allowNull: true
@@ -296,6 +297,24 @@ const MaoyanRecordModel = sequelize.define('MaoyanRecords', {
 	},
 	//
 	viewInfoV2: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+
+	// 全球票房
+
+	// 全球票房
+	globalBoxInfo: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+	// 北美票房
+	northAmericaBoxInfo: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+	// IMDB评分
+	imdbRating: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},

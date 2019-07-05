@@ -47,15 +47,25 @@ export const constantRouterMap = [{
     component: () => import('@/views/crawling/Maoyan'),
     meta: { title: '猫眼爬虫', icon: 'list' }
   }, {
-    path: 'maoyanWantSee',
-    name: 'maoyanWantSee',
-    component: () => import('@/views/crawling/MaoyanWantSee'),
-    meta: { title: '猫眼想看爬虫', icon: 'list' }
+    path: 'MaoyanPreSale',
+    name: 'maoyanPreSale',
+    component: () => import('@/views/crawling/MaoyanPreSale'),
+    meta: { title: '猫眼预售爬虫', icon: 'list' }
   }, {
     path: 'maoyanRankingList',
     name: 'maoyanRankingList',
     component: () => import('@/views/crawling/MaoyanRankingList'),
-    meta: { title: '猫眼排行榜爬虫', icon: 'list' }
+    meta: { title: '排行榜爬虫', icon: 'list' }
+  }, {
+    path: 'maoyanRatingList',
+    name: 'MaoyanRatingList',
+    component: () => import('@/views/crawling/MaoyanRatingList'),
+    meta: { title: '评分排行榜', icon: 'list' }
+  }, {
+    path: 'maoyanWantToSeeList',
+    name: 'MaoyanWantToSeeList',
+    component: () => import('@/views/crawling/MaoyanWantToSeeList'),
+    meta: { title: '想看排行榜', icon: 'list' }
   }]
 }, {
   path: '/settings',
