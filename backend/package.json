@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon --inspect app.js",
+    "start-pm2": "pm2 start app.js --name crawling",
     "inspect": "nodemon --debug-brk --inspect app.js"
   },
   "author": "spikespiegel <583288277@qq.com>",
