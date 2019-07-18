@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 
 const sequelize = require('../util/database');
 
-const MaoyanRecordsJson = sequelize.define('MaoyanRecords', {
+const MaoyanBoxOfficeRecordModel = sequelize.define('MaoyanBoxOfficeRecord', {
 	id: {
 		type: Sequelize.INTEGER,
 		autoIncrement: true,
@@ -123,4 +123,4 @@ const MaoyanRecordsJson = sequelize.define('MaoyanRecords', {
 
 });
 
-module.exports = MaoyanRecordsJson;
+module.exports = MaoyanBoxOfficeRecordModel;

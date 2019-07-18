@@ -101,9 +101,9 @@
     },
     data() {
       return {
-        getListByPaginationRequest: 'crawlerBoxOfficeMaoyan/getListByPagination',
-        crawlAndSaveRequest: 'crawlerBoxOfficeMaoyan/crawlAndSave',
-        deleteRecordRequest: 'crawlerBoxOfficeMaoyan/deleteRecords',
+        getListByPaginationRequest: 'crawlerMaoyanBoxOffice/getListByPagination',
+        crawlAndSaveRequest: 'crawlerMaoyanBoxOffice/crawlAndSave',
+        deleteRecordRequest: 'crawlerMaoyanBoxOffice/deleteRecords',
         getSettingsRequest: 'settings/getList',
         crawlerSettingFlag: false,
         crawlerSetting: {

@@ -5,7 +5,8 @@ const cors = require('cors');
 // const observe = require('object.observe');
 const sequelize = require('./util/database');
 
-const MaoyanRecords = require('./models/MaoyanRecordsJson');
+const MaoyanRecords = require('./models/MaoyanBoxOfficeRecordModel');
+const MaoyanBoxOfficeRecordModel = require('./models/MaoyanBoxOfficeRecordModel');
 const Dictionaries = require('./models/Dictionaries');
 const HeadersModel = require('./models/HeadersSettings');
 const SettingsModel = require('./models/SettingsModel');

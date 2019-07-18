@@ -1,6 +1,6 @@
 const express = require('express');
 const crawler = require('crawler');
-const MaoyanRecords = require('../models/MaoyanRecordsJson');
+const MaoyanRecords = require('../models/MaoyanBoxOfficeRecordModel');
 const SettingsModel = require('../models/SettingsModel');
 
 
@@ -274,7 +274,7 @@ const crawlAndSave = (req, res, next) => {
 		console.log('_crawlPromise', response);
 		const timestamp = Date.now();
 
-		response.data.list.reverse().forEach((item, index) => {
+		response.data.list.forEach((item, index) => {
 			_createRecord(item, timestamp).then(response2 => {
 				if (index === response.data.list.length - 1) {
 					res.status(200).json(response);
