@@ -171,11 +171,11 @@
       <el-row :gutter="1">
         <el-col :span="2">
           <el-button type="primary" @click="getAllCrawlingIndex">
-            {{preSaleWantToSeeListData.length===0?'获取索引':'重新获取索引'}}
+            {{rankingListData.length===0?'获取索引':'重新获取索引'}}
           </el-button>
         </el-col>
         <el-col :span="2">
-          <el-button v-if="!crawlingFlag" :disabled="preSaleWantToSeeListData.length===0" type="primary"
+          <el-button v-if="!crawlingFlag" :disabled="rankingListData.length===0" type="primary"
                      @click="beginToCrawRankingListMovieData">
             {{crawlingCount===0?'开始抓取':'重新抓取'}}
           </el-button>
@@ -312,7 +312,7 @@
         crawlRankingListMoreSectionsRequest: 'crawlerMaoyanRankingList/crawlRankingListMoreSections',
         crawlRankingListRatingRequest: 'crawlerMaoyanRankingList/crawlRankingListRating',
         crawlRankingListWantToSeePortraitRequest: 'crawlerMaoyanRankingList/crawlRankingListWantToSeePortrait',
-        crawlRankingListBoxOfficeBoxPremiereRequest: 'crawlerMaoyanRankingList/crawlRankingListBoxOfficeBoxPremiere',
+        crawlRankingListBoxOfficePremiereRequest: 'crawlerMaoyanRankingList/crawlRankingListBoxOfficePremiere',
         crawlRankingListBoxOfficeGlobalRequest: 'crawlerMaoyanRankingList/crawlRankingListBoxOfficeGlobal',
 
         crawlMoviePreSaleDetailRequest: 'crawlerMaoyanPreSale/crawlMoviePreSaleDetail',
@@ -944,7 +944,7 @@
 
           const getRankingListPremiereBox = () => {
             return new Promise((resolve, reject) => {
-              this.$http.get(this.$baseUrl + this.crawlRankingListBoxOfficeBoxPremiereRequest, {
+              this.$http.get(this.$baseUrl + this.crawlRankingListBoxOfficePremiereRequest, {
                 params: {
                   address: 'https://piaofang.maoyan.com/movie/' + movieId + '/premierebox',
                   headerCode: 'rankingListDetailHeader'

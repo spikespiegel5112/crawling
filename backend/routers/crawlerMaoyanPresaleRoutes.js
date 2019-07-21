@@ -6,7 +6,8 @@ const crawlerController = require('../controllers/crawlerMaoyanPreSaleController
 // router.get('/crawl', crawlerController.crawl);
 router.get('/crawlMovieList', crawlerController.crawlMovieList);
 router.get('/crawlMoviePreSaleDetail', crawlerController.crawlMoviePreSaleDetail);
-router.get('/crawlMoviePreSalePortrait', crawlerController.crawlMoviePreSalePortrait);
+router.get('/crawlPreSaleWantToSeePortrait', crawlerController.crawlPreSaleWantToSeePortrait);
+router.get('/crawlPreSaleBoxOfficePremiere', crawlerController.crawlPreSaleBoxOfficePremiere);
 router.get('/oneKeyMoviePreSale', crawlerController.oneKeyMoviePreSale);
 router.post('/saveOneMaoyanPreSale', crawlerController.saveOneMaoyanPreSale);
 router.post('/saveMultipleMaoyanPreSale', crawlerController.saveMultipleMaoyanPreSale);

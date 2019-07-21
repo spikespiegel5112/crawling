@@ -42,27 +42,31 @@
       <el-table-column align="center" label="平台名称（中文）" prop='platformChineseName'></el-table-column>
       <el-table-column align="center" label="平台类型" prop='platformType'></el-table-column>
       <el-table-column align="center" label="想看数量" prop='numWantToSee'></el-table-column>
-      <el-table-column align="center" label="男性受众占比" prop='byGenderMale'>
+      <el-table-column align="center" label="想看男性受众占比" prop='wantToSeeByGenderMale'>
         <!--        <template slot-scope="scope">-->
         <!--          {{JSON.parse(scope.row.byGenderMale.match(/[1-9]\d*\.\d*|0\.\d*[1-9]\d*$/))+'%'}}-->
         <!--        </template>-->
       </el-table-column>
-      <el-table-column align="center" label="女性受众占比" prop='byGenderFemale'>
+      <el-table-column align="center" label="想看女性受众占比" prop='wantToSeeByGenderFemale'>
         <!--        <template slot-scope="scope">-->
         <!--          {{scope.row.byGenderFemale.match(/[[1-9]\d*\.\d*|0\.\d*[1-9]\d*]$/g)}}-->
         <!--          {{String(scope.row.byGenderFemale.match(/[[1-9]\d*\.\d*|0\.\d*[1-9]\d*]$/g)).split(',')[1]}}-->
         <!--        </template>-->
       </el-table-column>
-      <el-table-column align="center" label="20岁以下占比" prop='byAge20'></el-table-column>
-      <el-table-column align="center" label="20到24岁占比" prop='byAge20To24'></el-table-column>
-      <el-table-column align="center" label="25到29岁占比" prop='byAge25To29'></el-table-column>
-      <el-table-column align="center" label="30到34岁占比" prop='byAge30To34'></el-table-column>
-      <el-table-column align="center" label="35到39岁占比" prop='byAge35To39'></el-table-column>
-      <el-table-column align="center" label="40岁以上占比" prop='byAge40'></el-table-column>
-      <el-table-column align="center" label="一线城市占比" prop='byTier1'></el-table-column>
-      <el-table-column align="center" label="二线城市占比" prop='byTier2'></el-table-column>
-      <el-table-column align="center" label="三线城市占比" prop='byTier3'></el-table-column>
-      <el-table-column align="center" label="四线城市占比" prop='byTier4'></el-table-column>
+      <el-table-column align="center" label="想看20岁以下占比" prop='wantToSeeByAge20'></el-table-column>
+      <el-table-column align="center" label="想看20到24岁占比" prop='wantToSeeByAge20To24'></el-table-column>
+      <el-table-column align="center" label="想看25到29岁占比" prop='wantToSeeByAge25To29'></el-table-column>
+      <el-table-column align="center" label="想看30到34岁占比" prop='wantToSeeByAge30To34'></el-table-column>
+      <el-table-column align="center" label="想看35到39岁占比" prop='wantToSeeByAge35To39'></el-table-column>
+      <el-table-column align="center" label="想看40岁以上占比" prop='wantToSeeByAge40'></el-table-column>
+      <el-table-column align="center" label="想看一线城市占比" prop='wantToSeeByTier1'></el-table-column>
+      <el-table-column align="center" label="想看二线城市占比" prop='wantToSeeByTier2'></el-table-column>
+      <el-table-column align="center" label="想看三线城市占比" prop='wantToSeeByTier3'></el-table-column>
+      <el-table-column align="center" label="想看四线城市占比" prop='wantToSeeByTier4'></el-table-column>
+
+      <el-table-column align="center" label="预售票房" prop='preSaleBoxInfo'></el-table-column>
+      <el-table-column align="center" label="预售排片占比" prop='preSaleShowRate'></el-table-column>
+      <el-table-column align="center" label="预售排片场次" prop='preSaleShowInfo'></el-table-column>
 
 
       <el-table-column align="center" label="操作" width="100px">
@@ -251,7 +255,8 @@
         getListByPaginationRequest: 'crawlerMaoyanPreSale/getListByPagination',
         crawlAndSaveRequest: 'crawlerMaoyanPreSale/crawlAndSave',
         crawlMoviePreSaleDetailRequest: 'crawlerMaoyanPreSale/crawlMoviePreSaleDetail',
-        crawlMoviePreSalePortraitRequest: 'crawlerMaoyanPreSale/crawlMoviePreSalePortrait',
+        crawlPreSaleWantToSeePortraitRequest: 'crawlerMaoyanPreSale/crawlPreSaleWantToSeePortrait',
+        crawlPreSaleBoxOfficePremiereRequest: 'crawlerMaoyanPreSale/crawlPreSaleBoxOfficePremiere',
         deleteRecordRequest: 'crawlerMaoyanPreSale/deleteRecords',
         getSettingsRequest: 'settings/getList',
 
@@ -349,7 +354,7 @@
         stepCrawlFlag: false,
         prepareToCrawlFlag: false,
         settingsList: [],
-        PreSaleData: [],
+        preSaleData: [],
         crawlingCount: 0,
         preSaleListData: [],
         crawlingFlag: false,
@@ -656,7 +661,7 @@
       },
       async beginToCrawPreSaleListMovieData() {
         this.crawlingCount = 0
-        this.PreSaleData = []
+        this.preSaleData = []
 
         const preSaleData = this.preSaleListData.filter(item => item.active)
         // const preSaleListCountLimit
@@ -698,7 +703,7 @@
 
           const getPortrait = () => {
             return new Promise((resolve, reject) => {
-              this.$http.get(this.$baseUrl + this.crawlMoviePreSalePortraitRequest, {
+              this.$http.get(this.$baseUrl + this.crawlPreSaleWantToSeePortraitRequest, {
                 params: {
                   address: 'https://piaofang.maoyan.com/movie/' + movieId,
                   headerCode: 'maoyanPreSalePortrait'
@@ -722,20 +727,47 @@
             })
           }
 
+          const getPreSaleBoxOfficePremiere = () => {
+            return new Promise((resolve, reject) => {
+              this.$http.get(this.$baseUrl + this.crawlPreSaleBoxOfficePremiereRequest, {
+                params: {
+                  address: 'https://piaofang.maoyan.com/movie/' + movieId,
+                  headerCode: 'maoyanPreSalePortrait'
+                }
+              }).then(response1 => {
+                record.portrait = response1.data
+
+                this.$set(this.preSaleListData, crawlingCount, Object.assign(preSaleData[crawlingCount], {
+                  premiereSuccess: 1,
+                  color: 'success'
+                }))
+                resolve(response1.data)
+              }).catch(error => {
+                this.$set(this.preSaleListData, crawlingCount, Object.assign(preSaleData[crawlingCount], {
+                  premiereSuccess: 2,
+                  color: 'failed'
+                }))
+
+                reject(error)
+              })
+            })
+          }
+
           const getDetailPromise = getDetail()
           const getPortraitPromise = getPortrait()
+          const getPreSaleBoxOfficePremierePromise = getPreSaleBoxOfficePremiere()
           if (this.crawlingCount === this.preSaleListCountLimit) {
             // debugger
             this.crawlingFlag = false
           } else {
             this.crawlingCount++
           }
-          Promise.all([getDetailPromise, getPortraitPromise]).then(responseAll => {
+          Promise.all([getDetailPromise, getPortraitPromise, getPreSaleBoxOfficePremierePromise]).then(responseAll => {
             console.log(responseAll)
 
-            this.$set(this.PreSaleData, crawlingCount, Object.assign(responseAll[0], responseAll[1]))
+            this.$set(this.preSaleData, crawlingCount, Object.assign(responseAll[0], responseAll[1], responseAll[2]))
 
-            console.log('PreSaleData', this.PreSaleData)
+            console.log('preSaleData', this.preSaleData)
 
             if (this.crawlingFlag) {
               this.preSaleListData[crawlingCount].recordTime = this.$moment(Date.now()).format('hh:mm:ss')
@@ -763,8 +795,8 @@
       },
       save() {
         if (this.crawlingCount === this.preSaleListCountLimit) {
-          console.log(this.PreSaleData)
-          this.$http.post(this.$baseUrl + this.saveMultipleMaoyanPreSaleRequest, this.PreSaleData.reverse()).then(response => {
+          console.log(this.preSaleData)
+          this.$http.post(this.$baseUrl + this.saveMultipleMaoyanPreSaleRequest, this.preSaleData).then(response => {
             this.$message.success('数据提交成功')
             this.getTableData()
             this.stepCrawlFlag = false

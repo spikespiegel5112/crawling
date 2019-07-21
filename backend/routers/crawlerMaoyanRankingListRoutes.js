@@ -10,12 +10,12 @@ router.get('/crawlRankingList', crawlerMaoyanRankingListController.crawlRankingL
 router.post('/crawlRankingListByYear', crawlerMaoyanRankingListController.crawlRankingListByYear);
 router.get('/crawlRankingListBoxOfficeDetail', crawlerMaoyanRankingListController.crawlRankingListBoxOfficeDetail);
 router.get('/crawlRankingListBoxOfficeGlobal', crawlerMaoyanRankingListController.crawlRankingListBoxOfficeGlobal);
-router.get('/crawlRankingListBoxOfficeBoxPremiere', crawlerMaoyanRankingListController.crawlRankingListBoxOfficeBoxPremiere);
+router.get('/crawlRankingListBoxOfficePremiere', crawlerMaoyanRankingListController.crawlRankingListBoxOfficePremiere);
 
 router.get('/crawlRankingListDetail', crawlerMaoyanRankingListController.crawlRankingListDetail);
 router.get('/crawlRankingListMoreSections', crawlerMaoyanRankingListController.crawlRankingListMoreSections);
 router.get('/crawlRankingListRating', crawlerMaoyanRankingListController.crawlRankingListRating);
-router.get('/crawlRankingListPreSale', crawlerMaoyanRankingListController.crawlRankingListPreSale);
+router.get('/crawlRankingListPremiereBox', crawlerMaoyanRankingListController.crawlRankingListPremiereBox);
 
 router.get('/crawlRankingListWantToSeePortrait', crawlerMaoyanRankingListController.crawlRankingListWantToSeePortrait);
 router.post('/saveOneRankingListRecord', crawlerMaoyanRankingListController.saveOneRankingListRecord);

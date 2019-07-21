@@ -1,6 +1,8 @@
 const express = require('express');
 const find = require('cheerio-eq');
 const crawler = require('crawler');
+
+const commonController = require('./commonController');
 const MaoyanPreSaleModel = require('../models/MaoyanPreSaleModel');
 const SettingsModel = require('../models/SettingsModel');
 const {AsyncParser} = require('json2csv');
@@ -11,6 +13,14 @@ const fs = require('fs');
 let headers = {};
 
 let dataJSONHeadersSample = {};
+
+const _trimData = selector => {
+	let result = selector.html().replace('.', '').split(';');
+	// console.log('_trimData+++++++++++++++++', result)
+	return result.filter((item, index) => index < result.length - 2).map(item => {
+		return item + ';'
+	}).join('')
+};
 const crawlPagePromise = (req, res, next) => {
 	return new Promise(async (resolve, reject) => {
 		let $ = {};
@@ -160,20 +170,23 @@ const _createMaoyanPreSaleRecord = (requestBody, timestamp) => {
 			"platformChineseName": requestBody.platformChineseName,
 			"platformType": requestBody.platformType,
 			"numWantToSee": requestBody.numWantToSee,
-			"byGenderMale": requestBody.byGenderMale,
-			"byGenderFemale": requestBody.byGenderFemale,
 
+			"wantToSeeByGenderMale": requestBody.byGenderMale,
+			"wantToSeeByGenderFemale": requestBody.byGenderFemale,
+			"wantToSeeByAge20": requestBody.byAge20,
+			"wantToSeeByAge20To24": requestBody.byAge20To24,
+			"wantToSeeByAge25To29": requestBody.byAge25To29,
+			"wantToSeeByAge30To34": requestBody.byAge30To34,
+			"wantToSeeByAge35To39": requestBody.byAge35To39,
+			"wantToSeeByAge40": requestBody.byAge40,
+			"wantToSeeByTier1": requestBody.byTier1,
+			"wantToSeeByTier2": requestBody.byTier2,
+			"wantToSeeByTier3": requestBody.byTier3,
+			"wantToSeeByTier4": requestBody.byTier4,
 
-			"byAge20": requestBody.byAge20,
-			"byAge20To24": requestBody.byAge20To24,
-			"byAge25To29": requestBody.byAge25To29,
-			"byAge30To34": requestBody.byAge30To34,
-			"byAge35To39": requestBody.byAge35To39,
-			"byAge40": requestBody.byAge40,
-			"byTier1": requestBody.byTier1,
-			"byTier2": requestBody.byTier2,
-			"byTier3": requestBody.byTier3,
-			"byTier4": requestBody.byTier4,
+			"premiereBoxInfo": requestBody.premiereBoxInfo,
+			"premiereShowRate": requestBody.premiereShowRate,
+			"premiereShowInfo": requestBody.premiereShowInfo,
 		}).then(result => {
 			// console(result);
 			resolve(result)
@@ -256,70 +269,6 @@ const _crawlMoviePreSaleDetailPromise = (req, res, next) => {
 	})
 };
 
-const _crawlMoviePreSalePortraitPromise = (req, res, next) => {
-	return new Promise(async (resolve, reject) => {
-		console.log('_crawlMoviePreSalePortraitPromise+++++', req.query);
-
-		req.query = Object.assign(req.query, {
-			address: encodeURI(req.query.address + '/wantindex?city_tier=0&city_id=0&cityName=全国')
-			// address: req.query.address + '/wantindex?city_tier=0&city_id=0&cityName=全国'
-		});
-
-		try {
-			const response = await crawlPagePromise(req, res, next);
-
-			console.log('_crawlMoviePreSalePortraitPromise(req, res, next)+++++', req.query);
-			// res.status(200).json({
-			// 	data: req.query
-			// });
-			// console.log('crawlPagePromise', response);
-			const $ = response.$;
-			// console.log('$+++++++++', titleEL.text());
-
-			const isEmpty = $(".bar-group .single-bar text").text() === '' ? true : false;
-
-			const rawData = {
-
-				byAge20: find($, ".bar-group .single-bar text:eq(0)").text(),
-				byAge20To24: find($, ".bar-group .single-bar text:eq(1)").text(),
-				byAge25To29: find($, ".bar-group .single-bar text:eq(2)").text(),
-				byAge30To34: find($, ".bar-group .single-bar text:eq(3)").text(),
-				byAge35To39: find($, ".bar-group .single-bar text:eq(4)").text(),
-				byAge40: find($, ".bar-group .single-bar text:eq(5)").text(),
-				byTier1: find($, ".linebars-list .linebars-item .linebars-value:eq(0)").text(),
-				byTier2: find($, ".linebars-list .linebars-item .linebars-value:eq(1)").text(),
-				byTier3: find($, ".linebars-list .linebars-item .linebars-value:eq(2)").text(),
-				byTier4: find($, ".linebars-list .linebars-item .linebars-value:eq(3)").text(),
-				// request: req.query,
-				// html: response.body
-			};
-
-			const result = {
-				// byAge20: rawData.byAge20.split('%')[0],
-				byAge20: rawData.byAge20.split('%'),
-				byAge20To24: rawData.byAge20To24.split('%')[1],
-				byAge25To29: rawData.byAge25To29.split('%')[2],
-				byAge30To34: rawData.byAge30To34.split('%')[3],
-				byAge35To39: rawData.byAge35To39.split('%')[4],
-				byAge40: rawData.byAge40.split('%')[5],
-				byTier1: rawData.byTier1.split('%')[0],
-				byTier2: rawData.byTier2.split('%')[1],
-				byTier3: rawData.byTier3.split('%')[2],
-				byTier4: rawData.byTier4.split('%')[3],
-			};
-			console.log('_crawlMoviePreSaleDetailPromise result+++++++++', result);
-
-			resolve(rawData)
-
-		} catch (e) {
-			res.status(400).json({
-				error: e
-			});
-			reject(e)
-		}
-
-	})
-};
 
 const crawlMovieList = async (req, res, next) => {
 	_crawlMovieListPromise(req, res, next).then((response) => {
@@ -386,23 +335,152 @@ const crawlMoviePreSaleDetail = async (req, res, next) => {
 	})
 };
 
-const crawlMoviePreSalePortrait = async (req, res, next) => {
+const crawlPreSaleWantToSeePortrait = async (req, res, next) => {
 	return new Promise((resolve, reject) => {
-		_crawlMoviePreSalePortraitPromise(req, res, next).then(response => {
-			console.log('_crawlMoviePreSalePortrait+++++++++++++++++++++++++++++++', response);
-			resolve(response);
+		_crawlPreSaleWantToSeePortraitPromise(req, res, next).then(response => {
+			console.log('_crawlPreSaleWantToSeePortrait+++++++++++++++++++++++++++++++', response);
 			res.status(200).json({
 				data: response
 			});
 		}).catch(error => {
-			reject(error);
 			res.status(400).json({
 				error: error
 			});
 		})
 	})
 };
+const _crawlPreSaleWantToSeePortraitPromise = (req, res, next) => {
+	return new Promise(async (resolve, reject) => {
+		console.log('_crawlPreSaleWantToSeePortraitPromise+++++', req.query);
 
+		req.query = Object.assign(req.query, {
+			address: encodeURI(req.query.address + '/wantindex?city_tier=0&city_id=0&cityName=全国')
+			// address: req.query.address + '/wantindex?city_tier=0&city_id=0&cityName=全国'
+		});
+
+		try {
+			const response = await crawlPagePromise(req, res, next);
+
+			console.log('_crawlPreSaleWantToSeePortraitPromise(req, res, next)+++++', req.query);
+
+			// console.log('crawlPagePromise', response);
+			const $ = response.$;
+			// console.log('$+++++++++', titleEL.text());
+
+			const isEmpty = $(".no-persona").text() !== '';
+
+			if (isEmpty) {
+				const rawData = {
+					wantToSeeByGenderMale: '',
+					wantToSeeByGenderFemale: '',
+					wantToSeeByAge20: '',
+					wantToSeeByAge20To24: '',
+					wantToSeeByAge25To29: '',
+					wantToSeeByAge30To34: '',
+					wantToSeeByAge35To39: '',
+					wantToSeeByAge40: '',
+					wantToSeeByTier1: '',
+					wantToSeeByTier2: '',
+					wantToSeeByTier3: '',
+					wantToSeeByTier4: '',
+				};
+				// res.status(200).json({
+				// 	data: rawData
+				// });
+				resolve(rawData)
+			} else {
+				const base64 = $('#js-nuwa').html().match(/(?<=src:url\().+.(?=\)\sformat\("woff"\))/)[0];
+				const rawData = {
+					wantToSeeByGenderMale: await commonController.parseDecimal(_trimData(find($, '.stackcolumn-desc .cs:eq(0)')), base64) + '%',
+					wantToSeeByGenderFemale: await commonController.parseDecimal(_trimData(find($, '.stackcolumn-desc .cs:eq(1)')), base64) + '%',
+					wantToSeeByAge20: find($, ".bar-group .single-bar text:eq(0)").text(),
+					wantToSeeByAge20To24: find($, ".bar-group .single-bar text:eq(1)").text(),
+					wantToSeeByAge25To29: find($, ".bar-group .single-bar text:eq(2)").text(),
+					wantToSeeByAge30To34: find($, ".bar-group .single-bar text:eq(3)").text(),
+					wantToSeeByAge35To39: find($, ".bar-group .single-bar text:eq(4)").text(),
+					wantToSeeByAge40: find($, ".bar-group .single-bar text:eq(5)").text(),
+					wantToSeeByTier1: find($, ".linebars-list .linebars-item .linebars-value:eq(0)").text(),
+					wantToSeeByTier2: find($, ".linebars-list .linebars-item .linebars-value:eq(1)").text(),
+					wantToSeeByTier3: find($, ".linebars-list .linebars-item .linebars-value:eq(2)").text(),
+					wantToSeeByTier4: find($, ".linebars-list .linebars-item .linebars-value:eq(3)").text(),
+					// request: req.query,
+					// html: response.body
+				};
+
+				const result = {
+					wantToSeeByGenderMale: rawData.wantToSeeByGenderMale,
+					wantToSeeByGenderFemale: rawData.wantToSeeByGenderFemale,
+					wantToSeeByAge20: rawData.wantToSeeByAge20.split('%'),
+					wantToSeeByAge20To24: rawData.wantToSeeByAge20To24.split('%')[1],
+					wantToSeeByAge25To29: rawData.wantToSeeByAge25To29.split('%')[2],
+					wantToSeeByAge30To34: rawData.wantToSeeByAge30To34.split('%')[3],
+					wantToSeeByAge35To39: rawData.wantToSeeByAge35To39.split('%')[4],
+					wantToSeeByAge40: rawData.wantToSeeByAge40.split('%')[5],
+					wantToSeeByTier1: rawData.wantToSeeByTier1.split('%')[0],
+					wantToSeeByTier2: rawData.wantToSeeByTier2.split('%')[1],
+					wantToSeeByTier3: rawData.wantToSeeByTier3.split('%')[2],
+					wantToSeeByTier4: rawData.wantToSeeByTier4.split('%')[3],
+				};
+				console.log('_crawlMoviePreSaleDetailPromise result+++++++++', result);
+
+				resolve(rawData)
+			}
+
+
+		} catch (e) {
+			res.status(400).json({
+				error: e
+			});
+			reject(e)
+		}
+
+	})
+};
+
+const crawlPreSaleBoxOfficePremiere = async (req, res, next) => {
+
+	_crawlPreSaleBoxOfficePremierePromise(req, res, next).then(response => {
+		console.log('_crawlRankingListBoxOfficeDetailPromise+++++++++++++++++++++++++++++++', response);
+		res.status(200).json({
+			data: response
+		});
+	}).catch(error => {
+		res.status(400).json({
+			error2: error
+		});
+	})
+};
+const _crawlPreSaleBoxOfficePremierePromise = async (req, res, next) => {
+	return new Promise(async (resolve, reject) => {
+
+		try {
+
+			const response = await commonController.crawlPagePromise(req, res, next);
+
+			console.log('_crawlRankingListBoxOfficePremierePromise+++++', req.query);
+			// console.log('commonController.crawlPagePromise', response);
+			const $ = response.$;
+			// const base64 = $('#js-nuwa').html().match(/(?<=src:url\().+.(?=\)\sformat\("woff"\))/)[0];
+
+			const rawData = {
+				premiereBoxInfo: find($, '.box-summary .box-item:eq(0) .box-num').text() + find($, '.box-summary .box-item:eq(0) .box-unit').text(),
+				premiereShowRate: find($, '.box-summary .box-item:eq(1) .box-num').text(),
+				premiereShowInfo: find($, '.box-summary .box-item:eq(2) .box-num').text() + find($, '.box-summary .box-item:eq(2) .box-unit').text()
+			};
+			const result = {
+				premiereBoxInfo: rawData.premiereBoxInfo,
+				premiereShowRate: rawData.premiereShowRate,
+				premiereShowInfo: rawData.premiereShowInfo,
+			};
+			console.log('_crawlRankingListBoxOfficeGlobalPromise result+++++++++', result);
+
+			resolve(result)
+		} catch (e) {
+			reject(e)
+		}
+
+	})
+};
 const oneKeyMoviePreSale = async (req, res, next) => {
 	let address1 = "https://piaofang.maoyan.com/store";
 	let queryPreSaleList = Object.assign(req, {
@@ -456,7 +534,7 @@ const oneKeyMoviePreSale = async (req, res, next) => {
 
 			console.log(data);
 
-			dataPreSalePortrait = await _crawlMoviePreSalePortraitPromise(Object.assign(req, queryPreSalePortrait), res, next);
+			dataPreSalePortrait = await _crawlPreSaleWantToSeePortraitPromise(Object.assign(req, queryPreSalePortrait), res, next);
 
 			result.push({
 				movieId: movieId,
@@ -752,7 +830,8 @@ const exportCSV = (req, res, getTitle, rows, fileName) => {
 
 exports.crawlMovieList = crawlMovieList;
 exports.crawlMoviePreSaleDetail = crawlMoviePreSaleDetail;
-exports.crawlMoviePreSalePortrait = crawlMoviePreSalePortrait;
+exports.crawlPreSaleWantToSeePortrait = crawlPreSaleWantToSeePortrait;
+exports.crawlPreSaleBoxOfficePremiere = crawlPreSaleBoxOfficePremiere;
 exports.oneKeyMoviePreSale = oneKeyMoviePreSale;
 exports.save = save;
 exports.saveOneMaoyanPreSale = saveOneMaoyanPreSale;

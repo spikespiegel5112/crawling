@@ -9,7 +9,7 @@ const MaoyanPresaleModel = sequelize.define('MaoyanPresale', {
 		allowNull: true,
 		primaryKey: true
 	},
-	timestamp:{
+	timestamp: {
 		type: Sequelize.STRING,
 		allowNull: false
 	},
@@ -45,51 +45,63 @@ const MaoyanPresaleModel = sequelize.define('MaoyanPresale', {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	byGenderMale: {
+	wantToSeeByGenderMale: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	byGenderFemale: {
+	wantToSeeByGenderFemale: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	byAge20: {
+	wantToSeeByAge20: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	byAge20To24: {
+	wantToSeeByAge20To24: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	byAge25To29: {
+	wantToSeeByAge25To29: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	byAge30To34: {
+	wantToSeeByAge30To34: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	byAge35To39: {
+	wantToSeeByAge35To39: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	byAge40: {
+	wantToSeeByAge40: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	byTier1: {
+	wantToSeeByTier1: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	byTier2: {
+	wantToSeeByTier2: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	byTier3: {
+	wantToSeeByTier3: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	byTier4: {
+	wantToSeeByTier4: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+	premiereBoxInfo: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+	premiereShowRate: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+	premiereShowInfo: {
 		type: Sequelize.STRING,
 		allowNull: true
 	}
