@@ -24,7 +24,8 @@
     <el-table :data="tableList" v-loading.body="listLoading" element-loading-text="Loading" border fit
               highlight-current-row
               @selection-change="handleSelectionChange"
-              :height="tableHeight">
+              :height="tableHeight"
+              @row-click="handleClickRow">
       <el-table-column type="selection" width="40"></el-table-column>
       <el-table-column label="No" type="index" width="45" align="center" fixed></el-table-column>
       <el-table-column align="center" label="电影名称" prop='movieName' width="200"></el-table-column>
@@ -230,7 +231,12 @@
         }).then(response => {
           console.log('getListByPaginationRequest', response)
 
-          this.tableList = response.data
+          let data = response.data.map((item, index) => {
+            return Object.assign(item, {
+              _index: index
+            })
+          })
+          this.tableList = data
           this.total = response.pagination.total
           this.listLoading = false
         })
@@ -454,6 +460,11 @@
           }
 
         })
+      },
+      handleClickRow(row, column, e) {
+        console.log('row', row)
+        console.log('column', column)
+        console.log('e', e)
       }
 
     }

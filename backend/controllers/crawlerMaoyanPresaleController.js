@@ -201,34 +201,6 @@ const _createMultipleMaoyanPreSaleRecord = (requestBody, timestamp) => {
 	})
 };
 
-const _crawlMovieListPromise = (req, res, next) => {
-	return new Promise((resolve, reject) => {
-		console.log('_crawlMovieListPromise++++++++', req.query);
-		crawlPagePromise(req, res, next).then(response => {
-			const $ = response.$;
-			let result = [];
-			let titleEL = $("#movie-list section article");
-			Object.keys(titleEL).forEach((item, index) => {
-				// console.log('item+++++++', item);
-				if (Number(item).toString() !== 'NaN') {
-					// console.log('item+++++++', Number(item));
-					let itemValue = titleEL[item].attribs['data-com'];
-					result.push({
-						indexOf: itemValue.indexOf('/movie/'),
-						movieId: itemValue.replace(/[^0-9]/ig, ""),
-						title: find($, "#movie-list section article:eq(" + index + ") .title").text()
-					})
-
-				}
-			});
-			console.log('titleEL+++++++++', titleEL.options);
-
-			resolve(result)
-		}).catch(error => {
-			reject(error)
-		})
-	})
-};
 
 const _crawlMoviePreSaleDetailPromise = (req, res, next) => {
 	return new Promise(async (resolve, reject) => {
@@ -358,6 +330,42 @@ const crawlMovieList = async (req, res, next) => {
 		res.status(400).json({
 			error: error
 		});
+	})
+};
+
+const _crawlMovieListPromise = (req, res, next) => {
+	return new Promise((resolve, reject) => {
+		console.log('_crawlMovieListPromise++++++++', req.query);
+		crawlPagePromise(req, res, next).then(response => {
+			const $ = response.$;
+			let result = [];
+			let titleEL = $("#movie-list section article");
+			let limit = Number(req.query.limit);
+			// res.status(200).json({
+			// 	limit:limit
+			// });
+			let offset = 0;
+
+			Object.keys(titleEL).forEach((item, index) => {
+				// console.log('item+++++++', item);
+				if (Number(item).toString() !== 'NaN') {
+					// console.log('item+++++++', Number(item));
+					if (index < Number(limit) || Number(limit) === 0 || limit === '' || limit === undefined) {
+						let itemValue = titleEL[item].attribs['data-com'];
+						result.push({
+							indexOf: itemValue.indexOf('/movie/'),
+							movieId: itemValue.replace(/[^0-9]/ig, ""),
+							title: find($, "#movie-list section article:eq(" + index + ") .title").text()
+						})
+					}
+				}
+			});
+			console.log('titleEL+++++++++', titleEL.options);
+
+			resolve(result)
+		}).catch(error => {
+			reject(error)
+		})
 	})
 };
 

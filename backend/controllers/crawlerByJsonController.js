@@ -254,16 +254,52 @@ const save = (req, res, next) => {
 	};
 	const timestamp = Date.now();
 
-	_createRecord(req, timestamp).then(response => {
-		res.status(200).json({
-			data: req
-		})
+	MaoyanRecords.create({
+		timestamp: _timestamp,
+		"avgSeatView": requestBody.avgSeatView,
+		"avgShowView": requestBody.avgShowView,
+		"avgViewBox": requestBody.avgViewBox,
+		"boxInfo": requestBody.boxInfo,
+		"boxRate": requestBody.boxRate,
+		"movieId": requestBody.movieId,
+		"movieName": requestBody.movieName,
+		"myRefundNumInfo": requestBody.myRefundNumInfo,
+		"myRefundRateInfo": requestBody.myRefundRateInfo,
+		"onlineBoxRate": requestBody.onlineBoxRate,
+		"refundViewInfo": requestBody.refundViewInfo,
+		"refundViewRate": requestBody.refundViewRate,
+		"releaseInfo": requestBody.releaseInfo,
+		"releaseInfoColor": requestBody.releaseInfoColor,
+		"seatRate": requestBody.seatRate,
+		"showInfo": requestBody.showInfo,
+		"showRate": requestBody.showRate,
+		"splitAvgViewBox": requestBody.splitAvgViewBox,
+		"splitBoxInfo": requestBody.splitBoxInfo,
+		"splitBoxRate": requestBody.splitBoxRate,
+		"splitSumBoxInfo": requestBody.splitSumBoxInfo,
+		"sumBoxInfo": requestBody.sumBoxInfo,
+		"viewInfo": requestBody.viewInfo,
+		"viewInfoV2": requestBody.viewInfoV2,
+	}).then(result => {
+		console(result);
+		// res.status(200).json({
+		// 	data: req
+		// })
 	}).catch(error => {
 		res.status(500).json({
 			message: error
 		})
 	})
 
+	// _createRecord(req, timestamp).then(response => {
+	// 	res.status(200).json({
+	// 		data: req
+	// 	})
+	// }).catch(error => {
+	// 	res.status(500).json({
+	// 		message: error
+	// 	})
+	// })
 
 };
 

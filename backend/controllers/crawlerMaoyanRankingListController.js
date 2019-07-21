@@ -123,10 +123,7 @@ const _crawlRankingListPromise = (req, res, next) => {
 							data: itemValue,
 							indexOf: itemValue.indexOf('/movie/'),
 						})
-
 					}
-
-
 				} else {
 					offset++;
 				}

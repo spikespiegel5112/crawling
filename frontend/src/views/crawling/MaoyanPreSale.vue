@@ -114,7 +114,7 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="stepCrawlFlag" width="1600px" top="1vh">
       <el-row :gutter="1">
         <el-col :span="4">
-          <el-button type="primary" @click="getAllCrawlingIndex">
+          <el-button type="primary" @click="prepareToCrawlFlag=true">
             {{preSaleListData.length===0?'获取索引':'重新获取索引'}}
           </el-button>
           <el-button v-if="!crawlingFlag" :disabled="preSaleListData.length===0" type="primary"
@@ -135,22 +135,23 @@
         <el-col :span="24">
           <el-row type="flex" justify="left">
 
-            <el-col :span="14">
+            <el-col :span="5">
               <!--          {{preSaleListCountLimit}}-->
               <el-input-number v-model="preSaleListCountLimit" :min="0"></el-input-number>
               <el-button type="primary" @click="handleChangeCounter">确定</el-button>
 
             </el-col>
-            <el-col :span="3">
+            <el-col :span="19">
+              <el-progress :text-inside="true" :stroke-width="20"
+                           :percentage="preSaleListData.length!==0?Math.floor(crawlingCount/preSaleListData.filter(item=>item.active).length*100):0"
+                           status="success"></el-progress>
             </el-col>
 
           </el-row>
           <el-row>
             <el-col :span="24">
               <el-card shadow="never">
-                <el-progress :text-inside="true" :stroke-width="20"
-                             :percentage="preSaleListData.length!==0?Math.floor(crawlingCount/preSaleListData.length*100):0"
-                             status="success"></el-progress>
+
                 <el-divider>
                   <el-row>
                     <el-col v-if="preSaleListData.length>0&&crawlingCount<preSaleListData.length" :span="24">
@@ -165,7 +166,7 @@
                   <el-col :span="24">
                     <!--          {{preSaleListData}}-->
                     <el-timeline :style="clawerStyle">
-                      <el-timeline-item v-for="(item, index) in preSaleListData.filter(item=>!item.disabled)"
+                      <el-timeline-item v-for="(item, index) in preSaleListData.filter(item=>item.active)"
                                         :key="index"
                                         :timestamp="item.recordTime"
                                         placement="top"
@@ -220,105 +221,20 @@
         </el-col>
       </el-row>
     </el-dialog>
+    <el-dialog title="准备爬取" :visible.sync="prepareToCrawlFlag" width="600px">
+      <el-radio-group v-model="crawlerCountType" @change="handleChangeLimitType">
+        <el-radio :label="0">全部</el-radio>
+        <el-radio :label="1">部分</el-radio>
+        <el-input-number v-model="preSaleListCountLimit" :disabled="crawlerCountType===0"
+                         @change="handleChangeCountLimit"
+                         :min="0"></el-input-number>
+
+      </el-radio-group>
+
+      <el-button type="primary" @click="getAllCrawlingIndex">开始抓取列表</el-button>
+    </el-dialog>
+
   </el-row>
-
-  <!--    分步抓取-->
-  <!--    <el-dialog :title="textMap[dialogStatus]" :visible.sync="stepCrawlFlag" width="850px">-->
-  <!--      <el-row type="flex" justify="left">-->
-  <!--        <el-col :span="5">-->
-  <!--          &lt;!&ndash;          {{crawlingFlag}}&ndash;&gt;-->
-  <!--          &lt;!&ndash;          {{crawlingCount }}&ndash;&gt;-->
-  <!--          &lt;!&ndash;          {{crawlingCountLimit}}&ndash;&gt;-->
-  <!--          <el-button type="primary" @click="getPreSaleList">-->
-  <!--            {{preSaleListData.length===0?'获取索引':'重新获取索引'}}-->
-  <!--          </el-button>-->
-
-
-  <!--        </el-col>-->
-
-  <!--        <el-col :span="4">-->
-  <!--          <el-button v-if="!crawlingFlag" :disabled="preSaleListData.length===0" type="primary" @click="beginToCrawl">-->
-  <!--            {{preSaleListData.length===0?'开始抓取':'重新抓取'}}-->
-  <!--          </el-button>-->
-  <!--          <el-button v-else type="danger" @click="stopCrawling">停止抓取</el-button>-->
-  <!--        </el-col>-->
-
-  <!--        <el-col :span="14">-->
-  <!--          &lt;!&ndash;          {{crawlingCountLimit}}&ndash;&gt;-->
-  <!--          <el-input-number v-model="crawlingCountLimit" :min="0"-->
-  <!--                           :max="preSaleListData.length"></el-input-number>-->
-  <!--          <el-button type="primary" @click="handleChangeCounter">确定</el-button>-->
-
-  <!--        </el-col>-->
-  <!--        <el-col :span="3">-->
-  <!--        </el-col>-->
-  <!--        <el-col :span="3" style="text-align: right">-->
-  <!--          <el-button type="primary" @click="save">保存</el-button>-->
-  <!--        </el-col>-->
-
-  <!--      </el-row>-->
-  <!--      <el-row>-->
-  <!--        <el-col :span="24">-->
-  <!--          <el-card shadow="never">-->
-  <!--            <el-progress :text-inside="true" :stroke-width="20"-->
-  <!--                         :percentage="preSaleListData.length!==0?Math.floor(crawlingCount/preSaleListData.length*100):0"-->
-  <!--                         status="success"></el-progress>-->
-  <!--            <el-divider>-->
-  <!--              <el-row>-->
-  <!--                <el-col v-if="preSaleListData.length>0&&crawlingCount<preSaleListData.length" :span="24">-->
-  <!--                  共有{{preSaleListData.length}}条数据，正在抓取第{{crawlingCount}}条...-->
-  <!--                </el-col>-->
-  <!--                <el-col v-else :span="24">-->
-  <!--                  共有{{preSaleListData.length}}条数据，抓取完毕-->
-  <!--                </el-col>-->
-  <!--              </el-row>-->
-  <!--            </el-divider>-->
-  <!--            <el-row type="flex" justify="left">-->
-  <!--              <el-col :span="24">-->
-  <!--                &lt;!&ndash;          {{preSaleListData}}&ndash;&gt;-->
-  <!--                <el-timeline>-->
-  <!--                  <el-timeline-item v-for="(item, index) in preSaleListData.filter(item=>!item.disabled)"-->
-  <!--                                    :key="index"-->
-  <!--                                    :timestamp="item.recordTime"-->
-  <!--                                    placement="top"-->
-  <!--                                    :color="item.color==='success'?'#91d929':'#e4e7ed'"-->
-  <!--                                    class="timelineitem"-->
-  <!--                  >-->
-  <!--                    <el-card shadow="hover">-->
-  <!--                      <el-row>-->
-  <!--                        <el-col :span="3" style="text-align: left">第{{index+1}}条</el-col>-->
-  <!--                        <el-col :span="4">-->
-  <!--                          详情: <i v-if="item.detailSuccess===0" class="el-icon-loading"></i>-->
-  <!--                          <i v-else-if="item.detailSuccess===1" class="el-icon-check success"></i>-->
-  <!--                          <i v-else="item.detailSuccess===2" class="el-icon-close failed"></i>-->
-  <!--                        </el-col>-->
-  <!--                        <el-col :span="4">-->
-  <!--                          {{item.active}}-->
-  <!--                          画像: <i v-if="item.portraitSuccess===0" class="el-icon-loading"></i>-->
-  <!--                          <i v-else-if="item.portraitSuccess===1" class="el-icon-check success"></i>-->
-  <!--                          <i v-else="item.portraitSuccess===2" class="el-icon-close failed"></i>-->
-  <!--                        </el-col>-->
-  <!--                      </el-row>-->
-  <!--                    </el-card>-->
-
-
-  <!--                  </el-timeline-item>-->
-  <!--                </el-timeline>-->
-  <!--              </el-col>-->
-  <!--            </el-row>-->
-
-  <!--          </el-card>-->
-  <!--        </el-col>-->
-  <!--      </el-row>-->
-
-  <!--      <el-row type="flex" justify="space-between">-->
-  <!--        <el-col :span="21">-->
-  <!--        </el-col>-->
-  <!--        <el-col :span="3" style="text-align: right">-->
-  <!--          <el-button type="primary" @click="stepCrawlFlag=false">关闭</el-button>-->
-  <!--        </el-col>-->
-  <!--      </el-row>-->
-  <!--    </el-dialog>-->
 
 
 </template>
@@ -424,18 +340,19 @@
         expandQuery: '',
         showFileListFlag: false,
         newFile: '',
+        crawlerCountType: 0,
         advertisementDialogFlag: false,
         currentAdvertisementTabIndex: 0,
         effectiveDuration: [],
         multipleSelection: [],
         oneKeyCrawlFlag: false,
         stepCrawlFlag: false,
+        prepareToCrawlFlag: false,
         settingsList: [],
         PreSaleData: [],
         crawlingCount: 0,
         preSaleListData: [],
         crawlingFlag: false,
-        crawlingCountLimit: 0,
         preSaleListCountLimit: 0
       }
     },
@@ -521,7 +438,7 @@
           rewardStr: '',
           rewardType: '',
           rewardValue: '',
-          status: ''
+          status: '.....'
         }
 
       },
@@ -705,19 +622,21 @@
         })
       },
       async getAllCrawlingIndex() {
+        this.prepareToCrawlFlag = false
         this.$http.get(this.$baseUrl + this.crawlMovieListRequest, {
           params: {
             address: 'https://piaofang.maoyan.com/store',
-            headerCode: 'maoyanPreSale'
+            headerCode: 'maoyanPreSale',
+            limit: this.preSaleListCountLimit
           }
         }).then(response => {
-          // this.crawlingCountLimit =
+          // this.preSaleListCountLimit =
           console.log(response)
-          this.crawlingCountLimit = response.data.length
+          this.preSaleListCountLimit = response.data.length
 
           this.preSaleListData = response.data
           this.preSaleListData.forEach((item, index) => {
-            if (index < this.crawlingCountLimit) {
+            if (index < this.preSaleListCountLimit) {
               this.$set(this.preSaleListData, index, Object.assign(item, {
                 detailSuccess: 0,
                 portraitSuccess: 0,
@@ -729,7 +648,7 @@
 
             }
           })
-          this.$message.success('获取列表失败')
+          this.$message.success('获取列表成功')
         }).catch(error => {
           this.$message.error(error)
         })
@@ -739,6 +658,8 @@
         this.crawlingCount = 0
         this.PreSaleData = []
 
+        const preSaleData = this.preSaleListData.filter(item => item.active)
+        // const preSaleListCountLimit
         let result = []
         let record = {}
 
@@ -748,7 +669,7 @@
         const loop = () => {
           const crawlingCount = this.crawlingCount
           this.crawlingFlag = true
-          const movieId = this.preSaleListData[crawlingCount].movieId
+          const movieId = preSaleData[crawlingCount].movieId
           const getDetail = () => {
             return new Promise((resolve, reject) => {
               this.$http.get(this.$baseUrl + this.crawlMoviePreSaleDetailRequest, {
@@ -759,14 +680,14 @@
               }).then(response1 => {
                 record.detail = response1.data
 
-                this.$set(this.preSaleListData, crawlingCount, Object.assign(this.preSaleListData[crawlingCount], {
+                this.$set(this.preSaleListData, crawlingCount, Object.assign(preSaleData[crawlingCount], {
                   detailSuccess: 1
                 }))
 
                 resolve(response1.data)
               }).catch(error => {
 
-                this.$set(this.preSaleListData, crawlingCount, Object.assign(this.preSaleListData[crawlingCount], {
+                this.$set(this.preSaleListData, crawlingCount, Object.assign(preSaleData[crawlingCount], {
                   detailSuccess: 2
                 }))
                 reject(error)
@@ -785,13 +706,13 @@
               }).then(response1 => {
                 record.portrait = response1.data
 
-                this.$set(this.preSaleListData, crawlingCount, Object.assign(this.preSaleListData[crawlingCount], {
+                this.$set(this.preSaleListData, crawlingCount, Object.assign(preSaleData[crawlingCount], {
                   portraitSuccess: 1,
                   color: 'success'
                 }))
                 resolve(response1.data)
               }).catch(error => {
-                this.$set(this.preSaleListData, crawlingCount, Object.assign(this.preSaleListData[crawlingCount], {
+                this.$set(this.preSaleListData, crawlingCount, Object.assign(preSaleData[crawlingCount], {
                   portraitSuccess: 2,
                   color: 'failed'
                 }))
@@ -803,7 +724,7 @@
 
           const getDetailPromise = getDetail()
           const getPortraitPromise = getPortrait()
-          if (this.crawlingCount === this.crawlingCountLimit) {
+          if (this.crawlingCount === this.preSaleListCountLimit) {
             // debugger
             this.crawlingFlag = false
           } else {
@@ -823,7 +744,7 @@
 
           }).catch(error => {
             console.log(error)
-            if (this.crawlingCount === this.crawlingCountLimit) {
+            if (this.crawlingCount === this.preSaleListCountLimit) {
               // debugger
               this.crawlingFlag = false
             } else {
@@ -841,7 +762,7 @@
         this.crawlingFlag = false
       },
       save() {
-        if (this.crawlingCount === this.crawlingCountLimit) {
+        if (this.crawlingCount === this.preSaleListCountLimit) {
           console.log(this.PreSaleData)
           this.$http.post(this.$baseUrl + this.saveMultipleMaoyanPreSaleRequest, this.PreSaleData.reverse()).then(response => {
             this.$message.success('数据提交成功')
@@ -852,12 +773,24 @@
           this.$message.warning('dsdsdsdsds')
         }
       },
+      handleChangeLimitType(value) {
+        console.log(this.crawlerCountType)
+        if (this.crawlerCountType === 0) {
+          this.preSaleListCountLimit = 0
+        }
+      },
+      handleChangeCountLimit() {
+
+      },
       handleChangeCounter(value) {
         this.preSaleListData.forEach((item, index) => {
           this.$set(this.preSaleListData, index, Object.assign(this.preSaleListData[index], {
-            active: index < this.crawlingCountLimit
+            active: index < this.preSaleListCountLimit
           }))
         })
+        console.log('this.preSaleListData+++', this.preSaleListData)
+        debugger
+
       }
 
     }

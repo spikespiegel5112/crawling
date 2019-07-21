@@ -36,22 +36,12 @@ export const constantRouterMap = [{
     component: () => import('@/views/dashboard/index')
   }]
 }, {
-  path: '/crawling',
+  path: '/maoyanRankingList',
   component: Layout,
-  redirect: '/crawling/maoyan',
-  name: 'crawling',
-  meta: { title: '爬虫', icon: 'table' },
+  redirect: '/maoyanRankingList/maoyanRankingList',
+  name: 'maoyanRankingList',
+  meta: { title: '猫眼影库爬虫', icon: 'table' },
   children: [{
-    path: 'maoyan',
-    name: 'maoyan',
-    component: () => import('@/views/crawling/Maoyan'),
-    meta: { title: '猫眼爬虫', icon: 'list' }
-  }, {
-    path: 'MaoyanPreSale',
-    name: 'maoyanPreSale',
-    component: () => import('@/views/crawling/MaoyanPreSale'),
-    meta: { title: '猫眼预售爬虫', icon: 'list' }
-  }, {
     path: 'maoyanRankingList',
     name: 'maoyanRankingList',
     component: () => import('@/views/crawling/MaoyanRankingList'),
@@ -66,6 +56,30 @@ export const constantRouterMap = [{
     name: 'MaoyanWantToSeeList',
     component: () => import('@/views/crawling/MaoyanWantToSeeList'),
     meta: { title: '想看排行榜', icon: 'list' }
+  }]
+}, {
+  path: '/maoyanPreSaleList',
+  component: Layout,
+  redirect: '/maoyanPreSaleList/preSale',
+  name: 'crawling',
+  meta: { title: '猫眼预售爬虫', icon: 'table' },
+  children: [{
+    path: 'preSale',
+    name: 'preSale',
+    component: () => import('@/views/crawling/MaoyanPreSale'),
+    meta: { title: '猫眼预售爬虫', icon: 'list' }
+  }]
+}, {
+  path: '/maoyanOthersList',
+  component: Layout,
+  redirect: '/maoyanOthersList/boxOffice',
+  name: 'crawling',
+  meta: { title: '猫眼其他爬虫', icon: 'table' },
+  children: [{
+    path: 'boxOffice',
+    name: 'boxOffice',
+    component: () => import('@/views/crawling/Maoyan'),
+    meta: { title: '猫眼实时票房爬虫', icon: 'list' }
   }]
 }, {
   path: '/settings',
