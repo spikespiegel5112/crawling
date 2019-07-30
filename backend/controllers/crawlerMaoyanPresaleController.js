@@ -21,98 +21,8 @@ const _trimData = selector => {
 		return item + ';'
 	}).join('')
 };
-const crawlPagePromise = (req, res, next) => {
-	return new Promise(async (resolve, reject) => {
-		let $ = {};
-		dataJSONHeadersSample = {
-			"Host": "piaofang.maoyan.com",
-			"Connection": "keep-alive",
-			"Cache-Control": "max-age=0",
-			"Upgrade-Insecure-Requests": "1",
-			"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36",
-			"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",
-			"Referer": "https://piaofang.maoyan.com/seat",
-			"Accept-Encoding": "gzip, deflate, br",
-			"Accept-Language": "zh-CN,zh;q=0.9",
-			"Cookie": "_lxsdk_cuid=16b278f2da1c8-0bd217ef685a99-e353165-1fa400-16b278f2da1c8; _lxsdk=5B35B0C0878B11E9906EF30672EF100755FB61C41A934C41978723E76930287B; __mta=142417549.1559736824373.1559736824373.1559736841774.2; theme=moviepro; wantindex-city={\"city_tier\":0,\"city_id\":0,\"cityName\":\"%E5%85%A8%E5%9B%BD\"}; __mta=142417549.1559736824373.1559736841774.1560403190012.3; _lx_utm=utm_source%3Dgoogle%26utm_medium%3Dorganic; _lxsdk_s=16b4f46f13a-264-392-c4e%7C%7C18"
-		};
 
-
-		PreSaleDataJSONHeaderSample = {
-			"GET": "/movie/1197814/wantindex?city_tier=0&city_id=0&cityName=%E5%85%A8%E5%9B%BD HTTP/1.1",
-			"Host": "piaofang.maoyan.com",
-			"Connection": "keep-alive",
-			"Cache-Control": "max-age=0",
-			"Upgrade-Insecure-Requests": "1",
-			"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36",
-			"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",
-			"Referer": "https://piaofang.maoyan.com/movie/1197814",
-			"Accept-Encoding": "gzip, deflate, br",
-			"Accept-Language": "zh-CN,zh;q=0.9",
-			"Cookie": "_lxsdk_cuid=16b278f2da1c8-0bd217ef685a99-e353165-1fa400-16b278f2da1c8; _lxsdk=5B35B0C0878B11E9906EF30672EF100755FB61C41A934C41978723E76930287B; __mta=142417549.1559736824373.1559736824373.1559736841774.2; wantindex-city={'city_tier':0,'city_id':0,'cityName':'%E5%85%A8%E5%9B%BD'}; theme=moviepro; __mta=142417549.1559736824373.1559736841774.1560526087657.3; _lx_utm=utm_source%3Dgoogle%26utm_medium%3Dorganic; _lxsdk_s=16b5699e75e-a28-65-652%7C%7C28"
-		};
-
-		let crawlerInstance = new crawler({
-			maxConnections: 10,
-			// rateLimit: 3000,
-
-			// This will be called for each crawled page
-			callback: function (error, result, done) {
-				if (error) {
-					console.log('creating error: ', error);
-					res.status(400).json({
-						message: error.toString()
-					});
-					// done()
-				} else {
-					// $ is Cheerio by default
-					//a lean implementation of core jQuery designed specifically for the server
-					// console.log($("title").text());
-					console.log('dataJSONHeadersSample+++++', dataJSONHeadersSample)
-					// done();
-
-				}
-			}
-		});
-
-
-		headers = await SettingsModel.findOne({
-			where: {
-				code: req.query.headerCode
-			}
-		});
-		headers = headers._previousDataValues;
-		console.log('crawlerInstance+++++++++++', headers);
-
-		crawlerInstance.queue({
-			url: req.query.address,
-			headers: JSON.parse(headers.value),
-			// headers: dataJSONHeadersSample,
-			callback: (error, result, done) => {
-				if (error) {
-					console.log('insrtance error: ', error);
-					done();
-
-					reject(error.toString());
-
-				} else {
-					// $ = result.$;
-					// console.log('Grabbed', result.body.length, 'bytes');
-					// console.log('$++++++++++++: ', Object.keys(result));
-					done();
-
-					resolve(result);
-
-				}
-
-
-			}
-		});
-	});
-};
-
-
-const _createRecord = (requestBody, timestamp) => {
+const _createRecordPromise = (requestBody, timestamp) => {
 	let _timestamp = timestamp;
 	console.log('timestamp:   ', timestamp);
 	if (!timestamp) {
@@ -220,7 +130,7 @@ const _crawlMoviePreSaleDetailPromise = (req, res, next) => {
 		console.log('crawlPagePromise+++++', req.query);
 
 		try {
-			const response = await crawlPagePromise(req, res, next);
+			const response = await commonController.crawlPagePromise(req, res, next);
 
 			console.log('crawlPagePromise(req, res, next)+++++', req.query);
 			// res.status(200).json({
@@ -285,7 +195,7 @@ const crawlMovieList = async (req, res, next) => {
 const _crawlMovieListPromise = (req, res, next) => {
 	return new Promise((resolve, reject) => {
 		console.log('_crawlMovieListPromise++++++++', req.query);
-		crawlPagePromise(req, res, next).then(response => {
+		commonController.crawlPagePromise(req, res, next).then(response => {
 			const $ = response.$;
 			let result = [];
 			let titleEL = $("#movie-list section article");
@@ -359,7 +269,7 @@ const _crawlPreSaleWantToSeePortraitPromise = (req, res, next) => {
 		});
 
 		try {
-			const response = await crawlPagePromise(req, res, next);
+			const response = await commonController.crawlPagePromise(req, res, next);
 
 			console.log('_crawlPreSaleWantToSeePortraitPromise(req, res, next)+++++', req.query);
 
@@ -646,7 +556,7 @@ const save = (req, res, next) => {
 	// console.log('postAddProduct', req.body);
 	const timestamp = Date.now();
 
-	_createRecord(req, timestamp).then(response => {
+	_createRecordPromise(req, timestamp).then(response => {
 		res.status(200).json({
 			data: req
 		})
@@ -705,13 +615,13 @@ const saveMultipleMaoyanPreSale = (req, res, next) => {
 
 const crawlAndSave = (req, res, next) => {
 	const address = req.query.address;
-	crawlPagePromise(req, res).then(response => {
+	commonController.crawlPagePromise(req, res).then(response => {
 		console.log('crawlPagePromise', response);
 		const timestamp = Date.now();
 
 		let count = 0;
 		const loop = () => {
-			_createRecord(response.data.list[count], timestamp).then(response2 => {
+			_createRecordPromise(response.data.list[count], timestamp).then(response2 => {
 				if (count === response.data.list.length - 1) {
 					res.status(200).json(response);
 				} else {
@@ -727,7 +637,7 @@ const crawlAndSave = (req, res, next) => {
 
 		loop();
 		// response.data.list.forEach((item, index) => {
-		// 	_createRecord(item, timestamp).then(response2 => {
+		// 	_createRecordPromise(item, timestamp).then(response2 => {
 		// 		if (index === response.data.list.length - 1) {
 		// 			res.status(200).json(response);
 		// 		}

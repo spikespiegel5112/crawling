@@ -1,13 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+/* Layout */
+import Layout from '../views/layout/Layout'
 
 // in development-env not use lazy-loading, because lazy-loading too many pages will cause webpack hot update too slow. so only in production use lazy-loading;
 // detail: https://panjiachen.github.io/vue-element-admin-site/#/lazy-loading
 
 Vue.use(Router)
-
-/* Layout */
-import Layout from '../views/layout/Layout'
 
 /**
  * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
@@ -48,13 +47,13 @@ export const constantRouterMap = [{
     meta: { title: '排行榜爬虫', icon: 'list' }
   }, {
     path: 'ratingList',
-    name: 'MaoyanRatingList',
-    component: () => import('@/views/crawling/MaoyanRatingList'),
+    name: 'MaoyanRankingListRatingList',
+    component: () => import('@/views/crawling/MaoyanRankingListRatingList'),
     meta: { title: '评分排行榜', icon: 'list' }
   }, {
     path: 'wantToSeeList',
-    name: 'MaoyanWantToSeeList',
-    component: () => import('@/views/crawling/MaoyanWantToSeeList'),
+    name: 'MaoyanRankingListWantToSeeList',
+    component: () => import('@/views/crawling/MaoyanRankingListWantToSeeList'),
     meta: { title: '想看排行榜', icon: 'list' }
   }]
 }, {
@@ -68,6 +67,11 @@ export const constantRouterMap = [{
     name: 'preSale',
     component: () => import('@/views/crawling/MaoyanPreSale'),
     meta: { title: '猫眼预售爬虫', icon: 'list' }
+  }, {
+    path: 'bookingDetails',
+    name: 'preSaleBookingDetails',
+    component: () => import('@/views/crawling/MaoyanPreSaleBookingDetails'),
+    meta: { title: '猫眼预售明细爬虫', icon: 'list' }
   }]
 }, {
   path: '/maoyanOthersList',

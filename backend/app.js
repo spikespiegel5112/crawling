@@ -11,7 +11,9 @@ const Dictionaries = require('./models/Dictionaries');
 const HeadersModel = require('./models/HeadersSettings');
 const SettingsModel = require('./models/SettingsModel');
 const MaoyanWantSeeModel = require('./models/MaoyanWantSeeModel');
-const MaoyanPresale = require('./models/MaoyanPresaleModel');
+const MaoyanPreSaleModel = require('./models/MaoyanPreSaleModel');
+const MaoyanPreSaleBookingDetailsModel = require('./models/MaoyanPreSaleBookingDetailsModel');
+
 
 const errorController = require('./controllers/errorController');
 const commonRoutes = require('./routers/commonRoutes');
