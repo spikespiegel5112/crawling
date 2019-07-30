@@ -39,20 +39,20 @@ export const constantRouterMap = [{
   path: '/maoyanRankingList',
   component: Layout,
   redirect: '/maoyanRankingList/maoyanRankingList',
-  name: 'maoyanRankingList',
+  name: 'maoyanRankingListLayout',
   meta: { title: '猫眼影库爬虫', icon: 'table' },
   children: [{
-    path: 'maoyanRankingList',
+    path: 'crawler',
     name: 'maoyanRankingList',
     component: () => import('@/views/crawling/MaoyanRankingList'),
     meta: { title: '排行榜爬虫', icon: 'list' }
   }, {
-    path: 'maoyanRatingList',
+    path: 'ratingList',
     name: 'MaoyanRatingList',
     component: () => import('@/views/crawling/MaoyanRatingList'),
     meta: { title: '评分排行榜', icon: 'list' }
   }, {
-    path: 'maoyanWantToSeeList',
+    path: 'wantToSeeList',
     name: 'MaoyanWantToSeeList',
     component: () => import('@/views/crawling/MaoyanWantToSeeList'),
     meta: { title: '想看排行榜', icon: 'list' }
@@ -61,7 +61,7 @@ export const constantRouterMap = [{
   path: '/maoyanPreSaleList',
   component: Layout,
   redirect: '/maoyanPreSaleList/preSale',
-  name: 'crawling',
+  name: 'crawlingPreSale',
   meta: { title: '猫眼预售爬虫', icon: 'table' },
   children: [{
     path: 'preSale',
@@ -73,7 +73,7 @@ export const constantRouterMap = [{
   path: '/maoyanOthersList',
   component: Layout,
   redirect: '/maoyanOthersList/boxOffice',
-  name: 'crawling',
+  name: 'othersList',
   meta: { title: '猫眼其他爬虫', icon: 'table' },
   children: [{
     path: 'boxOffice',

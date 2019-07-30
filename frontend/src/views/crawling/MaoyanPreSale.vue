@@ -64,9 +64,9 @@
       <el-table-column align="center" label="想看三线城市占比" prop='wantToSeeByTier3'></el-table-column>
       <el-table-column align="center" label="想看四线城市占比" prop='wantToSeeByTier4'></el-table-column>
 
-      <el-table-column align="center" label="预售票房" prop='preSaleBoxInfo'></el-table-column>
-      <el-table-column align="center" label="预售排片占比" prop='preSaleShowRate'></el-table-column>
-      <el-table-column align="center" label="预售排片场次" prop='preSaleShowInfo'></el-table-column>
+      <el-table-column align="center" label="预售票房" prop='premiereBoxInfo'></el-table-column>
+      <el-table-column align="center" label="预售排片占比" prop='premiereShowRate'></el-table-column>
+      <el-table-column align="center" label="预售排片场次" prop='premiereShowRate'></el-table-column>
 
 
       <el-table-column align="center" label="操作" width="100px">
@@ -194,10 +194,10 @@
                             </el-col>
 
                             <el-col :span="2">
-                              预售票房: <i v-if="item.preSaleListWantToSeePortraitSuccess===0" class=""></i>
-                              <i v-else-if="item.preSaleListWantToSeePortraitSuccess===1"
+                              预售票房: <i v-if="item.premiereSuccess===0" class=""></i>
+                              <i v-else-if="item.premiereSuccess===1"
                                  class="el-icon-check success"></i>
-                              <i v-else="item.preSaleListWantToSeePortraitSuccess===2" class="el-icon-close failed"></i>
+                              <i v-else="item.premiereSuccess===2" class="el-icon-close failed"></i>
                             </el-col>
 
 
@@ -645,6 +645,7 @@
               this.$set(this.preSaleListData, index, Object.assign(item, {
                 detailSuccess: 0,
                 portraitSuccess: 0,
+                premiereSuccess: 0,
                 content: 'detailSuccess' + 'portraitSuccess',
                 color: 'sunccess',
                 recordTime: '---',
@@ -731,7 +732,7 @@
             return new Promise((resolve, reject) => {
               this.$http.get(this.$baseUrl + this.crawlPreSaleBoxOfficePremiereRequest, {
                 params: {
-                  address: 'https://piaofang.maoyan.com/movie/' + movieId,
+                  address: 'https://piaofang.maoyan.com/movie/' + movieId + '/premierebox',
                   headerCode: 'maoyanPreSalePortrait'
                 }
               }).then(response1 => {

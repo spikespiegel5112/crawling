@@ -2,20 +2,17 @@
   <el-row class="app-container">
     <CommonQuery>
       <template slot="button1">
-        <el-button size="mini" type="primary" icon="el-icon-plus" @click="stepCrawlFlag=true" v-waves>
+        <el-button @click="stepCrawlFlag=true" icon="el-icon-plus" size="mini" type="primary" v-waves>
           分步抓取
         </el-button>
-        <el-button size="mini" type="primary" icon="el-icon-plus" @click="oneKeyCrawlFlag=true" v-waves>
-          一键抓取
-        </el-button>
-        <el-button size="mini" type="danger" icon="el-icon-delete" @click="handleMultipleDelete" v-waves>
+        <el-button @click="handleMultipleDelete" icon="el-icon-delete" size="mini" type="danger" v-waves>
           批量删除
         </el-button>
       </template>
       <template slot="query1">
-        <div class="common-search-wrapper" @keyup.enter="search">
+        <div @keyup.enter="search" class="common-search-wrapper">
           <label>
-            <input v-model="queryModel.brandName" type="text" placeholder="请输入游戏名称"/>
+            <input placeholder="请输入游戏名称" type="text" v-model="queryModel.brandName"/>
           </label>
           <a>
             <span @click="search" class="el-icon-search"></span>
@@ -24,12 +21,13 @@
       </template>
     </CommonQuery>
 
-    <el-table :data="tableList" v-loading.body="listLoading" element-loading-text="Loading" border fit
+    <el-table :data="tableList" :height="tableHeight" @selection-change="handleSelectionChange" border
+              element-loading-text="Loading"
+              fit
               highlight-current-row
-              @selection-change="handleSelectionChange"
-              :height="tableHeight">
-      <el-table-column type="selection" width="40" fixed="left"></el-table-column>
-      <el-table-column label="No" type="index" width="45" align="center" fixed></el-table-column>
+              v-loading.body="listLoading">
+      <el-table-column fixed="left" type="selection" width="40"></el-table-column>
+      <el-table-column align="center" fixed label="No" type="index" width="45"></el-table-column>
       <el-table-column align="center" label="电影名称（中文）" prop='titleChi' width="100"></el-table-column>
       <el-table-column align="center" label="电影名称（原文）" prop='title' width="100"></el-table-column>
       <el-table-column align="center" label="抓取时间" prop='timestamp' width="100">
@@ -121,20 +119,20 @@
       <el-table-column align="center" label="viewInfo" prop='viewInfoV2'></el-table-column>
 
 
-      <el-table-column align="center" label="操作" width="100px" fixed="right">
+      <el-table-column align="center" fixed="right" label="操作" width="100px">
         <template slot-scope="scope">
-          <el-button type="danger" size="mini" @click="handleDelete(scope)">删除</el-button>
+          <el-button @click="handleDelete(scope)" size="mini" type="danger">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
     <!-- 分页 -->
     <div class="common-pagination-wrapper">
-      <el-pagination background @size-change="handleSizeChange"
-                     @current-change="handleCurrentChange"
-                     :current-page.sync="pagination.page"
+      <el-pagination :current-page.sync="pagination.page" :page-size="pagination.limit"
                      :page-sizes="[10,20,30,50,100]"
-                     :page-size="pagination.limit"
                      :total="total"
+                     @current-change="handleCurrentChange"
+                     @size-change="handleSizeChange"
+                     background
                      layout="total, sizes, prev, pager, next, jumper"
       >
       </el-pagination>
@@ -142,17 +140,17 @@
     <!-- 编辑 -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="oneKeyCrawlFlag" width="850px">
 
-      <el-row type="flex" justify="center">
+      <el-row justify="center" type="flex">
         <el-col :span="20">
 
-          <el-form :rules="rules" ref="formData" :model="formData"
-                   label-position="right"
-                   label-width="140px">
+          <el-form :model="formData" :rules="rules" label-position="right"
+                   label-width="140px"
+                   ref="formData">
             <el-form-item label="爬虫类型" prop="rewardType">
-              <el-select v-model="formData.rewardType" placeholder='' @change="chooseRewardType">
-                <el-option v-for="item in settingsList"
-                           :key="item.code" :label="item.name"
-                           :value="item.value"></el-option>
+              <el-select @change="chooseRewardType" placeholder='' v-model="formData.rewardType">
+                <el-option :key="item.code"
+                           :label="item.name" :value="item.value"
+                           v-for="item in settingsList"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="爬虫地址" prop="crawlerAddress">
@@ -161,29 +159,29 @@
           </el-form>
         </el-col>
       </el-row>
-      <div slot="footer" class="dialog-footer">
+      <div class="dialog-footer" slot="footer">
         <el-button @click="oneKeyCrawlFlag = false" v-waves>{{$t('table.cancel')}}</el-button>
-        <el-button type="primary" v-waves @click="crawlerData">{{$t('table.confirm')}}</el-button>
+        <el-button @click="crawlerData" type="primary" v-waves>{{$t('table.confirm')}}</el-button>
       </div>
     </el-dialog>
     <!--    分步抓取-->
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="stepCrawlFlag" width="1600px" top="1vh">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="stepCrawlFlag" top="1vh" width="1600px">
       <el-row :gutter="1">
         <el-col :span="2">
-          <el-button type="primary" @click="getAllCrawlingIndex">
+          <el-button @click="prepareToCrawlFlag=true" type="primary">
             {{rankingListData.length===0?'获取索引':'重新获取索引'}}
           </el-button>
         </el-col>
         <el-col :span="2">
-          <el-button v-if="!crawlingFlag" :disabled="rankingListData.length===0" type="primary"
-                     @click="beginToCrawRankingListMovieData">
+          <el-button :disabled="rankingListData.length===0" @click="beginToCrawRankingListMovieData" type="primary"
+                     v-if="!crawlingFlag">
             {{crawlingCount===0?'开始抓取':'重新抓取'}}
           </el-button>
-          <el-button v-else type="danger" @click="stopCrawling">停止抓取</el-button>
+          <el-button @click="stopCrawling" type="danger" v-else>停止抓取</el-button>
         </el-col>
 
         <el-col :span="20" style="text-align: right">
-          <el-button type="primary" @click="save">保存</el-button>
+          <el-button @click="save" type="primary">保存</el-button>
         </el-col>
 
       </el-row>
@@ -191,12 +189,12 @@
       <el-row>
 
         <el-col :span="24">
-          <el-row type="flex" justify="left">
+          <el-row justify="left" type="flex">
 
             <el-col :span="14">
               <!--          {{rankingListCountLimit}}-->
-              <el-input-number v-model="rankingListCountLimit" :min="0"></el-input-number>
-              <el-button type="primary" @click="handleChangeCounter">确定</el-button>
+              <el-input-number :min="0" v-model="rankingListCountLimit"></el-input-number>
+              <el-button @click="handleChangeCounter" type="primary">确定</el-button>
 
             </el-col>
             <el-col :span="3">
@@ -206,29 +204,31 @@
           <el-row>
             <el-col :span="24">
               <el-card shadow="never">
-                <el-progress :text-inside="true" :stroke-width="20"
-                             :percentage="rankingListData.length!==0?Math.floor(crawlingCount/rankingListData.length*100):0"
-                             status="success"></el-progress>
+                <el-progress
+                  :percentage="rankingListData.length!==0?Math.floor(crawlingCount/rankingListData.length*100):0"
+                  :stroke-width="20"
+                  :text-inside="true"
+                  status="success"></el-progress>
                 <el-divider>
                   <el-row>
-                    <el-col v-if="rankingListData.length>0&&crawlingCount<rankingListData.length" :span="24">
+                    <el-col :span="24" v-if="rankingListData.length>0&&crawlingCount<rankingListData.length">
                       共有{{rankingListData.length}}条数据，正在抓取第{{crawlingCount}}条...
                     </el-col>
-                    <el-col v-else :span="24">
+                    <el-col :span="24" v-else>
                       共有{{rankingListData.length}}条数据，抓取完毕
                     </el-col>
                   </el-row>
                 </el-divider>
-                <el-row type="flex" justify="left">
+                <el-row justify="left" type="flex">
                   <el-col :span="24">
                     <!--          {{preSaleWantToSeeListData}}-->
                     <el-timeline :style="clawerStyle">
-                      <el-timeline-item v-for="(item, index) in rankingListData.filter(item=>!item.disabled)"
+                      <el-timeline-item :color="item.color==='success'?'#91d929':'#e4e7ed'"
                                         :key="index"
                                         :timestamp="item.recordTime"
-                                        placement="top"
-                                        :color="item.color==='success'?'#91d929':'#e4e7ed'"
                                         class="timelineitem"
+                                        placement="top"
+                                        v-for="(item, index) in rankingListData.filter(item=>!item.disabled)"
                       >
                         <el-card shadow="hover">
                           <el-row>
@@ -236,38 +236,38 @@
                             <el-col :span="1" style="text-align: left">{{item.movieId}}</el-col>
                             <el-col :span="4" style="text-align: left">{{item.title}}</el-col>
                             <el-col :span="1">
-                              详情: <i v-if="item.detailSuccess===0" class=""></i>
-                              <i v-else-if="item.detailSuccess===1" class="el-icon-check success"></i>
-                              <i v-else="item.detailSuccess===2" class="el-icon-close failed"></i>
+                              详情: <i class="" v-if="item.detailSuccess===0"></i>
+                              <i class="el-icon-check success" v-else-if="item.detailSuccess===1"></i>
+                              <i class="el-icon-close failed" v-else="item.detailSuccess===2"></i>
                             </el-col>
                             <el-col :span="1">
-                              更多: <i v-if="item.moreSectionsSuccess===0" class=""></i>
-                              <i v-else-if="item.moreSectionsSuccess===1" class="el-icon-check success"></i>
-                              <i v-else="item.moreSectionsSuccess===2" class="el-icon-close failed"></i>
+                              更多: <i class="" v-if="item.moreSectionsSuccess===0"></i>
+                              <i class="el-icon-check success" v-else-if="item.moreSectionsSuccess===1"></i>
+                              <i class="el-icon-close failed" v-else="item.moreSectionsSuccess===2"></i>
                             </el-col>
                             <el-col :span="1">
-                              评分: <i v-if="item.rankingListRatingSuccess===0" class=""></i>
-                              <i v-else-if="item.rankingListRatingSuccess===1" class="el-icon-check success"></i>
-                              <i v-else="item.rankingListRatingSuccess===2" class="el-icon-close failed"></i>
+                              评分: <i class="" v-if="item.rankingListRatingSuccess===0"></i>
+                              <i class="el-icon-check success" v-else-if="item.rankingListRatingSuccess===1"></i>
+                              <i class="el-icon-close failed" v-else="item.rankingListRatingSuccess===2"></i>
                             </el-col>
 
                             <el-col :span="1">
-                              想看: <i v-if="item.rankingListWantToSeePortraitSuccess===0" class=""></i>
-                              <i v-else-if="item.rankingListWantToSeePortraitSuccess===1"
-                                 class="el-icon-check success"></i>
-                              <i v-else="item.rankingListWantToSeePortraitSuccess===2" class="el-icon-close failed"></i>
+                              想看: <i class="" v-if="item.rankingListWantToSeePortraitSuccess===0"></i>
+                              <i class="el-icon-check success"
+                                 v-else-if="item.rankingListWantToSeePortraitSuccess===1"></i>
+                              <i class="el-icon-close failed" v-else="item.rankingListWantToSeePortraitSuccess===2"></i>
                             </el-col>
                             <el-col :span="2">
-                              首映日票房: <i v-if="item.rankingListWantToSeePortraitSuccess===0" class=""></i>
-                              <i v-else-if="item.rankingListWantToSeePortraitSuccess===1"
-                                 class="el-icon-check success"></i>
-                              <i v-else="item.rankingListWantToSeePortraitSuccess===2" class="el-icon-close failed"></i>
+                              首映日票房: <i class="" v-if="item.rankingListWantToSeePortraitSuccess===0"></i>
+                              <i class="el-icon-check success"
+                                 v-else-if="item.rankingListWantToSeePortraitSuccess===1"></i>
+                              <i class="el-icon-close failed" v-else="item.rankingListWantToSeePortraitSuccess===2"></i>
                             </el-col>
                             <el-col :span="2">
-                              全球票房: <i v-if="item.rankingListBoxOfficeGlobalSuccess===0" class=""></i>
-                              <i v-else-if="item.rankingListBoxOfficeGlobalSuccess===1"
-                                 class="el-icon-check success"></i>
-                              <i v-else="item.rankingListBoxOfficeGlobalSuccess===2" class="el-icon-close failed"></i>
+                              全球票房: <i class="" v-if="item.rankingListBoxOfficeGlobalSuccess===0"></i>
+                              <i class="el-icon-check success"
+                                 v-else-if="item.rankingListBoxOfficeGlobalSuccess===1"></i>
+                              <i class="el-icon-close failed" v-else="item.rankingListBoxOfficeGlobalSuccess===2"></i>
                             </el-col>
 
                           </el-row>
@@ -286,13 +286,26 @@
       </el-row>
 
 
-      <el-row type="flex" justify="space-between">
+      <el-row justify="space-between" type="flex">
         <el-col :span="21">
         </el-col>
         <el-col :span="3" style="text-align: right">
-          <el-button type="primary" @click="stepCrawlFlag=false">关闭</el-button>
+          <el-button @click="stepCrawlFlag=false" type="primary">关闭</el-button>
         </el-col>
       </el-row>
+    </el-dialog>
+
+    <el-dialog :visible.sync="prepareToCrawlFlag" title="准备爬取" width="600px">
+      <el-radio-group @change="handleChangeLimitType" v-model="crawlerCountType">
+        <el-radio :label="0">全部</el-radio>
+        <el-radio :label="1">部分</el-radio>
+        <el-input-number :disabled="crawlerCountType===0" :min="0"
+                         @change="handleChangeCountLimit"
+                         v-model="rankingListCountLimit"></el-input-number>
+
+      </el-radio-group>
+
+      <el-button @click="getAllCrawlingIndex" type="primary">开始抓取列表</el-button>
     </el-dialog>
   </el-row>
 </template>
@@ -340,6 +353,8 @@
         total: null,
         listLoading: true,
         availabilityFlag: false,
+        prepareToCrawlFlag: false,
+        crawlerCountType: 0,
 
         statusDictionary: [{
           code: 0,
@@ -688,16 +703,16 @@
 
         })
       },
-      getAllCrawlingIndex() {
-        const getRankingListPromise = this.getRankingList()
-        const getPreSaleListPromise = this.getPreSaleList()
-
-        Promise.all([getRankingListPromise, getPreSaleListPromise]).then(responseAll => {
-          console.log(responseAll)
-        }).catch(error => {
-          console.log(error)
-          this.$message.error(error)
-        })
+      async getAllCrawlingIndex() {
+        await this.getRankingList()
+        this.prepareToCrawlFlag = false
+        // const getRankingListPromise = this.getRankingList()
+        // Promise.all([getRankingListPromise]).then(responseAll => {
+        //   console.log(responseAll)
+        // }).catch(error => {
+        //   console.log(error)
+        //   this.$message.error(error)
+        // })
 
       },
       getMovieData() {
@@ -788,9 +803,8 @@
             this.rankingListCountLimit = response.data.length
             console.log(response)
 
-            this.rankingListData = response.data
-            response.data.forEach((item, index) => {
-              this.$set(this.rankingListData, index, Object.assign(item, {
+            const result = response.data.map(item => {
+              return Object.assign(item, {
                 title: item.title,
                 detailSuccess: 0,
                 rankingListRatingSuccess: 0,
@@ -801,10 +815,26 @@
                 color: 'sunccess',
                 recordTime: '---',
                 active: true
-              }))
+              })
             })
             resolve(this.rankingListData)
             this.$message.success('获取电影排名列表成功')
+            this.rankingListData = result
+            // response.data.forEach((item, index) => {
+            //   this.$set(this.rankingListData, index, Object.assign(item, {
+            //     title: item.title,
+            //     detailSuccess: 0,
+            //     rankingListRatingSuccess: 0,
+            //     rankingListWantToSeePortraitSuccess: 0,
+            //     moreSectionsSuccess: 0,
+            //     rankingListBoxOfficeGlobalSuccess: 0,
+            //     content: 'detailSuccess' + 'rankingListWantToSeePortraitSuccess',
+            //     color: 'sunccess',
+            //     recordTime: '---',
+            //     active: true
+            //   }))
+            // })
+
           }).catch(error => {
             this.$message.error(error)
             reject(error)
@@ -1151,7 +1181,6 @@
       save() {
         if (this.crawlingCount === this.rankingListCountLimit) {
           console.log(this.rankingListMovieData)
-          debugger
           this.$http.post(this.$baseUrl + this.saveMultipleMaoyanRankingListRecordRequest, this.rankingListMovieData).then(response => {
             this.$message.success('数据提交成功')
             this.getTableData()
@@ -1175,6 +1204,15 @@
           callback: action => {
           }
         })
+      },
+      handleChangeLimitType(value) {
+        console.log(this.crawlerCountType)
+        if (this.crawlerCountType === 0) {
+          this.rankingListCountLimit = 0
+        }
+      },
+      handleChangeCountLimit() {
+
       }
 
     }
