@@ -126,7 +126,7 @@ const _createRecord = (requestBody, timestamp) => {
 			"viewInfo": requestBody.viewInfo,
 			"viewInfoV2": requestBody.viewInfoV2,
 		}).then(result => {
-			// console(result);
+			// console.log(result);
 			resolve(result)
 		}).catch(error => {
 			reject(error)
@@ -281,7 +281,7 @@ const save = (req, res, next) => {
 		"viewInfo": requestBody.viewInfo,
 		"viewInfoV2": requestBody.viewInfoV2,
 	}).then(result => {
-		console(result);
+		console.log(result);
 		// res.status(200).json({
 		// 	data: req
 		// })

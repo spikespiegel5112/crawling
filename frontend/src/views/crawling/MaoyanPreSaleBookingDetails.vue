@@ -5,9 +5,6 @@
         <el-button size="mini" type="primary" icon="el-icon-plus" @click="stepCrawlFlag=true" v-waves>
           分步抓取
         </el-button>
-        <el-button size="mini" type="primary" icon="el-icon-plus" @click="oneKeyCrawlFlag=true" v-waves>
-          一键抓取
-        </el-button>
         <el-button size="mini" type="danger" icon="el-icon-delete" @click="handleMultipleDelete" v-waves>
           批量删除
         </el-button>
@@ -28,7 +25,7 @@
               highlight-current-row
               @selection-change="handleSelectionChange"
               :height="tableHeight">
-      <el-table-column type="selection" width="40" fixed="left"></el-table-column>
+      <el-table-column type="selection" width="30" fixed="left"></el-table-column>
       <el-table-column label="No" type="index" width="45" align="center" fixed></el-table-column>
       <el-table-column align="center" label="电影名称（中文）" prop='titleChi' width="100"></el-table-column>
       <el-table-column align="center" label="电影名称（原文）" prop='title' width="100"></el-table-column>
@@ -69,7 +66,7 @@
       <el-table-column align="center" label="预售排片场次" prop='premiereShowRate'></el-table-column>
 
 
-      <el-table-column align="center" label="操作" width="100px">
+      <el-table-column align="center" label="操作" width="70" fixed="right">
         <template slot-scope="scope">
           <el-button type="danger" size="mini" @click="handleDelete(scope)">删除</el-button>
         </template>

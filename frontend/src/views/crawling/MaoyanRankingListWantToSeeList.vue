@@ -28,7 +28,7 @@
               highlight-current-row
               @selection-change="handleSelectionChange"
               :height="tableHeight">
-<!--      <el-table-column type="selection" width="40" fixed="left"></el-table-column>-->
+<!--      <el-table-column type="selection" width="30" fixed="left"></el-table-column>-->
       <el-table-column label="No" type="index" width="45" align="center" fixed></el-table-column>
       <el-table-column align="center" label="电影名称（中文）" prop='titleChi' width="100"></el-table-column>
       <el-table-column align="center" label="电影名称（原文）" prop='title' width="100"></el-table-column>

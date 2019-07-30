@@ -44,17 +44,17 @@ export const constantRouterMap = [{
     path: 'crawler',
     name: 'maoyanRankingList',
     component: () => import('@/views/crawling/MaoyanRankingList'),
-    meta: { title: '排行榜爬虫', icon: 'list' }
+    meta: { title: '排行榜爬虫', icon: '' }
   }, {
     path: 'ratingList',
     name: 'MaoyanRankingListRatingList',
     component: () => import('@/views/crawling/MaoyanRankingListRatingList'),
-    meta: { title: '评分排行榜', icon: 'list' }
+    meta: { title: '评分排行榜', icon: '' }
   }, {
     path: 'wantToSeeList',
     name: 'MaoyanRankingListWantToSeeList',
     component: () => import('@/views/crawling/MaoyanRankingListWantToSeeList'),
-    meta: { title: '想看排行榜', icon: 'list' }
+    meta: { title: '想看排行榜', icon: '' }
   }]
 }, {
   path: '/maoyanPreSaleList',
@@ -66,12 +66,12 @@ export const constantRouterMap = [{
     path: 'preSale',
     name: 'preSale',
     component: () => import('@/views/crawling/MaoyanPreSale'),
-    meta: { title: '猫眼预售爬虫', icon: 'list' }
+    meta: { title: '预售爬虫', icon: '' }
   }, {
     path: 'bookingDetails',
     name: 'preSaleBookingDetails',
     component: () => import('@/views/crawling/MaoyanPreSaleBookingDetails'),
-    meta: { title: '猫眼预售明细爬虫', icon: 'list' }
+    meta: { title: '预售首映日明细爬虫', icon: '' }
   }]
 }, {
   path: '/maoyanOthersList',
@@ -95,17 +95,17 @@ export const constantRouterMap = [{
     path: 'headers',
     name: 'headers',
     component: () => import('@/views/settings/Headers'),
-    meta: { title: '请求头设置', icon: 'list' }
+    meta: { title: '请求头设置', icon: '' }
   }, {
     path: '',
     name: 'settings',
     component: () => import('@/views/settings/Settings'),
-    meta: { title: '参数设置', icon: 'list' }
+    meta: { title: '参数设置', icon: '' }
   }, {
     path: 'dictionary',
     name: 'dictionary',
     component: () => import('@/views/settings/Dictionary'),
-    meta: { title: '字典表设置', icon: 'list' }
+    meta: { title: '字典表设置', icon: '' }
   }]
 }, {
 //   path: '/task',

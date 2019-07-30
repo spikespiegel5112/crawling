@@ -17,11 +17,15 @@ const MaoyanPreSaleBookingDetailsModel = sequelize.define('MaoyanPreSaleBookingD
 	type: Sequelize.STRING,
 	allowNull: false
   },
+  date:{
+	type: Sequelize.STRING,
+	allowNull: true
+  },
   title: {
 	type: Sequelize.STRING,
 	allowNull: true
   },
-  date: {
+  bookingDate: {
 	type: Sequelize.STRING,
 	allowNull: true
   },
@@ -37,7 +41,7 @@ const MaoyanPreSaleBookingDetailsModel = sequelize.define('MaoyanPreSaleBookingD
 	type: Sequelize.STRING,
 	allowNull: true
   },
-  dailyAdditionalVenue: {
+  dailyAdditionalVenues: {
 	type: Sequelize.STRING,
 	allowNull: true
   },

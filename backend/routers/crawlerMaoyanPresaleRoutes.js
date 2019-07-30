@@ -1,20 +1,23 @@
 const express = require('express');
 const router = express.Router();
 
-const crawlerController = require('../controllers/crawlerMaoyanPreSaleController');
+const crawlerPreSaleController = require('../controllers/crawlerMaoyanPreSaleController');
 
-// router.get('/crawl', crawlerController.crawl);
-router.get('/crawlMovieList', crawlerController.crawlMovieList);
-router.get('/crawlMoviePreSaleDetail', crawlerController.crawlMoviePreSaleDetail);
-router.get('/crawlPreSaleWantToSeePortrait', crawlerController.crawlPreSaleWantToSeePortrait);
-router.get('/crawlPreSaleBoxOfficePremiere', crawlerController.crawlPreSaleBoxOfficePremiere);
-router.get('/oneKeyMoviePreSale', crawlerController.oneKeyMoviePreSale);
-router.post('/saveOneMaoyanPreSale', crawlerController.saveOneMaoyanPreSale);
-router.post('/saveMultipleMaoyanPreSale', crawlerController.saveMultipleMaoyanPreSale);
-// router.post('/save', crawlerController.save);
-router.get('/getListByPagination', crawlerController.getListByPagination);
-// router.post('/crawlAndSave', crawlerController.crawlAndSave);
-router.delete('/deleteRecords', crawlerController.deleteRecords);
-router.get('/exportCSV', crawlerController.exportCSV);
+// router.get('/crawl', crawlerPreSaleController.crawl);
+router.get('/crawlMovieList', crawlerPreSaleController.crawlMovieList);
+router.get('/crawlMoviePreSaleDetail', crawlerPreSaleController.crawlMoviePreSaleDetail);
+router.get('/crawlPreSaleWantToSeePortrait', crawlerPreSaleController.crawlPreSaleWantToSeePortrait);
+router.get('/crawlPreSaleBoxOfficePremiere', crawlerPreSaleController.crawlPreSaleBoxOfficePremiere);
+router.get('/crawlPreSaleBookingDetails', crawlerPreSaleController.crawlPreSaleBookingDetails);
+router.get('/oneKeyMoviePreSale', crawlerPreSaleController.oneKeyMoviePreSale);
+router.post('/saveOneMaoyanPreSale', crawlerPreSaleController.saveOneMaoyanPreSale);
+router.post('/saveMultipleMaoyanPreSale', crawlerPreSaleController.saveMultipleMaoyanPreSale);
+router.post('/saveMultipleMaoyanPreSaleBookingDetails', crawlerPreSaleController.saveMultipleMaoyanPreSaleBookingDetails);
+
+// router.post('/save', crawlerPreSaleController.save);
+router.get('/getListByPagination', crawlerPreSaleController.getListByPagination);
+// router.post('/crawlAndSave', crawlerPreSaleController.crawlAndSave);
+router.delete('/deleteRecords', crawlerPreSaleController.deleteRecords);
+router.get('/exportCSV', crawlerPreSaleController.exportCSV);
 
 module.exports = router;

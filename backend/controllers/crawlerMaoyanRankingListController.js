@@ -87,7 +87,7 @@ const _createMultipleMaoyanRankingListRecordPromise = (requestBody, timestamp) =
 	}
 	return new Promise((resolve, reject) => {
 		MaoyanRecordModel.bulkCreate(requestBody.reverse()).then(result => {
-			// console(result);
+			// console.log(result);
 			resolve(result)
 		}).catch(error => {
 			reject(error)
