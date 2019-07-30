@@ -126,61 +126,6 @@ const _createMultipleMaoyanPreSaleRecord = (requestBody, timestamp) => {
 };
 
 
-const _crawlMoviePreSaleDetailPromise = (req, res, next) => {
-  return new Promise(async (resolve, reject) => {
-	console.log('crawlPagePromise+++++', req.query);
-
-	try {
-	  const response = await commonController.crawlPagePromise(req, res, next);
-
-	  console.log('crawlPagePromise(req, res, next)+++++', req.query);
-	  // res.status(200).json({
-	  // 	data: req.query
-	  // });
-	  // console.log('crawlPagePromise', response);
-	  const $ = response.$;
-	  // console.log('$+++++++++', titleEL.text());
-
-	  const rawData = {
-		titleChi: $(".movie-baseinfo .info-title-content").text(),
-		title: $(".movie-baseinfo .info-etitle-content").text(),
-		releaseDate: $(".movie-baseinfo .score-info.ellipsis-1").text(),
-		platformEngName: 'Maoyan',
-		platformChineseName: '猫眼',
-		platformType: 'Web',
-		numWantToSee: $(".movie-baseinfo .block-wish-item.left h2").text().replace('想看', '').trim(),
-		byGenderMale: find($, ".movie-baseinfo .block-wish-detail p:eq(0)").text(),
-		byGenderFemale: find($, ".movie-baseinfo .block-wish-detail p:eq(0)").text(),
-		// request: req.query,
-		// response: response
-	  };
-
-	  const result = {
-		titleChi: rawData.titleChi,
-		title: rawData.title,
-		releaseDate: rawData.releaseDate,
-		platformEngName: rawData.platformEngName,
-		platformChineseName: rawData.platformChineseName,
-		platformType: rawData.platformType,
-		numWantToSee: rawData.numWantToSee,
-		byGenderMale: rawData.byGenderMale.match(/[1-9]\d*\.\d*|0\.\d*[1-9]\d*$/) ? rawData.byGenderMale.match(/[1-9]\d*\.\d*|0\.\d*[1-9]\d*$/) + '%' : '',
-		byGenderFemale: rawData.byGenderFemale.match(/[[1-9]\d*\.\d*|0\.\d*[1-9]\d*]$/g) ? String(rawData.byGenderFemale.match(/[[1-9]\d*\.\d*|0\.\d*[1-9]\d*]$/g)).split(',')[1] + '%' : ''
-	  };
-	  console.log('_crawlMoviePreSaleDetailPromise result+++++++++', result);
-
-	  resolve(result)
-
-	} catch (e) {
-	  res.status(400).json({
-		error: e
-	  });
-	  reject(e)
-	}
-
-  })
-};
-
-
 const crawlMovieList = async (req, res, next) => {
   _crawlMovieListPromise(req, res, next).then((response) => {
 	res.status(200).json({
@@ -243,6 +188,61 @@ const crawlMoviePreSaleDetail = async (req, res, next) => {
 		error: error
 	  });
 	})
+  })
+};
+
+const _crawlMoviePreSaleDetailPromise = (req, res, next) => {
+  return new Promise(async (resolve, reject) => {
+	console.log('crawlPagePromise+++++', req.query);
+
+	try {
+	  const response = await commonController.crawlPagePromise(req, res, next);
+
+	  console.log('crawlPagePromise(req, res, next)+++++', req.query);
+	  // res.status(200).json({
+	  // 	data: req.query
+	  // });
+	  // console.log('crawlPagePromise', response);
+	  const $ = response.$;
+	  // console.log('$+++++++++', titleEL.text());
+
+	  const rawData = {
+
+		titleChi: $(".movie-baseinfo .info-title-content").text(),
+		title: $(".movie-baseinfo .info-etitle-content").text(),
+		releaseDate: $(".movie-baseinfo .score-info.ellipsis-1").text(),
+		platformEngName: 'Maoyan',
+		platformChineseName: '猫眼',
+		platformType: 'Web',
+		numWantToSee: $(".movie-baseinfo .block-wish-item.left h2").text().replace('想看', '').trim(),
+		byGenderMale: find($, ".movie-baseinfo .block-wish-detail p:eq(0)").text(),
+		byGenderFemale: find($, ".movie-baseinfo .block-wish-detail p:eq(0)").text(),
+		// request: req.query,
+		// response: response
+	  };
+
+	  const result = {
+		titleChi: rawData.titleChi,
+		title: rawData.title,
+		releaseDate: rawData.releaseDate,
+		platformEngName: rawData.platformEngName,
+		platformChineseName: rawData.platformChineseName,
+		platformType: rawData.platformType,
+		numWantToSee: rawData.numWantToSee,
+		byGenderMale: rawData.byGenderMale.match(/[1-9]\d*\.\d*|0\.\d*[1-9]\d*$/) ? rawData.byGenderMale.match(/[1-9]\d*\.\d*|0\.\d*[1-9]\d*$/) + '%' : '',
+		byGenderFemale: rawData.byGenderFemale.match(/[[1-9]\d*\.\d*|0\.\d*[1-9]\d*]$/g) ? String(rawData.byGenderFemale.match(/[[1-9]\d*\.\d*|0\.\d*[1-9]\d*]$/g)).split(',')[1] + '%' : ''
+	  };
+	  console.log('_crawlMoviePreSaleDetailPromise result+++++++++', result);
+
+	  resolve(result)
+
+	} catch (e) {
+	  res.status(400).json({
+		error: e
+	  });
+	  reject(e)
+	}
+
   })
 };
 
@@ -548,6 +548,37 @@ const _crawlPreSaleBookingDetailsPromise = (req, res, next) => {
 
   })
 };
+
+
+const getPreSaleBookingDetailsByMovieId = (req, res, next) => {
+  // let pagination = {
+  // limit: Number(req.query.limit),
+  // page: Number(req.query.page),
+  // offset: req.query.limit * (req.query.page - 1)
+  // };
+  // res.status(200).json({
+  // data: req.query
+  // })
+  MaoyanPreSaleBookingDetailsModel.findOne({
+	where: {
+	  movieId: req.query.movieId
+	}
+  }).then(async data => {
+	res.status(200).json({
+	  // pagination: {
+	  // total: await MaoyanPreSaleModel.count(),
+	  // },
+	  data: data
+	})
+  }).catch(error => {
+	res.status(400).json({
+	  error: {
+		message: error
+	  }
+	})
+  })
+};
+
 const saveMultipleMaoyanPreSaleBookingDetails = (req, res, next) => {
   let _timestamp = req.body.timestamp;
   console.log('timestamp:   ', _timestamp);
@@ -850,6 +881,7 @@ exports.crawlMoviePreSaleDetail = crawlMoviePreSaleDetail;
 exports.crawlPreSaleWantToSeePortrait = crawlPreSaleWantToSeePortrait;
 exports.crawlPreSaleBoxOfficePremiere = crawlPreSaleBoxOfficePremiere;
 exports.crawlPreSaleBookingDetails = crawlPreSaleBookingDetails;
+exports.getPreSaleBookingDetailsByMovieId = getPreSaleBookingDetailsByMovieId;
 exports.saveMultipleMaoyanPreSaleBookingDetails = saveMultipleMaoyanPreSaleBookingDetails;
 
 exports.oneKeyMoviePreSale = oneKeyMoviePreSale;

@@ -2,17 +2,17 @@
   <el-row class="app-container">
     <CommonQuery>
       <template slot="button1">
-        <el-button size="mini" type="primary" icon="el-icon-plus" @click="stepCrawlFlag=true" v-waves>
+        <el-button @click="stepCrawlFlag=true" icon="el-icon-plus" size="mini" type="primary" v-waves>
           分步抓取
         </el-button>
-        <el-button size="mini" type="danger" icon="el-icon-delete" @click="handleMultipleDelete" v-waves>
+        <el-button @click="handleMultipleDelete" icon="el-icon-delete" size="mini" type="danger" v-waves>
           批量删除
         </el-button>
       </template>
       <template slot="query1">
-        <div class="common-search-wrapper" @keyup.enter="search">
+        <div @keyup.enter="search" class="common-search-wrapper">
           <label>
-            <input v-model="queryModel.brandName" type="text" placeholder="请输入游戏名称"/>
+            <input placeholder="请输入游戏名称" type="text" v-model="queryModel.brandName"/>
           </label>
           <a>
             <span @click="search" class="el-icon-search"></span>
@@ -21,15 +21,16 @@
       </template>
     </CommonQuery>
 
-    <el-table :data="tableList" v-loading.body="listLoading" element-loading-text="Loading" border fit
+    <el-table :data="tableList" :height="tableHeight" @selection-change="handleSelectionChange" border
+              element-loading-text="Loading"
+              fit
               highlight-current-row
-              @selection-change="handleSelectionChange"
-              :height="tableHeight">
-      <el-table-column type="selection" width="30" fixed="left"></el-table-column>
-      <el-table-column label="No" type="index" width="45" align="center" fixed></el-table-column>
-      <el-table-column align="center" label="电影名称（中文）" prop='titleChi' width="100"></el-table-column>
-      <el-table-column align="center" label="电影名称（原文）" prop='title' width="100"></el-table-column>
-      <el-table-column align="center" label="抓取时间" prop='timestamp' width="100">
+              v-loading.body="listLoading">
+      <el-table-column fixed="left" type="selection" width="30"></el-table-column>
+      <el-table-column align="center" fixed label="No" type="index" width="45"></el-table-column>
+      <el-table-column align="center" label="电影名称（中文）" prop='titleChi' width="110"></el-table-column>
+      <el-table-column align="center" label="电影名称（原文）" prop='title' width="110"></el-table-column>
+      <el-table-column align="center" label="抓取时间" prop='timestamp' width="110">
         <template slot-scope="scope">
           {{$moment(Number(scope.row.timestamp)).format('YYYY-MM-DD HH:mm:ss')}}
         </template>
@@ -39,94 +40,84 @@
       <el-table-column align="center" label="平台名称（中文）" prop='platformChineseName'></el-table-column>
       <el-table-column align="center" label="平台类型" prop='platformType'></el-table-column>
       <el-table-column align="center" label="想看数量" prop='numWantToSee'></el-table-column>
-      <el-table-column align="center" label="想看男性受众占比" prop='wantToSeeByGenderMale'>
-        <!--        <template slot-scope="scope">-->
-        <!--          {{JSON.parse(scope.row.byGenderMale.match(/[1-9]\d*\.\d*|0\.\d*[1-9]\d*$/))+'%'}}-->
-        <!--        </template>-->
-      </el-table-column>
-      <el-table-column align="center" label="想看女性受众占比" prop='wantToSeeByGenderFemale'>
-        <!--        <template slot-scope="scope">-->
-        <!--          {{scope.row.byGenderFemale.match(/[[1-9]\d*\.\d*|0\.\d*[1-9]\d*]$/g)}}-->
-        <!--          {{String(scope.row.byGenderFemale.match(/[[1-9]\d*\.\d*|0\.\d*[1-9]\d*]$/g)).split(',')[1]}}-->
-        <!--        </template>-->
-      </el-table-column>
-      <el-table-column align="center" label="想看20岁以下占比" prop='wantToSeeByAge20'></el-table-column>
-      <el-table-column align="center" label="想看20到24岁占比" prop='wantToSeeByAge20To24'></el-table-column>
-      <el-table-column align="center" label="想看25到29岁占比" prop='wantToSeeByAge25To29'></el-table-column>
-      <el-table-column align="center" label="想看30到34岁占比" prop='wantToSeeByAge30To34'></el-table-column>
-      <el-table-column align="center" label="想看35到39岁占比" prop='wantToSeeByAge35To39'></el-table-column>
-      <el-table-column align="center" label="想看40岁以上占比" prop='wantToSeeByAge40'></el-table-column>
-      <el-table-column align="center" label="想看一线城市占比" prop='wantToSeeByTier1'></el-table-column>
-      <el-table-column align="center" label="想看二线城市占比" prop='wantToSeeByTier2'></el-table-column>
-      <el-table-column align="center" label="想看三线城市占比" prop='wantToSeeByTier3'></el-table-column>
-      <el-table-column align="center" label="想看四线城市占比" prop='wantToSeeByTier4'></el-table-column>
+      <el-table-column align="center" label="想看男性受众占比" prop='wantToSeeByGenderMale'></el-table-column>
+      <el-table-column align="center" label="想看女性受众占比" prop='wantToSeeByGenderFemale'></el-table-column>
 
       <el-table-column align="center" label="预售票房" prop='premiereBoxInfo'></el-table-column>
       <el-table-column align="center" label="预售排片占比" prop='premiereShowRate'></el-table-column>
       <el-table-column align="center" label="预售排片场次" prop='premiereShowRate'></el-table-column>
 
 
-      <el-table-column align="center" label="操作" width="70" fixed="right">
+      <el-table-column align="center" fixed="right" label="操作" width="150">
         <template slot-scope="scope">
-          <el-button type="danger" size="mini" @click="handleDelete(scope)">删除</el-button>
+          <el-button @click="checkRecord(scope)" size="mini" type="primary">查看</el-button>
+          <el-button @click="handleDelete(scope)" size="mini" type="danger">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
     <!-- 分页 -->
     <div class="common-pagination-wrapper">
-      <el-pagination background @size-change="handleSizeChange"
-                     @current-change="handleCurrentChange"
-                     :current-page.sync="pagination.page"
+      <el-pagination :current-page.sync="pagination.page" :page-size="pagination.limit"
                      :page-sizes="[10,20,30,50,100]"
-                     :page-size="pagination.limit"
                      :total="total"
+                     @current-change="handleCurrentChange"
+                     @size-change="handleSizeChange"
+                     background
                      layout="total, sizes, prev, pager, next, jumper"
       >
       </el-pagination>
     </div>
-    <!-- 编辑 -->
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="oneKeyCrawlFlag" width="850px">
+    <!-- 查看预售明细  -->
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="checkPreSaleFlag" width="1000">
 
-      <el-row type="flex" justify="center">
-        <el-col :span="20">
+      <el-row justify="center" type="flex">
+        <el-col :span="24">
 
-          <el-form :rules="rules" ref="formData" :model="formData"
-                   label-position="right"
-                   label-width="140px">
-            <el-form-item label="爬虫类型" prop="rewardType">
-              <el-select v-model="formData.rewardType" placeholder='' @change="chooseRewardType">
-                <el-option v-for="item in settingsList"
-                           :key="item.code" :label="item.name"
-                           :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="爬虫地址" prop="crawlerAddress">
-              <el-input v-model="formData.crawlerAddress"></el-input>
-            </el-form-item>
-          </el-form>
+          <el-table :data="currentPreSaleDetailsTableData" @selection-change="checkPreSaleFlag"
+                    border
+                    element-loading-text="Loading"
+                    fit
+                    highlight-current-row
+                    v-loading.body="listLoading">
+            <el-table-column fixed="left" type="selection" width="30"></el-table-column>
+            <el-table-column align="center" fixed label="No" type="index" width="45"></el-table-column>
+            <el-table-column align="center" label="时间戳" prop='timestamp' width="110"></el-table-column>
+            <el-table-column align="center" label="爬取日期" prop='date' width="110"></el-table-column>
+            <el-table-column align="center" label="日期" prop='bookingDate' width="110"></el-table-column>
+            <el-table-column align="center" label="累计首日预售" prop='titleChi' width="110"></el-table-column>
+            <el-table-column align="center" label="当日新增预售" prop='title' width="110"></el-table-column>
+
+            <el-table-column align="center" label="累计开放场次" prop='releaseDate'></el-table-column>
+            <el-table-column align="center" label="当日新增场次" prop='platformEngName'></el-table-column>
+
+            <el-table-column align="center" fixed="right" label="操作" width="70">
+              <template slot-scope="scope">
+                <el-button @click="handleDelete(scope)" size="mini" type="danger">删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
         </el-col>
       </el-row>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="oneKeyCrawlFlag = false" v-waves>{{$t('table.cancel')}}</el-button>
-        <el-button type="primary" v-waves @click="crawlerData">{{$t('table.confirm')}}</el-button>
+      <div class="dialog-footer" slot="footer">
+        <el-button @click="checkPreSaleFlag = false" v-waves>关闭</el-button>
       </div>
     </el-dialog>
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="stepCrawlFlag" width="1600px" top="1vh">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="stepCrawlFlag" top="1vh" width="1600px">
       <el-row :gutter="1">
         <el-col :span="4">
-          <el-button type="primary" @click="prepareToCrawlFlag=true">
+          <el-button @click="prepareToCrawlFlag=true" type="primary">
             {{preSaleListData.length===0?'获取索引':'重新获取索引'}}
           </el-button>
-          <el-button v-if="!crawlingFlag" :disabled="preSaleListData.length===0" type="primary"
-                     @click="beginToCrawPreSaleListMovieData">
+          <el-button :disabled="preSaleListData.length===0" @click="beginToCrawPreSaleListMovieData" type="primary"
+                     v-if="!crawlingFlag">
             {{crawlingCount===0?'开始抓取':'重新抓取'}}
           </el-button>
-          <el-button v-else type="danger" @click="stopCrawling">停止抓取</el-button>
+          <el-button @click="stopCrawling" type="danger" v-else>停止抓取</el-button>
         </el-col>
 
         <el-col :span="20" style="text-align: right">
-          <el-button type="primary" @click="save">保存</el-button>
+          <el-button @click="save" type="primary">保存</el-button>
         </el-col>
 
       </el-row>
@@ -134,18 +125,20 @@
       <el-row>
 
         <el-col :span="24">
-          <el-row type="flex" justify="left">
+          <el-row justify="left" type="flex">
 
             <el-col :span="5">
               <!--          {{preSaleListCountLimit}}-->
-              <el-input-number v-model="preSaleListCountLimit" :min="0"></el-input-number>
-              <el-button type="primary" @click="handleChangeCounter">确定</el-button>
+              <el-input-number :min="0" v-model="preSaleListCountLimit"></el-input-number>
+              <el-button @click="handleChangeCounter" type="primary">确定</el-button>
 
             </el-col>
             <el-col :span="19">
-              <el-progress :text-inside="true" :stroke-width="20"
-                           :percentage="preSaleListData.length!==0?Math.floor(crawlingCount/preSaleListData.filter(item=>item.active).length*100):0"
-                           status="success"></el-progress>
+              <el-progress
+                :percentage="preSaleListData.length!==0?Math.floor(crawlingCount/preSaleListData.filter(item=>item.active).length*100):0"
+                :stroke-width="20"
+                :text-inside="true"
+                status="success"></el-progress>
             </el-col>
 
           </el-row>
@@ -155,46 +148,45 @@
 
                 <el-divider>
                   <el-row>
-                    <el-col v-if="preSaleListData.length>0&&crawlingCount<preSaleListData.length" :span="24">
+                    <el-col :span="24" v-if="preSaleListData.length>0&&crawlingCount<preSaleListData.length">
                       共有{{preSaleListData.length}}条数据，正在抓取第{{crawlingCount}}条...
                     </el-col>
-                    <el-col v-else :span="24">
+                    <el-col :span="24" v-else>
                       共有{{preSaleListData.length}}条数据，抓取完毕
                     </el-col>
                   </el-row>
                 </el-divider>
-                <el-row type="flex" justify="left">
+                <el-row justify="left" type="flex">
                   <el-col :span="24">
                     <!--          {{preSaleListData}}-->
                     <el-timeline :style="clawerStyle">
-                      <el-timeline-item v-for="(item, index) in preSaleListData.filter(item=>item.active)"
+                      <el-timeline-item :color="item.color==='success'?'#91d929':'#e4e7ed'"
                                         :key="index"
                                         :timestamp="item.recordTime"
-                                        placement="top"
-                                        :color="item.color==='success'?'#91d929':'#e4e7ed'"
                                         class="timelineitem"
+                                        placement="top"
+                                        v-for="(item, index) in preSaleListData.filter(item=>item.active)"
                       >
                         <el-card shadow="hover">
                           <el-row>
                             <el-col :span="1" style="text-align: left">第{{index+1}}条</el-col>
-                            <!--                            <el-col :span="1" style="text-align: left">{{item.movieId}}</el-col>-->
                             <el-col :span="4" style="text-align: left">{{item.title}}</el-col>
                             <el-col :span="2">
-                              详情: <i v-if="item.detailSuccess===0" class=""></i>
-                              <i v-else-if="item.detailSuccess===1" class="el-icon-check success"></i>
-                              <i v-else="item.detailSuccess===2" class="el-icon-close failed"></i>
+                              详情: <i class="" v-if="item.detailSuccess===0"></i>
+                              <i class="el-icon-check success" v-else-if="item.detailSuccess===1"></i>
+                              <i class="el-icon-close failed" v-else="item.detailSuccess===2"></i>
                             </el-col>
                             <el-col :span="2">
-                              想看画像: <i v-if="item.portraitSuccess===0" class=""></i>
-                              <i v-else-if="item.portraitSuccess===1" class="el-icon-check success"></i>
-                              <i v-else="item.portraitSuccess===2" class="el-icon-close failed"></i>
+                              想看画像: <i class="" v-if="item.portraitSuccess===0"></i>
+                              <i class="el-icon-check success" v-else-if="item.portraitSuccess===1"></i>
+                              <i class="el-icon-close failed" v-else="item.portraitSuccess===2"></i>
                             </el-col>
 
                             <el-col :span="2">
-                              预售票房: <i v-if="item.premiereSuccess===0" class=""></i>
-                              <i v-else-if="item.premiereSuccess===1"
-                                 class="el-icon-check success"></i>
-                              <i v-else="item.premiereSuccess===2" class="el-icon-close failed"></i>
+                              预售票房: <i class="" v-if="item.premiereSuccess===0"></i>
+                              <i class="el-icon-check success"
+                                 v-else-if="item.premiereSuccess===1"></i>
+                              <i class="el-icon-close failed" v-else="item.premiereSuccess===2"></i>
                             </el-col>
 
 
@@ -214,25 +206,25 @@
       </el-row>
 
 
-      <el-row type="flex" justify="space-between">
+      <el-row justify="space-between" type="flex">
         <el-col :span="21">
         </el-col>
         <el-col :span="3" style="text-align: right">
-          <el-button type="primary" @click="stepCrawlFlag=false">关闭</el-button>
+          <el-button @click="stepCrawlFlag=false" type="primary">关闭</el-button>
         </el-col>
       </el-row>
     </el-dialog>
-    <el-dialog title="准备爬取" :visible.sync="prepareToCrawlFlag" width="600px">
-      <el-radio-group v-model="crawlerCountType" @change="handleChangeLimitType">
+    <el-dialog :visible.sync="prepareToCrawlFlag" title="准备爬取" width="600px">
+      <el-radio-group @change="handleChangeLimitType" v-model="crawlerCountType">
         <el-radio :label="0">全部</el-radio>
         <el-radio :label="1">部分</el-radio>
-        <el-input-number v-model="preSaleListCountLimit" :disabled="crawlerCountType===0"
+        <el-input-number :disabled="crawlerCountType===0" :min="0"
                          @change="handleChangeCountLimit"
-                         :min="0"></el-input-number>
+                         v-model="preSaleListCountLimit"></el-input-number>
 
       </el-radio-group>
 
-      <el-button type="primary" @click="getAllCrawlingIndex">开始抓取列表</el-button>
+      <el-button @click="getAllCrawlingIndex" type="primary">开始抓取列表</el-button>
     </el-dialog>
 
   </el-row>
@@ -347,7 +339,7 @@
         currentAdvertisementTabIndex: 0,
         effectiveDuration: [],
         multipleSelection: [],
-        oneKeyCrawlFlag: false,
+        checkPreSaleFlag: false,
         stepCrawlFlag: false,
         prepareToCrawlFlag: false,
         settingsList: [],
@@ -355,7 +347,9 @@
         crawlingCount: 0,
         preSaleListData: [],
         crawlingFlag: false,
-        preSaleListCountLimit: 0
+        preSaleListCountLimit: 0,
+
+        currentPreSaleDetailsTableData: []
       }
     },
     computed: {
@@ -453,7 +447,7 @@
           this.$message.success('抓取成功')
 
           this.getTableData()
-          this.oneKeyCrawlFlag = false
+          this.checkPreSaleFlag = false
 
         })
       },
@@ -821,6 +815,11 @@
         console.log('this.preSaleListData+++', this.preSaleListData)
         debugger
 
+      },
+      checkRecord(scope) {
+        this.checkPreSaleFlag = true
+        console.log(scope)
+        // this.currentPreSaleDetailsTableData = scope
       }
 
     }

@@ -17,6 +17,8 @@ router.get('/crawlRankingListMoreSections', crawlerMaoyanRankingListController.c
 router.get('/crawlRankingListRating', crawlerMaoyanRankingListController.crawlRankingListRating);
 router.get('/crawlRankingListPremiereBox', crawlerMaoyanRankingListController.crawlRankingListPremiereBox);
 
+
+
 router.get('/crawlRankingListWantToSeePortrait', crawlerMaoyanRankingListController.crawlRankingListWantToSeePortrait);
 router.post('/saveOneRankingListRecord', crawlerMaoyanRankingListController.saveOneRankingListRecord);
 router.post('/saveMultipleMaoyanRankingListRecord', crawlerMaoyanRankingListController.saveMultipleMaoyanRankingListRecord);
