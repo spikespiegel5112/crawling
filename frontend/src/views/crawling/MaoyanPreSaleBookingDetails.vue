@@ -28,6 +28,7 @@
               v-loading.body="listLoading">
       <el-table-column fixed="left" type="selection" width="30"></el-table-column>
       <el-table-column align="center" fixed label="No" type="index" width="45"></el-table-column>
+      <el-table-column align="center" label="movieId" prop='movieId' width="110"></el-table-column>
       <el-table-column align="center" label="电影名称（中文）" prop='titleChi' width="110"></el-table-column>
       <el-table-column align="center" label="电影名称（原文）" prop='title' width="110"></el-table-column>
       <el-table-column align="center" label="抓取时间" prop='timestamp' width="110">
@@ -39,9 +40,6 @@
       <el-table-column align="center" label="平台名称（英文）" prop='platformEngName'></el-table-column>
       <el-table-column align="center" label="平台名称（中文）" prop='platformChineseName'></el-table-column>
       <el-table-column align="center" label="平台类型" prop='platformType'></el-table-column>
-      <el-table-column align="center" label="想看数量" prop='numWantToSee'></el-table-column>
-      <el-table-column align="center" label="想看男性受众占比" prop='wantToSeeByGenderMale'></el-table-column>
-      <el-table-column align="center" label="想看女性受众占比" prop='wantToSeeByGenderFemale'></el-table-column>
 
       <el-table-column align="center" label="预售票房" prop='premiereBoxInfo'></el-table-column>
       <el-table-column align="center" label="预售排片占比" prop='premiereShowRate'></el-table-column>
@@ -68,7 +66,7 @@
       </el-pagination>
     </div>
     <!-- 查看预售明细  -->
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="checkPreSaleFlag" width="1000">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="checkPreSaleFlag" width="1200px">
 
       <el-row justify="center" type="flex">
         <el-col :span="24">
@@ -81,14 +79,15 @@
                     v-loading.body="listLoading">
             <el-table-column fixed="left" type="selection" width="30"></el-table-column>
             <el-table-column align="center" fixed label="No" type="index" width="45"></el-table-column>
-            <el-table-column align="center" label="时间戳" prop='timestamp' width="110"></el-table-column>
+            <el-table-column align="center" label="时间戳" prop='timestamp' width="130"></el-table-column>
+            <el-table-column align="center" label="名称" prop='title' width="110"></el-table-column>
             <el-table-column align="center" label="爬取日期" prop='date' width="110"></el-table-column>
             <el-table-column align="center" label="日期" prop='bookingDate' width="110"></el-table-column>
-            <el-table-column align="center" label="累计首日预售" prop='titleChi' width="110"></el-table-column>
-            <el-table-column align="center" label="当日新增预售" prop='title' width="110"></el-table-column>
+            <el-table-column align="center" label="累计首日预售" prop='accumulatedFirstDayPreSale' width="110"></el-table-column>
+            <el-table-column align="center" label="当日新增预售" prop='dailyAdditionalPreSale' width="110"></el-table-column>
 
-            <el-table-column align="center" label="累计开放场次" prop='releaseDate'></el-table-column>
-            <el-table-column align="center" label="当日新增场次" prop='platformEngName'></el-table-column>
+            <el-table-column align="center" label="累计开放场次" prop='accumulatedOpenVenues'></el-table-column>
+            <el-table-column align="center" label="当日新增场次" prop='dailyAdditionalVenues'></el-table-column>
 
             <el-table-column align="center" fixed="right" label="操作" width="70">
               <template slot-scope="scope">
@@ -103,117 +102,6 @@
       </div>
     </el-dialog>
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="stepCrawlFlag" top="1vh" width="1600px">
-      <el-row :gutter="1">
-        <el-col :span="4">
-          <el-button @click="prepareToCrawlFlag=true" type="primary">
-            {{preSaleListData.length===0?'获取索引':'重新获取索引'}}
-          </el-button>
-          <el-button :disabled="preSaleListData.length===0" @click="beginToCrawPreSaleListMovieData" type="primary"
-                     v-if="!crawlingFlag">
-            {{crawlingCount===0?'开始抓取':'重新抓取'}}
-          </el-button>
-          <el-button @click="stopCrawling" type="danger" v-else>停止抓取</el-button>
-        </el-col>
-
-        <el-col :span="20" style="text-align: right">
-          <el-button @click="save" type="primary">保存</el-button>
-        </el-col>
-
-      </el-row>
-      <el-divider></el-divider>
-      <el-row>
-
-        <el-col :span="24">
-          <el-row justify="left" type="flex">
-
-            <el-col :span="5">
-              <!--          {{preSaleListCountLimit}}-->
-              <el-input-number :min="0" v-model="preSaleListCountLimit"></el-input-number>
-              <el-button @click="handleChangeCounter" type="primary">确定</el-button>
-
-            </el-col>
-            <el-col :span="19">
-              <el-progress
-                :percentage="preSaleListData.length!==0?Math.floor(crawlingCount/preSaleListData.filter(item=>item.active).length*100):0"
-                :stroke-width="20"
-                :text-inside="true"
-                status="success"></el-progress>
-            </el-col>
-
-          </el-row>
-          <el-row>
-            <el-col :span="24">
-              <el-card shadow="never">
-
-                <el-divider>
-                  <el-row>
-                    <el-col :span="24" v-if="preSaleListData.length>0&&crawlingCount<preSaleListData.length">
-                      共有{{preSaleListData.length}}条数据，正在抓取第{{crawlingCount}}条...
-                    </el-col>
-                    <el-col :span="24" v-else>
-                      共有{{preSaleListData.length}}条数据，抓取完毕
-                    </el-col>
-                  </el-row>
-                </el-divider>
-                <el-row justify="left" type="flex">
-                  <el-col :span="24">
-                    <!--          {{preSaleListData}}-->
-                    <el-timeline :style="clawerStyle">
-                      <el-timeline-item :color="item.color==='success'?'#91d929':'#e4e7ed'"
-                                        :key="index"
-                                        :timestamp="item.recordTime"
-                                        class="timelineitem"
-                                        placement="top"
-                                        v-for="(item, index) in preSaleListData.filter(item=>item.active)"
-                      >
-                        <el-card shadow="hover">
-                          <el-row>
-                            <el-col :span="1" style="text-align: left">第{{index+1}}条</el-col>
-                            <el-col :span="4" style="text-align: left">{{item.title}}</el-col>
-                            <el-col :span="2">
-                              详情: <i class="" v-if="item.detailSuccess===0"></i>
-                              <i class="el-icon-check success" v-else-if="item.detailSuccess===1"></i>
-                              <i class="el-icon-close failed" v-else="item.detailSuccess===2"></i>
-                            </el-col>
-                            <el-col :span="2">
-                              想看画像: <i class="" v-if="item.portraitSuccess===0"></i>
-                              <i class="el-icon-check success" v-else-if="item.portraitSuccess===1"></i>
-                              <i class="el-icon-close failed" v-else="item.portraitSuccess===2"></i>
-                            </el-col>
-
-                            <el-col :span="2">
-                              预售票房: <i class="" v-if="item.premiereSuccess===0"></i>
-                              <i class="el-icon-check success"
-                                 v-else-if="item.premiereSuccess===1"></i>
-                              <i class="el-icon-close failed" v-else="item.premiereSuccess===2"></i>
-                            </el-col>
-
-
-                          </el-row>
-                        </el-card>
-
-                      </el-timeline-item>
-                    </el-timeline>
-                  </el-col>
-                </el-row>
-
-              </el-card>
-            </el-col>
-          </el-row>
-        </el-col>
-
-      </el-row>
-
-
-      <el-row justify="space-between" type="flex">
-        <el-col :span="21">
-        </el-col>
-        <el-col :span="3" style="text-align: right">
-          <el-button @click="stepCrawlFlag=false" type="primary">关闭</el-button>
-        </el-col>
-      </el-row>
-    </el-dialog>
     <el-dialog :visible.sync="prepareToCrawlFlag" title="准备爬取" width="600px">
       <el-radio-group @change="handleChangeLimitType" v-model="crawlerCountType">
         <el-radio :label="0">全部</el-radio>
@@ -247,8 +135,9 @@
         crawlPreSaleWantToSeePortraitRequest: 'crawlerMaoyanPreSale/crawlPreSaleWantToSeePortrait',
         crawlPreSaleBoxOfficePremiereRequest: 'crawlerMaoyanPreSale/crawlPreSaleBoxOfficePremiere',
         deleteRecordRequest: 'crawlerMaoyanPreSale/deleteRecords',
-        getSettingsRequest: 'settings/getList',
+        getPreSaleBookingDetailsByMovieIdRequest: 'crawlerMaoyanPreSale/getPreSaleBookingDetailsByMovieId',
 
+        getSettingsRequest: 'settings/getList',
         crawlMovieListRequest: 'crawlerMaoyanPreSale/crawlMovieList',
         saveMultipleMaoyanPreSaleRequest: 'crawlerMaoyanPreSale/saveMultipleMaoyanPreSale',
         crawlerSettingFlag: false,
@@ -667,59 +556,8 @@
           const crawlingCount = this.crawlingCount
           this.crawlingFlag = true
           const movieId = preSaleData[crawlingCount].movieId
-          const getDetail = () => {
-            return new Promise((resolve, reject) => {
-              this.$http.get(this.$baseUrl + this.crawlMoviePreSaleDetailRequest, {
-                params: {
-                  address: 'https://piaofang.maoyan.com/movie/' + movieId,
-                  headerCode: 'maoyanPreSale'
-                }
-              }).then(response1 => {
-                record.detail = response1.data
 
-                this.$set(this.preSaleListData, crawlingCount, Object.assign(preSaleData[crawlingCount], {
-                  detailSuccess: 1
-                }))
-
-                resolve(response1.data)
-              }).catch(error => {
-
-                this.$set(this.preSaleListData, crawlingCount, Object.assign(preSaleData[crawlingCount], {
-                  detailSuccess: 2
-                }))
-                reject(error)
-
-              })
-            })
-          }
-
-          const getPortrait = () => {
-            return new Promise((resolve, reject) => {
-              this.$http.get(this.$baseUrl + this.crawlPreSaleWantToSeePortraitRequest, {
-                params: {
-                  address: 'https://piaofang.maoyan.com/movie/' + movieId,
-                  headerCode: 'maoyanPreSalePortrait'
-                }
-              }).then(response1 => {
-                record.portrait = response1.data
-
-                this.$set(this.preSaleListData, crawlingCount, Object.assign(preSaleData[crawlingCount], {
-                  portraitSuccess: 1,
-                  color: 'success'
-                }))
-                resolve(response1.data)
-              }).catch(error => {
-                this.$set(this.preSaleListData, crawlingCount, Object.assign(preSaleData[crawlingCount], {
-                  portraitSuccess: 2,
-                  color: 'failed'
-                }))
-
-                reject(error)
-              })
-            })
-          }
-
-          const getPreSaleBoxOfficePremiere = () => {
+          const crawlPreSaleBoxOfficePremiere = () => {
             return new Promise((resolve, reject) => {
               this.$http.get(this.$baseUrl + this.crawlPreSaleBoxOfficePremiereRequest, {
                 params: {
@@ -745,19 +583,17 @@
             })
           }
 
-          const getDetailPromise = getDetail()
-          const getPortraitPromise = getPortrait()
-          const getPreSaleBoxOfficePremierePromise = getPreSaleBoxOfficePremiere()
+          const crawlPreSaleBoxOfficePremierePromise = crawlPreSaleBoxOfficePremiere()
           if (this.crawlingCount === this.preSaleListCountLimit) {
             // debugger
             this.crawlingFlag = false
           } else {
             this.crawlingCount++
           }
-          Promise.all([getDetailPromise, getPortraitPromise, getPreSaleBoxOfficePremierePromise]).then(responseAll => {
+          Promise.all([crawlPreSaleBoxOfficePremierePromise]).then(responseAll => {
             console.log(responseAll)
 
-            this.$set(this.preSaleData, crawlingCount, Object.assign(responseAll[0], responseAll[1], responseAll[2]))
+            this.$set(this.preSaleData, crawlingCount, Object.assign({ movieId: movieId }, responseAll[0], responseAll[1], responseAll[2]))
 
             console.log('preSaleData', this.preSaleData)
 
@@ -820,6 +656,17 @@
         this.checkPreSaleFlag = true
         console.log(scope)
         // this.currentPreSaleDetailsTableData = scope
+        this.$http.get(this.$baseUrl + this.getPreSaleBookingDetailsByMovieIdRequest, {
+          params: {
+            movieId: scope.row.movieId
+          }
+        }).then(response => {
+          console.log(response)
+          this.currentPreSaleDetailsTableData = response.data
+        }).catch(error => {
+          console.log(response)
+
+        })
       }
 
     }

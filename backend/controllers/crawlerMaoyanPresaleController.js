@@ -108,23 +108,6 @@ const _createMaoyanPreSaleRecord = (requestBody, timestamp) => {
   })
 };
 
-const _createMultipleMaoyanPreSaleRecord = (requestBody, timestamp) => {
-  let _timestamp = timestamp;
-  console.log('timestamp:   ', timestamp);
-  if (!timestamp) {
-	_timestamp = Date.now();
-  }
-  return new Promise((resolve, reject) => {
-	MaoyanPreSaleModel.bulkCreate(requestBody).then(result => {
-	  // console.log(result);
-	  resolve(result)
-	}).catch(error => {
-	  reject(error)
-	})
-
-  })
-};
-
 
 const crawlMovieList = async (req, res, next) => {
   _crawlMovieListPromise(req, res, next).then((response) => {
@@ -495,8 +478,10 @@ const _crawlPreSaleBookingDetailsPromise = (req, res, next) => {
   return new Promise(async (resolve, reject) => {
 	console.log('_crawlPreSaleBookingDetailsPromise+++++', req.query);
 
+	const movieId = Number(req.query.movieId);
+	const address = 'https://piaofang.maoyan.com/movie/' + movieId + '/premierebox';
 	req.query = Object.assign(req.query, {
-	  address: encodeURI(req.query.address)
+	  address: encodeURI(address)
 	});
 
 	try {
@@ -517,8 +502,12 @@ const _crawlPreSaleBookingDetailsPromise = (req, res, next) => {
 	  // data: bookingDateList
 	  // });
 	  const rawData = [];
+	  const date=new Date();
 	  bookingDateList.forEach((item, index) => {
 		rawData.push({
+		  movieId: movieId,
+		  title: $('.info-base .info-title-bar').text(),
+		  date:date.toLocaleTimeString(),
 		  bookingDate: find($, ".section-detail .t-table .t-main-col .t-row:eq(" + index + ")").text().replace(/[\u4e00-\u9fa5]+/, '').trim(),
 		  accumulatedFirstDayPreSale: find($, ".section-detail .t-table .t-other-col .t-row:eq(" + index + ") .t-col:eq(0)").text().trim(),
 		  dailyAdditionalPreSale: find($, ".section-detail .t-table .t-other-col .t-row:eq(" + index + ") .t-col:eq(1)").text().trim(),
@@ -528,15 +517,10 @@ const _crawlPreSaleBookingDetailsPromise = (req, res, next) => {
 	  });
 
 
-	  const result = {
-		accumulatedFirstDayPreSale: rawData.accumulatedFirstDayPreSale,
-		dailyAdditionalPreSale: rawData.dailyAdditionalPreSale,
-		accumulatedOpenVenues: rawData.accumulatedOpenVenues,
-		dailyAdditionalVenues: rawData.dailyAdditionalVenue
-	  };
+	  const result = rawData;
 	  console.log('_crawlMoviePreSaleDetailPromise result+++++++++', result);
 
-	  resolve(rawData)
+	  resolve(result)
 
 
 	} catch (e) {
@@ -551,23 +535,12 @@ const _crawlPreSaleBookingDetailsPromise = (req, res, next) => {
 
 
 const getPreSaleBookingDetailsByMovieId = (req, res, next) => {
-  // let pagination = {
-  // limit: Number(req.query.limit),
-  // page: Number(req.query.page),
-  // offset: req.query.limit * (req.query.page - 1)
-  // };
-  // res.status(200).json({
-  // data: req.query
-  // })
-  MaoyanPreSaleBookingDetailsModel.findOne({
+  MaoyanPreSaleBookingDetailsModel.findAll({
 	where: {
-	  movieId: req.query.movieId
+	  movieId: Number(req.query.movieId)
 	}
   }).then(async data => {
 	res.status(200).json({
-	  // pagination: {
-	  // total: await MaoyanPreSaleModel.count(),
-	  // },
 	  data: data
 	})
   }).catch(error => {
@@ -586,7 +559,7 @@ const saveMultipleMaoyanPreSaleBookingDetails = (req, res, next) => {
 	_timestamp = Date.now();
   }
 
-  _createMultipleMaoyanPreSaleBookingDetailsPromise(req, _timestamp).then(response => {
+  _createMultipleMaoyanPreSaleBookingDetailsPromise(req, res, _timestamp).then(response => {
 	res.status(200).json({
 	  message: 'success',
 	  data: response
@@ -597,10 +570,15 @@ const saveMultipleMaoyanPreSaleBookingDetails = (req, res, next) => {
 	})
   })
 };
-const _createMultipleMaoyanPreSaleBookingDetailsPromise = (req, _timestamp) => {
+const _createMultipleMaoyanPreSaleBookingDetailsPromise = (req, res, _timestamp) => {
 
+  requestBody = req.body.map(item => {
+	return Object.assign({
+	  timestamp: _timestamp
+	}, item)
+  });
   return new Promise((resolve, reject) => {
-	MaoyanPreSaleBookingDetailsModel.bulkCreate(req.body).then(result => {
+	MaoyanPreSaleBookingDetailsModel.bulkCreate(requestBody).then(result => {
 	  console.log(result);
 	  resolve(result)
 	}).catch(error => {
@@ -727,13 +705,13 @@ const saveMultipleMaoyanPreSale = (req, res, next) => {
 	  error: 'not array'
 	})
   }
-  const timestamp = Date.now();
+
   requestBody = requestBody.map(item => {
 	return Object.assign(item, {
-	  timestamp: timestamp
+	  movieId: Number(item.movieId)
 	})
   });
-  _createMultipleMaoyanPreSaleRecord(requestBody, timestamp).then(response => {
+  _createMultipleMaoyanPreSaleRecordPromise(requestBody).then(response => {
 	res.status(200).json({
 	  data: response
 	})
@@ -743,11 +721,18 @@ const saveMultipleMaoyanPreSale = (req, res, next) => {
 	  error: error
 	})
   });
+};
 
+const _createMultipleMaoyanPreSaleRecordPromise = (requestBody) => {
+  return new Promise((resolve, reject) => {
+	MaoyanPreSaleModel.bulkCreate(requestBody).then(result => {
+	  // console.log(result);
+	  resolve(result)
+	}).catch(error => {
+	  reject(error)
+	})
 
-  // requestBody.forEach((item, index) => {
-  //
-  // })
+  })
 };
 
 
@@ -881,13 +866,14 @@ exports.crawlMoviePreSaleDetail = crawlMoviePreSaleDetail;
 exports.crawlPreSaleWantToSeePortrait = crawlPreSaleWantToSeePortrait;
 exports.crawlPreSaleBoxOfficePremiere = crawlPreSaleBoxOfficePremiere;
 exports.crawlPreSaleBookingDetails = crawlPreSaleBookingDetails;
-exports.getPreSaleBookingDetailsByMovieId = getPreSaleBookingDetailsByMovieId;
-exports.saveMultipleMaoyanPreSaleBookingDetails = saveMultipleMaoyanPreSaleBookingDetails;
 
 exports.oneKeyMoviePreSale = oneKeyMoviePreSale;
 exports.save = save;
 exports.saveOneMaoyanPreSale = saveOneMaoyanPreSale;
 exports.saveMultipleMaoyanPreSale = saveMultipleMaoyanPreSale;
+exports.saveMultipleMaoyanPreSaleBookingDetails = saveMultipleMaoyanPreSaleBookingDetails;
+
+exports.getPreSaleBookingDetailsByMovieId = getPreSaleBookingDetailsByMovieId;
 exports.getListByPagination = getListByPagination;
 exports.getListByDate = getListByDate;
 exports.crawlAndSave = crawlAndSave;
