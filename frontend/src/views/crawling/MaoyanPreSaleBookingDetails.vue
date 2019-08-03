@@ -2,9 +2,6 @@
   <el-row class="app-container">
     <CommonQuery>
       <template slot="button1">
-        <el-button @click="stepCrawlFlag=true" icon="el-icon-plus" size="mini" type="primary" v-waves>
-          分步抓取
-        </el-button>
         <el-button @click="handleMultipleDelete" icon="el-icon-delete" size="mini" type="danger" v-waves>
           批量删除
         </el-button>
@@ -29,17 +26,13 @@
       <el-table-column fixed="left" type="selection" width="30"></el-table-column>
       <el-table-column align="center" fixed label="No" type="index" width="45"></el-table-column>
       <el-table-column align="center" label="movieId" prop='movieId' width="110"></el-table-column>
-      <el-table-column align="center" label="电影名称（中文）" prop='titleChi' width="110"></el-table-column>
-      <el-table-column align="center" label="电影名称（原文）" prop='title' width="110"></el-table-column>
+      <el-table-column align="center" label="电影名称（中文）" prop='titleChi' width="150"></el-table-column>
       <el-table-column align="center" label="抓取时间" prop='timestamp' width="110">
         <template slot-scope="scope">
           {{$moment(Number(scope.row.timestamp)).format('YYYY-MM-DD HH:mm:ss')}}
         </template>
       </el-table-column>
       <el-table-column align="center" label="上映时间" prop='releaseDate'></el-table-column>
-      <el-table-column align="center" label="平台名称（英文）" prop='platformEngName'></el-table-column>
-      <el-table-column align="center" label="平台名称（中文）" prop='platformChineseName'></el-table-column>
-      <el-table-column align="center" label="平台类型" prop='platformType'></el-table-column>
 
       <el-table-column align="center" label="预售票房" prop='premiereBoxInfo'></el-table-column>
       <el-table-column align="center" label="预售排片占比" prop='premiereShowRate'></el-table-column>
@@ -80,10 +73,15 @@
             <el-table-column fixed="left" type="selection" width="30"></el-table-column>
             <el-table-column align="center" fixed label="No" type="index" width="45"></el-table-column>
             <el-table-column align="center" label="时间戳" prop='timestamp' width="130"></el-table-column>
-            <el-table-column align="center" label="名称" prop='title' width="110"></el-table-column>
-            <el-table-column align="center" label="爬取日期" prop='date' width="110"></el-table-column>
-            <el-table-column align="center" label="日期" prop='bookingDate' width="110"></el-table-column>
-            <el-table-column align="center" label="累计首日预售" prop='accumulatedFirstDayPreSale' width="110"></el-table-column>
+            <el-table-column align="center" label="名称（中文）" prop='titleChi' width="110"></el-table-column>
+            <el-table-column align="center" label="爬取日期" prop='date' width="110">
+              <template slot-scope="scope">
+                {{$moment(Number(scope.row.timestamp)).format('YYYY-MM-DD HH:mm:ss')}}
+              </template>
+            </el-table-column>
+            <el-table-column align="center" label="记录日期" prop='bookingDate' width="110"></el-table-column>
+            <el-table-column align="center" label="累计首日预售" prop='accumulatedFirstDayPreSale'
+                             width="110"></el-table-column>
             <el-table-column align="center" label="当日新增预售" prop='dailyAdditionalPreSale' width="110"></el-table-column>
 
             <el-table-column align="center" label="累计开放场次" prop='accumulatedOpenVenues'></el-table-column>

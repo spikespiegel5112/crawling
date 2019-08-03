@@ -21,7 +21,7 @@ const MaoyanPreSaleBookingDetailsModel = sequelize.define('MaoyanPreSaleBookingD
 	type: Sequelize.STRING,
 	allowNull: true
   },
-  title: {
+  titleChi: {
 	type: Sequelize.STRING,
 	allowNull: true
   },

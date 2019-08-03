@@ -12,6 +12,7 @@ const HeadersModel = require('./models/HeadersSettings');
 const SettingsModel = require('./models/SettingsModel');
 const MaoyanWantSeeModel = require('./models/MaoyanWantSeeModel');
 const MaoyanPreSaleModel = require('./models/MaoyanPreSaleModel');
+const MaoyanPreSaleBookingDetailsMappingModel = require('./models/MaoyanPreSaleBookingDetailsMappingModel');
 const MaoyanPreSaleBookingDetailsModel = require('./models/MaoyanPreSaleBookingDetailsModel');
 
 

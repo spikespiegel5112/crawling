@@ -41,17 +41,8 @@
       <el-table-column align="center" label="平台名称（中文）" prop='platformChineseName'></el-table-column>
       <el-table-column align="center" label="平台类型" prop='platformType'></el-table-column>
       <el-table-column align="center" label="想看数量" prop='numWantToSee'></el-table-column>
-      <el-table-column align="center" label="想看男性受众占比" prop='wantToSeeByGenderMale'>
-        <!--        <template slot-scope="scope">-->
-        <!--          {{JSON.parse(scope.row.byGenderMale.match(/[1-9]\d*\.\d*|0\.\d*[1-9]\d*$/))+'%'}}-->
-        <!--        </template>-->
-      </el-table-column>
-      <el-table-column align="center" label="想看女性受众占比" prop='wantToSeeByGenderFemale'>
-        <!--        <template slot-scope="scope">-->
-        <!--          {{scope.row.byGenderFemale.match(/[[1-9]\d*\.\d*|0\.\d*[1-9]\d*]$/g)}}-->
-        <!--          {{String(scope.row.byGenderFemale.match(/[[1-9]\d*\.\d*|0\.\d*[1-9]\d*]$/g)).split(',')[1]}}-->
-        <!--        </template>-->
-      </el-table-column>
+      <el-table-column align="center" label="想看男性受众占比" prop='wantToSeeByGenderMale'></el-table-column>
+      <el-table-column align="center" label="想看女性受众占比" prop='wantToSeeByGenderFemale'></el-table-column>
       <el-table-column align="center" label="想看20岁以下占比" prop='wantToSeeByAge20'></el-table-column>
       <el-table-column align="center" label="想看20到24岁占比" prop='wantToSeeByAge20To24'></el-table-column>
       <el-table-column align="center" label="想看25到29岁占比" prop='wantToSeeByAge25To29'></el-table-column>
@@ -68,7 +59,7 @@
       <el-table-column align="center" label="预售排片场次" prop='premiereShowRate'></el-table-column>
 
 
-      <el-table-column align="center" label="操作" width="100px">
+      <el-table-column align="center" fixed="right" label="操作" width="70px">
         <template slot-scope="scope">
           <el-button @click="handleDelete(scope)" size="mini" type="danger">删除</el-button>
         </template>
@@ -219,10 +210,7 @@
             </el-col>
           </el-row>
         </el-col>
-
       </el-row>
-
-
       <el-row justify="space-between" type="flex">
         <el-col :span="21">
         </el-col>
@@ -231,6 +219,7 @@
         </el-col>
       </el-row>
     </el-dialog>
+
     <el-dialog :visible.sync="prepareToCrawlFlag" title="准备爬取" width="600px">
       <el-radio-group @change="handleChangeLimitType" v-model="crawlerCountType">
         <el-radio :label="0">全部</el-radio>
@@ -260,7 +249,7 @@
       return {
         getListByPaginationRequest: 'crawlerMaoyanPreSale/getListByPagination',
         crawlAndSaveRequest: 'crawlerMaoyanPreSale/crawlAndSave',
-        crawlMoviePreSaleDetailRequest: 'crawlerMaoyanPreSale/crawlMoviePreSaleDetail',
+        crawlPreSaleDetailRequest: 'crawlerMaoyanPreSale/crawlPreSaleDetail',
         crawlPreSaleWantToSeePortraitRequest: 'crawlerMaoyanPreSale/crawlPreSaleWantToSeePortrait',
         crawlPreSaleBoxOfficePremiereRequest: 'crawlerMaoyanPreSale/crawlPreSaleBoxOfficePremiere',
         crawlPreSaleBookingDetailsRequest: 'crawlerMaoyanPreSale/crawlPreSaleBookingDetails',
@@ -309,7 +298,7 @@
         statusOptions: ['published', 'draft', 'deleted'],
         showReviewer: false,
         formData: {
-          headerCode: 'maoyan',
+          rewardType: '',
           crawlerAddress: ''
         },
         dialogFormVisible: false,
@@ -329,32 +318,10 @@
           endDate: [{ required: true, message: '此项为必填项', trigger: 'change' }],
           status: [{ required: true, message: '此项为必填项', trigger: 'change' }]
         },
-        downloadLoading: false,
-        pickerOptions0: {
-          disabledDate: (time) => {
-            if (this.value2 !== '') {
-              return time.getTime() > this.value2
-            }
-          }
-        },
-        pickerOptions1: {
-          disabledDate: (time) => {
-            return time.getTime() < this.value1
-          }
-        },
         fileList: [],
-        portraitParams: {
-          bucketName: 'funyvalley',
-          folderName: 'icon'
-        },
-        iosVersionListData: [],
-        androidVersionListData: [],
         searchTxt: '',
         expandQuery: '',
-        showFileListFlag: false,
-        newFile: '',
         crawlerCountType: 0,
-        advertisementDialogFlag: false,
         currentAdvertisementTabIndex: 0,
         effectiveDuration: [],
         multipleSelection: [],
@@ -687,9 +654,9 @@
           const crawlingCount = this.crawlingCount
           this.crawlingFlag = true
           const movieId = preSaleData[crawlingCount].movieId
-          const crawlMoviePreSaleDetail = () => {
+          const crawlPreSaleDetail = () => {
             return new Promise((resolve, reject) => {
-              this.$http.get(this.$baseUrl + this.crawlMoviePreSaleDetailRequest, {
+              this.$http.get(this.$baseUrl + this.crawlPreSaleDetailRequest, {
                 params: {
                   address: 'https://piaofang.maoyan.com/movie/' + movieId,
                   headerCode: 'maoyanPreSale'
@@ -792,7 +759,7 @@
             })
           }
 
-          const crawlMoviePreSaleDetailPromise = crawlMoviePreSaleDetail()
+          const crawlPreSaleDetailPromise = crawlPreSaleDetail()
           const crawlPreSaleWantToSeePortraitPromise = crawlPreSaleWantToSeePortrait()
           const crawlPreSaleBoxOfficePremierePromise = getPreSaleBoxOfficePremiere()
           const crawlPreSaleBookingDetailsPromise = crawlPreSaleBookingDetails()
@@ -803,7 +770,7 @@
             this.crawlingCount++
           }
           Promise.all([
-            crawlMoviePreSaleDetailPromise,
+            crawlPreSaleDetailPromise,
             crawlPreSaleWantToSeePortraitPromise,
             crawlPreSaleBoxOfficePremierePromise,
             crawlPreSaleBookingDetailsPromise
@@ -815,11 +782,20 @@
               timestamp: timestamp
             }, responseAll[0], responseAll[1], responseAll[2]))
 
-            this.bookingDetailsData.push(...responseAll[3].map(item => {
-              return Object.assign(item, {
-                timestamp: timestamp
+            this.$set(this.bookingDetailsData, crawlingCount, {
+              movieId: movieId,
+              timestamp: timestamp,
+              list: responseAll[3].map(item => {
+                return Object.assign(item, {
+                  timestamp: timestamp
+                })
               })
-            }))
+            })
+            // this.bookingDetailsData.list.push(...responseAll[3].map(item => {
+            //   return Object.assign(item, {
+            //     timestamp: timestamp
+            //   })
+            // }))
 
             console.log('preSaleData', this.preSaleData)
 
