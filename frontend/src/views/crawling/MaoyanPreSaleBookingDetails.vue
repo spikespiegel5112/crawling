@@ -19,10 +19,10 @@
     </CommonQuery>
 
     <el-table :data="tableList" :height="tableHeight" @selection-change="handleSelectionChange" border
-              element-loading-text="Loading"
+
               fit
               highlight-current-row
-              v-loading.body="listLoading">
+              >
       <el-table-column fixed="left" type="selection" width="30"></el-table-column>
       <el-table-column align="center" fixed label="No" type="index" width="45"></el-table-column>
       <el-table-column align="center" label="movieId" prop='movieId' width="110"></el-table-column>
@@ -66,10 +66,10 @@
 
           <el-table :data="currentPreSaleDetailsTableData" @selection-change="checkPreSaleFlag"
                     border
-                    element-loading-text="Loading"
+
                     fit
                     highlight-current-row
-                    v-loading.body="listLoading">
+                    >
             <el-table-column fixed="left" type="selection" width="30"></el-table-column>
             <el-table-column align="center" fixed label="No" type="index" width="45"></el-table-column>
             <el-table-column align="center" label="时间戳" prop='timestamp' width="130"></el-table-column>
@@ -246,7 +246,7 @@
       dictionaryList() {
         return this.$store.state.app.dictionary.crawlerAddress
       },
-      clawerStyle() {
+      crawlerStyle() {
         return {
           height: (this.tableHeight - 180) + 'px',
           overflow: 'auto'

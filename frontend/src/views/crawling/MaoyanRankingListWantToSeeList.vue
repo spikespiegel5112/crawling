@@ -24,7 +24,7 @@
       </template>
     </CommonQuery>
 
-    <el-table :data="tableList" v-loading.body="listLoading" element-loading-text="Loading" border fit
+    <el-table :data="tableList"   border fit
               highlight-current-row
               @selection-change="handleSelectionChange"
               :height="tableHeight">
@@ -164,7 +164,7 @@
                 <el-row type="flex" justify="left">
                   <el-col :span="24">
                     <!--          {{preSaleWantToSeeListData}}-->
-                    <el-timeline :style="clawerStyle">
+                    <el-timeline :style="crawlerStyle">
                       <el-timeline-item v-for="(item, index) in rankingListData.filter(item=>!item.disabled)"
                                         :key="index"
                                         :timestamp="item.recordTime"
@@ -254,7 +254,7 @@
         <!--                <el-row class="" type="flex" justify="left">-->
         <!--                  <el-col :span="24">-->
         <!--                    &lt;!&ndash;          {{preSaleWantToSeeListData}}&ndash;&gt;-->
-        <!--                    <el-timeline :style="clawerStyle">-->
+        <!--                    <el-timeline :style="crawlerStyle">-->
         <!--                      <el-timeline-item v-for="(item, index) in preSaleWantToSeeListData.filter(item=>!item.disabled)"-->
         <!--                                        :key="index"-->
         <!--                                        :timestamp="item.recordTime"-->
@@ -437,7 +437,7 @@
       dictionaryList() {
         return this.$store.state.app.dictionary.crawlerAddress
       },
-      clawerStyle() {
+      crawlerStyle() {
         return {
           height: (this.tableHeight - 180) + 'px',
           overflow: 'auto'

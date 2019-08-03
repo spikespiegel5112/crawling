@@ -22,10 +22,10 @@
     </CommonQuery>
 
     <el-table :data="tableList" :height="tableHeight" @selection-change="handleSelectionChange" border
-              element-loading-text="Loading"
+
               fit
               highlight-current-row
-              v-loading.body="listLoading">
+              >
       <el-table-column fixed="left" type="selection" width="40"></el-table-column>
       <el-table-column align="center" fixed label="No" type="index" width="45"></el-table-column>
       <el-table-column align="center" label="电影名称（中文）" prop='titleChi' width="100"></el-table-column>
@@ -222,7 +222,7 @@
                 <el-row justify="left" type="flex">
                   <el-col :span="24">
                     <!--          {{preSaleWantToSeeListData}}-->
-                    <el-timeline :style="clawerStyle">
+                    <el-timeline :style="crawlerStyle">
                       <el-timeline-item :color="item.color==='success'?'#91d929':'#e4e7ed'"
                                         :key="index"
                                         :timestamp="item.recordTime"
@@ -446,7 +446,7 @@
       dictionaryList() {
         return this.$store.state.app.dictionary.crawlerAddress
       },
-      clawerStyle() {
+      crawlerStyle() {
         return {
           height: (this.tableHeight - 180) + 'px',
           overflow: 'auto'

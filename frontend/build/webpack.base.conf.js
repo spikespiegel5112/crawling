@@ -6,6 +6,7 @@ const config = require('../config')
 const manifest = require('../vendor-manifest.json')
 const vueLoaderConfig = require('./vue-loader.conf')
 const AssetsPlugin = require('assets-webpack-plugin')
+const { VueLoaderPlugin } = require('vue-loader')
 
 function resolve(dir) {
   return path.join(__dirname, '..', dir)
@@ -42,7 +43,7 @@ module.exports = {
       'uploader_modified$': resolve('/static/assets/js/simditor/uploader_modified.js'),
       // 'simpleHotkeys$': resolve('/static/assets/js/simditor/hotkeys.js'),
       '@': resolve('src'),
-      'swiper$': resolve('/src/assets/swiper/swiper.esm.bundle.js'),
+      'swiper$': resolve('/src/assets/swiper/swiper.esm.bundle.js')
     }
   },
   module: {
@@ -102,11 +103,12 @@ module.exports = {
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery',
-      swiper: 'Swiper',
+      swiper: 'Swiper'
       // simpleUploader: 'uploader_modified',
       // simpleHotkeys: 'simpleHotkeys'
 
-    })
+    }),
+    new VueLoaderPlugin()
   ],
   node: {
     // prevent webpack from injecting useless setImmediate polyfill because Vue
