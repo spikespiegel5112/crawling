@@ -20,55 +20,56 @@
         </div>
       </template>
     </CommonQuery>
-    <!--{{tableList}}-->
+    {{tableData}}
     <el-table :data="tableData" style="width: 100%">
       <el-table-column label="日期" prop="date" width="180"></el-table-column>
       <el-table-column label="姓名" prop="name" width="180"></el-table-column>
       <el-table-column label="地址" prop="address"></el-table-column>
     </el-table>
-<!--    <el-table :data="tableList" :height="tableHeight" @selection-change="handleSelectionChange" border fit-->
-<!--              highlight-current-row-->
-<!--    >-->
+    <el-table :data="tableList" :height="tableHeight"
+              @selection-change="handleSelectionChange"
+              border fit
+              highlight-current-row
+    >
 
-<!--      <el-table-column fixed="left" type="selection" width="30"></el-table-column>-->
-<!--      <el-table-column align="center" fixed label="No" type="index" width="45"></el-table-column>-->
-<!--      <el-table-column align="center" label="movieId" prop='movieId' width="100"></el-table-column>-->
-<!--      <el-table-column align="center" label="电影名称（中文）" prop='titleChi' width="100"></el-table-column>-->
-<!--      <el-table-column align="center" label="电影名称（原文）" prop='title' width="100"></el-table-column>-->
-<!--      <el-table-column align="center" label="抓取时间" prop='timestamp' width="100">-->
-<!--        <template slot-scope="scope">-->
-<!--          {{$moment(Number(scope.row.timestamp)).format('YYYY-MM-DD HH:mm:ss')}}-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-<!--      <el-table-column align="center" label="上映时间" prop='releaseDate'></el-table-column>-->
-<!--      <el-table-column align="center" label="平台名称（英文）" prop='platformEngName'></el-table-column>-->
-<!--      <el-table-column align="center" label="平台名称（中文）" prop='platformChineseName'></el-table-column>-->
-<!--      <el-table-column align="center" label="平台类型" prop='platformType'></el-table-column>-->
-<!--      <el-table-column align="center" label="想看数量" prop='numWantToSee'></el-table-column>-->
-<!--      <el-table-column align="center" label="想看男性受众占比" prop='wantToSeeByGenderMale'></el-table-column>-->
-<!--      <el-table-column align="center" label="想看女性受众占比" prop='wantToSeeByGenderFemale'></el-table-column>-->
-<!--      <el-table-column align="center" label="想看20岁以下占比" prop='wantToSeeByAge20'></el-table-column>-->
-<!--      <el-table-column align="center" label="想看20到24岁占比" prop='wantToSeeByAge20To24'></el-table-column>-->
-<!--      <el-table-column align="center" label="想看25到29岁占比" prop='wantToSeeByAge25To29'></el-table-column>-->
-<!--      <el-table-column align="center" label="想看30到34岁占比" prop='wantToSeeByAge30To34'></el-table-column>-->
-<!--      <el-table-column align="center" label="想看35到39岁占比" prop='wantToSeeByAge35To39'></el-table-column>-->
-<!--      <el-table-column align="center" label="想看40岁以上占比" prop='wantToSeeByAge40'></el-table-column>-->
-<!--      <el-table-column align="center" label="想看一线城市占比" prop='wantToSeeByTier1'></el-table-column>-->
-<!--      <el-table-column align="center" label="想看二线城市占比" prop='wantToSeeByTier2'></el-table-column>-->
-<!--      <el-table-column align="center" label="想看三线城市占比" prop='wantToSeeByTier3'></el-table-column>-->
-<!--      <el-table-column align="center" label="想看四线城市占比" prop='wantToSeeByTier4'></el-table-column>-->
+      <el-table-column fixed="left" type="selection" width="30"></el-table-column>
+      <el-table-column align="center" fixed label="No" type="index" width="45"></el-table-column>
+      <el-table-column align="center" label="movieId" prop='movieId' width="100"></el-table-column>
+      <el-table-column align="center" label="电影名称（中文）" prop='titleChi' width="100"></el-table-column>
+      <el-table-column align="center" label="电影名称（原文）" prop='title' width="100"></el-table-column>
+      <el-table-column align="center" label="抓取时间" prop='timestamp' width="100">
+        <template slot-scope="scope">
+          {{$moment(Number(scope.row.timestamp)).format('YYYY-MM-DD HH:mm:ss')}}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="上映时间" prop='releaseDate'></el-table-column>
+      <el-table-column align="center" label="平台名称（英文）" prop='platformEngName'></el-table-column>
+      <el-table-column align="center" label="平台名称（中文）" prop='platformChineseName'></el-table-column>
+      <el-table-column align="center" label="平台类型" prop='platformType'></el-table-column>
+      <el-table-column align="center" label="想看数量" prop='numWantToSee'></el-table-column>
+      <el-table-column align="center" label="想看男性受众占比" prop='wantToSeeByGenderMale'></el-table-column>
+      <el-table-column align="center" label="想看女性受众占比" prop='wantToSeeByGenderFemale'></el-table-column>
+      <el-table-column align="center" label="想看20岁以下占比" prop='wantToSeeByAge20'></el-table-column>
+      <el-table-column align="center" label="想看20到24岁占比" prop='wantToSeeByAge20To24'></el-table-column>
+      <el-table-column align="center" label="想看25到29岁占比" prop='wantToSeeByAge25To29'></el-table-column>
+      <el-table-column align="center" label="想看30到34岁占比" prop='wantToSeeByAge30To34'></el-table-column>
+      <el-table-column align="center" label="想看35到39岁占比" prop='wantToSeeByAge35To39'></el-table-column>
+      <el-table-column align="center" label="想看40岁以上占比" prop='wantToSeeByAge40'></el-table-column>
+      <el-table-column align="center" label="想看一线城市占比" prop='wantToSeeByTier1'></el-table-column>
+      <el-table-column align="center" label="想看二线城市占比" prop='wantToSeeByTier2'></el-table-column>
+      <el-table-column align="center" label="想看三线城市占比" prop='wantToSeeByTier3'></el-table-column>
+      <el-table-column align="center" label="想看四线城市占比" prop='wantToSeeByTier4'></el-table-column>
+      <el-table-column align="center" label="预售票房" prop='premiereBoxInfo'></el-table-column>
+      <el-table-column align="center" label="预售排片占比" prop='premiereShowRate'></el-table-column>
+      <el-table-column align="center" label="预售排片场次" prop='premiereShowRate'></el-table-column>
 
-<!--      <el-table-column align="center" label="预售票房" prop='premiereBoxInfo'></el-table-column>-->
-<!--      <el-table-column align="center" label="预售排片占比" prop='premiereShowRate'></el-table-column>-->
-<!--      <el-table-column align="center" label="预售排片场次" prop='premiereShowRate'></el-table-column>-->
 
-
-<!--      <el-table-column align="center" fixed="right" label="操作" width="70px">-->
-<!--        <template slot-scope="scope">-->
-<!--          <el-button @click="handleDelete(scope)" size="mini" type="danger">删除</el-button>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-<!--    </el-table>-->
+      <el-table-column align="center" fixed="right" label="操作" width="70px">
+        <template slot-scope="scope">
+          <el-button @click="handleDelete(scope)" size="mini" type="danger">删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
     <!-- 分页 -->
     <div class="common-pagination-wrapper">
       <el-pagination :current-page.sync="pagination.page" :page-size="pagination.limit"
@@ -129,15 +130,12 @@
       </el-row>
       <el-divider></el-divider>
       <el-row>
-
         <el-col :span="24">
           <el-row justify="left" type="flex">
-
             <el-col :span="5">
               <!--          {{preSaleListCountLimit}}-->
               <el-input-number :min="0" v-model="preSaleListCountLimit"></el-input-number>
               <el-button @click="handleChangeCounter" type="primary">确定</el-button>
-
             </el-col>
             <el-col :span="19">
               <el-progress
@@ -146,7 +144,6 @@
                 :text-inside="true"
                 status="success"></el-progress>
             </el-col>
-
           </el-row>
           <el-row>
             <el-col :span="24">
@@ -271,7 +268,6 @@
         dailyLimitMode: '',
         limitMode: '',
         tableKey: 0,
-        tableList: [],
         tableData: [{
           date: '2016-05-02',
           name: '王小虎',
@@ -289,6 +285,7 @@
           name: '王小虎',
           address: '上海市普陀区金沙江路 1516 弄'
         }],
+        tableList: [],
         total: null,
         listLoading: true,
         availabilityFlag: false,
@@ -392,8 +389,10 @@
           params: this.queryModel
         }).then(response => {
           console.log('getListByPaginationRequest', response)
-
-          this.tableList = response.data
+          response.data.forEach((item, index) => {
+            this.$set(this.tableList, index, item)
+          })
+          // this.tableList = response.data
           this.total = response.pagination.total
           this.listLoading = false
         })
