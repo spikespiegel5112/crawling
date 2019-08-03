@@ -197,10 +197,8 @@
                                  v-else-if="item.bookingDetailsSuccess===1"></i>
                               <i class="el-icon-close failed" v-else="item.premiereSuccess===2"></i>
                             </el-col>
-
                           </el-row>
                         </el-card>
-
                       </el-timeline-item>
                     </el-timeline>
                   </el-col>
@@ -232,10 +230,7 @@
 
       <el-button @click="getAllCrawlingIndex" type="primary">开始抓取列表</el-button>
     </el-dialog>
-
   </el-row>
-
-
 </template>
 
 <script>
@@ -826,20 +821,18 @@
       save() {
         if (this.crawlingCount === this.preSaleListCountLimit) {
           console.log(this.preSaleData)
-          this.$http.post(this.$baseUrl + this.saveMultipleMaoyanPreSaleRequest, this.preSaleData).then(response => {
+          const promise1 = this.$http.post(this.$baseUrl + this.saveMultipleMaoyanPreSaleRequest, this.preSaleData)
+          const promise2 = this.$http.post(this.$baseUrl + this.saveMultipleMaoyanPreSaleBookingDetailsRequest, this.bookingDetailsData)
+
+          Promise.all(promise1, promise2).then(responseAll => {
             this.$message.success('数据提交成功')
             this.getTableData()
             this.stepCrawlFlag = false
           }).catch(error => {
             this.$message.error(error)
+
           })
 
-          this.$http.post(this.$baseUrl + this.saveMultipleMaoyanPreSaleBookingDetailsRequest, this.bookingDetailsData).then(resposse => {
-            this.$message.success('数据提交成功')
-
-          }).catch(error => {
-            this.$message.error(error)
-          })
         } else {
           this.$message.warning('dsdsdsdsds')
         }
