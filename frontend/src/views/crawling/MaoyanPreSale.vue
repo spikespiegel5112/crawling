@@ -656,14 +656,19 @@
       async beginToCrawPreSaleListMovieData() {
         this.crawlingCount = 0
         this.preSaleData = []
+        this.preSaleListData.forEach((item, index) => {
+          this.$set(this.preSaleListData, index, Object.assign(item, {
+            detailSuccess: 0,
+            portraitSuccess: 0,
+            premiereSuccess: 0,
+            bookingDetailsSuccess: 0,
+          }))
+        })
 
         const preSaleData = this.preSaleListData.filter(item => item.active)
         // const preSaleListCountLimit
-        let result = []
         let record = {}
 
-        let detailReadyFlag = false
-        let portraitReadyFlag = false
         const timestamp = Date.now()
 
         const loop = () => {
@@ -779,12 +784,7 @@
           const crawlPreSaleWantToSeePortraitPromise = crawlPreSaleWantToSeePortrait()
           const crawlPreSaleBoxOfficePremierePromise = getPreSaleBoxOfficePremiere()
           const crawlPreSaleBookingDetailsPromise = crawlPreSaleBookingDetails()
-          if (this.crawlingCount === this.preSaleListCountLimit) {
-            // debugger
-            this.crawlingFlag = false
-          } else {
-            this.crawlingCount++
-          }
+
           Promise.all([
             crawlPreSaleDetailPromise,
             crawlPreSaleWantToSeePortraitPromise,
@@ -807,12 +807,11 @@
                 })
               })
             })
-            // this.bookingDetailsData.list.push(...responseAll[3].map(item => {
-            //   return Object.assign(item, {
-            //     timestamp: timestamp
-            //   })
-            // }))
 
+            this.crawlingCount++
+            if (this.crawlingCount === this.preSaleListCountLimit) {
+              this.crawlingFlag = false
+            }
             console.log('preSaleData', this.preSaleData)
 
             if (this.crawlingFlag) {
