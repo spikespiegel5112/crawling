@@ -839,22 +839,23 @@
         this.crawlingFlag = false
       },
       save() {
+        let that=this;
         if (this.crawlingCount === this.preSaleListCountLimit) {
           console.log(this.preSaleData)
           const promise1 = this.$http.post(this.$baseUrl + this.saveMultipleMaoyanPreSaleRequest, this.preSaleData)
           const promise2 = this.$http.post(this.$baseUrl + this.saveMultipleMaoyanPreSaleBookingDetailsRequest, this.bookingDetailsData)
 
           Promise.all(promise1, promise2).then(responseAll => {
-            this.$message.success('数据提交成功')
-            this.getTableData()
-            this.stepCrawlFlag = false
+            // this.$message.success('数据提交成功')
+            // this.getTableData()
+            // this.stepCrawlFlag = false
           }).catch(error => {
-            this.$message.error(error)
+            that.$message.warning(error)
 
           })
 
         } else {
-          this.$message.warning('dsdsdsdsds')
+          // this.$message.warning('dsdsdsdsds')
         }
       },
       handleChangeLimitType(value) {
