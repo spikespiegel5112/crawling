@@ -2,17 +2,17 @@
   <el-row class="app-container">
     <CommonQuery>
       <template slot="button1">
-        <el-button size="mini" type="primary" icon="el-icon-plus" @click="createData" v-waves>
+        <el-button @click="createData" icon="el-icon-plus" size="mini" type="primary" v-waves>
           新建
         </el-button>
-        <el-button size="mini" type="danger" icon="el-icon-delete" @click="handleMultipleDelete" v-waves>
+        <el-button @click="handleMultipleDelete" icon="el-icon-delete" size="mini" type="danger" v-waves>
           批量删除
         </el-button>
       </template>
       <template slot="query1">
-        <div class="common-search-wrapper" @keyup.enter="search">
+        <div @keyup.enter="search" class="common-search-wrapper">
           <label>
-            <input v-model="queryModel.brandName" type="text" placeholder="请输入游戏名称"/>
+            <input placeholder="请输入游戏名称" type="text" v-model="queryModel.brandName"/>
           </label>
           <a>
             <span @click="search" class="el-icon-search"></span>
@@ -21,12 +21,14 @@
       </template>
     </CommonQuery>
 
-    <el-table :data="tableList"   border fit
+    <el-table :data="tableList" :height="tableHeight" @selection-change="handleSelectionChange"
+              border
+              element-loading-text="Loading"
+              fit
               highlight-current-row
-              @selection-change="handleSelectionChange"
-              :height="tableHeight">
+              v-loading.body="listLoading">
       <el-table-column type="selection" width="40"></el-table-column>
-      <el-table-column label="No" type="index" width="45" align="center" fixed></el-table-column>
+      <el-table-column align="center" fixed label="No" type="index" width="45"></el-table-column>
       <el-table-column align="center" label="设置名称" prop='name' width="200"></el-table-column>
       <el-table-column align="center" label="设置Code" prop='code'></el-table-column>
       <el-table-column align="center" label="设置类型" prop='type'>
@@ -42,30 +44,30 @@
 
       <el-table-column align="center" label="操作" width="200px">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="handleUpdate(scope)">编辑</el-button>
-          <el-button type="danger" size="mini" @click="handleDelete(scope)">删除</el-button>
+          <el-button @click="handleUpdate(scope)" size="mini" type="primary">编辑</el-button>
+          <el-button @click="handleDelete(scope)" size="mini" type="danger">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
     <!-- 分页 -->
     <div class="common-pagination-wrapper">
-      <el-pagination background @size-change="handleSizeChange"
-                     @current-change="handleCurrentChange"
-                     :current-page.sync="pagination.page"
+      <el-pagination :current-page.sync="pagination.page" :page-size="pagination.limit"
                      :page-sizes="[10,20,30,50,100]"
-                     :page-size="pagination.limit"
                      :total="total"
+                     @current-change="handleCurrentChange"
+                     @size-change="handleSizeChange"
+                     background
                      layout="total, sizes, prev, pager, next, jumper"
       >
       </el-pagination>
     </div>
     <!-- 编辑 -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="850px">
-      <el-row type="flex" justify="center">
+      <el-row justify="center" type="flex">
         <el-col :span="20">
-          <el-form :rules="rules" ref="formData" :model="formData"
-                   label-position="right"
-                   label-width="140px">
+          <el-form :model="formData" :rules="rules" label-position="right"
+                   label-width="140px"
+                   ref="formData">
             <el-form-item label="名称" prop="name">
               <el-input v-model="formData.name"></el-input>
             </el-form-item>
@@ -75,43 +77,43 @@
             <el-form-item label="类型" prop="type">
               {{$store.state.app.dictionary}}
 
-              <el-select v-model="formData.type" placeholder='请选择'>
-                <el-option v-for="item in dictionaryList.settings"
-                           :key="item.dictionaryId" :label="item.name"
-                           :value="item.code"></el-option>
+              <el-select placeholder='请选择' v-model="formData.type">
+                <el-option :key="item.dictionaryId"
+                           :label="item.name" :value="item.code"
+                           v-for="item in dictionaryList.settings"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="值" prop="value">
-              <el-input v-model="formData.value" type="textarea"
-                        :autosize="{ minRows: 2, maxRows: 8}"></el-input>
+              <el-input :autosize="{ minRows: 2, maxRows: 8}" type="textarea"
+                        v-model="formData.value"></el-input>
             </el-form-item>
           </el-form>
         </el-col>
       </el-row>
-      <div slot="footer" class="dialog-footer">
+      <div class="dialog-footer" slot="footer">
         <el-button @click="dialogFormVisible = false" v-waves>{{$t('table.cancel')}}</el-button>
-        <el-button v-if="dialogStatus==='create'" type="primary" @click="createData">{{$t('table.confirm')}}</el-button>
-        <el-button v-else type="primary" @click="updateData" v-waves>{{$t('table.confirm')}}</el-button>
+        <el-button @click="createData" type="primary" v-if="dialogStatus==='create'">{{$t('table.confirm')}}</el-button>
+        <el-button @click="updateData" type="primary" v-else v-waves>{{$t('table.confirm')}}</el-button>
       </div>
     </el-dialog>
     <!-- JSON查看器 -->
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="valueViewerFlag" :close-on-click-modal="false"
+    <el-dialog :close-on-click-modal="false" :title="textMap[dialogStatus]" :visible.sync="valueViewerFlag"
                width="850px">
-      <el-row type="flex" justify="center">
+      <el-row justify="center" type="flex">
         <el-col :span="20">
-          <el-form :rules="rules" ref="formData" :model="formData"
-                   label-position="right"
-                   label-width="50px">
+          <el-form :model="formData" :rules="rules" label-position="right"
+                   label-width="50px"
+                   ref="formData">
             <el-form-item label="值" prop="name">
-              <el-input type="textarea" v-model="formData.value" :autosize="{ minRows: 16, maxRows: 32}"></el-input>
+              <el-input :autosize="{ minRows: 16, maxRows: 32}" type="textarea" v-model="formData.value"></el-input>
             </el-form-item>
 
           </el-form>
         </el-col>
       </el-row>
-      <div slot="footer" class="dialog-footer">
+      <div class="dialog-footer" slot="footer">
         <el-button @click="valueViewerFlag = false" v-waves>{{$t('table.cancel')}}</el-button>
-        <el-button type="primary" v-waves @click="updateValue">{{$t('table.confirm')}}</el-button>
+        <el-button @click="updateValue" type="primary" v-waves>{{$t('table.confirm')}}</el-button>
       </div>
     </el-dialog>
   </el-row>

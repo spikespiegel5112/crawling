@@ -2,17 +2,17 @@
   <el-row class="app-container">
     <CommonQuery>
       <template slot="button1">
-        <el-button size="mini" type="primary" icon="el-icon-plus" @click="oneKeyCrawlFlag=true" v-waves>
+        <el-button @click="oneKeyCrawlFlag=true" icon="el-icon-plus" size="mini" type="primary" v-waves>
           一键抓取
         </el-button>
-        <el-button size="mini" type="danger" icon="el-icon-delete" @click="handleMultipleDelete" v-waves>
+        <el-button @click="handleMultipleDelete" icon="el-icon-delete" size="mini" type="danger" v-waves>
           批量删除
         </el-button>
       </template>
       <template slot="query1">
-        <div class="common-search-wrapper" @keyup.enter="search">
+        <div @keyup.enter="search" class="common-search-wrapper">
           <label>
-            <input v-model="queryModel.brandName" type="text" placeholder="请输入游戏名称"/>
+            <input placeholder="请输入游戏名称" type="text" v-model="queryModel.brandName"/>
           </label>
           <a>
             <span @click="search" class="el-icon-search"></span>
@@ -21,13 +21,16 @@
       </template>
     </CommonQuery>
 
-    <el-table :data="tableList"   border fit
-              highlight-current-row
+    <el-table :data="tableList" :height="tableHeight" @row-click="handleClickRow"
               @selection-change="handleSelectionChange"
-              :height="tableHeight"
-              @row-click="handleClickRow">
+              border
+              element-loading-text="Loading"
+              fit
+              highlight-current-row
+              v-loading.body="listLoading"
+    >
       <el-table-column type="selection" width="40"></el-table-column>
-      <el-table-column label="No" type="index" width="45" align="center" fixed></el-table-column>
+      <el-table-column align="center" fixed label="No" type="index" width="45"></el-table-column>
       <el-table-column align="center" label="电影名称" prop='movieName' width="200"></el-table-column>
       <el-table-column align="center" label="抓取时间" prop='timestamp' width="100">
         <template slot-scope="scope">
@@ -48,34 +51,34 @@
 
       <el-table-column align="center" label="操作" width="100px">
         <template slot-scope="scope">
-          <el-button type="danger" size="mini" @click="handleDelete(scope)">删除</el-button>
+          <el-button @click="handleDelete(scope)" size="mini" type="danger">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
     <!-- 分页 -->
     <div class="common-pagination-wrapper">
-      <el-pagination background @size-change="handleSizeChange"
-                     @current-change="handleCurrentChange"
-                     :current-page.sync="pagination.page"
+      <el-pagination :current-page.sync="pagination.page" :page-size="pagination.limit"
                      :page-sizes="[10,20,30,50,100]"
-                     :page-size="pagination.limit"
                      :total="total"
+                     @current-change="handleCurrentChange"
+                     @size-change="handleSizeChange"
+                     background
                      layout="total, sizes, prev, pager, next, jumper"
       >
       </el-pagination>
     </div>
     <!-- 编辑 -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="oneKeyCrawlFlag" width="850px">
-      <el-row type="flex" justify="center">
+      <el-row justify="center" type="flex">
         <el-col :span="20">
-          <el-form :rules="rules" ref="formData" :model="formData"
-                   label-position="right"
-                   label-width="140px">
+          <el-form :model="formData" :rules="rules" label-position="right"
+                   label-width="140px"
+                   ref="formData">
             <el-form-item label="爬虫类型" prop="rewardType">
-              <el-select v-model="formData.rewardType" placeholder='' @change="chooseRewardType">
-                <el-option v-for="item in settingsList"
-                           :key="item.code" :label="item.name"
-                           :value="item.value"></el-option>
+              <el-select @change="chooseRewardType" placeholder='' v-model="formData.rewardType">
+                <el-option :key="item.code"
+                           :label="item.name" :value="item.value"
+                           v-for="item in settingsList"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="爬虫地址" prop="crawlerAddress">
@@ -84,9 +87,9 @@
           </el-form>
         </el-col>
       </el-row>
-      <div slot="footer" class="dialog-footer">
+      <div class="dialog-footer" slot="footer">
         <el-button @click="oneKeyCrawlFlag = false" v-waves>{{$t('table.cancel')}}</el-button>
-        <el-button type="primary" v-waves @click="crawlerData">{{$t('table.confirm')}}</el-button>
+        <el-button @click="crawlerData" type="primary" v-waves>{{$t('table.confirm')}}</el-button>
       </div>
     </el-dialog>
 

@@ -97,9 +97,9 @@ module.exports = {
   },
   plugins: [
     // 关联dll拆分出去的依赖
-    new webpack.DllReferencePlugin({
-      manifest
-    }),
+    // new webpack.DllReferencePlugin({
+    //   manifest
+    // }),
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery',

@@ -26,8 +26,11 @@
 
     <el-table :data="tableList" :height="tableHeight" @selection-change="handleSelectionChange"
               border
+              element-loading-text="Loading"
               fit
-              highlight-current-row>
+              highlight-current-row
+              v-loading.body="listLoading"
+    >
       <!--      <el-table-column type="selection" width="30" fixed="left"></el-table-column>-->
       <el-table-column align="center" fixed label="No" type="index" width="45"></el-table-column>
       <el-table-column align="center" label="电影名称（中文）" prop='titleChi' width="100"></el-table-column>

@@ -22,7 +22,8 @@
     </CommonQuery>
 
     <el-table :data="tableList" :height="tableHeight" @selection-change="handleSelectionChange" border
-
+              v-loading.body="listLoading"
+              element-loading-text="Loading"
               fit
               highlight-current-row
               >

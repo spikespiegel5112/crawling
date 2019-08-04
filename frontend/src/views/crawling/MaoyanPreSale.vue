@@ -20,18 +20,13 @@
         </div>
       </template>
     </CommonQuery>
-    {{tableData}}
-    <el-table :data="tableData" style="width: 100%">
-      <el-table-column label="日期" prop="date" width="180"></el-table-column>
-      <el-table-column label="姓名" prop="name" width="180"></el-table-column>
-      <el-table-column label="地址" prop="address"></el-table-column>
-    </el-table>
-    <el-table :data="tableList" :height="tableHeight"
-              @selection-change="handleSelectionChange"
-              border fit
+    <el-table :data="tableList" :height="tableHeight" @selection-change="handleSelectionChange"
+              border
+              fit
+              v-loading.body="listLoading"
+              element-loading-text="Loading"
               highlight-current-row
     >
-
       <el-table-column fixed="left" type="selection" width="30"></el-table-column>
       <el-table-column align="center" fixed label="No" type="index" width="45"></el-table-column>
       <el-table-column align="center" label="movieId" prop='movieId' width="100"></el-table-column>
@@ -62,8 +57,6 @@
       <el-table-column align="center" label="预售票房" prop='premiereBoxInfo'></el-table-column>
       <el-table-column align="center" label="预售排片占比" prop='premiereShowRate'></el-table-column>
       <el-table-column align="center" label="预售排片场次" prop='premiereShowRate'></el-table-column>
-
-
       <el-table-column align="center" fixed="right" label="操作" width="70px">
         <template slot-scope="scope">
           <el-button @click="handleDelete(scope)" size="mini" type="danger">删除</el-button>
@@ -116,7 +109,8 @@
           <el-button @click="prepareToCrawlFlag=true" type="primary">
             {{preSaleListData.length===0?'获取索引':'重新获取索引'}}
           </el-button>
-          <el-button :disabled="preSaleListData.length===0" @click="beginToCrawPreSaleListMovieData" type="primary"
+          <el-button :disabled="preSaleListData.length===0" @click="beginToCrawPreSaleListMovieData"
+                     type="primary"
                      v-if="!crawlingFlag">
             {{crawlingCount===0?'开始抓取':'重新抓取'}}
           </el-button>
@@ -151,7 +145,8 @@
 
                 <el-divider>
                   <el-row>
-                    <el-col :span="24" v-if="preSaleListData.length>0&&crawlingCount<preSaleListData.length">
+                    <el-col :span="24"
+                            v-if="preSaleListData.length>0&&crawlingCount<preSaleListData.length">
                       共有{{preSaleListData.length}}条数据，正在抓取第{{crawlingCount}}条...
                     </el-col>
                     <el-col :span="24" v-else>
@@ -172,31 +167,40 @@
                       >
                         <el-card shadow="hover">
                           <el-row>
-                            <el-col :span="1" style="text-align: left">第{{index+1}}条</el-col>
+                            <el-col :span="1" style="text-align: left">第{{index+1}}条
+                            </el-col>
                             <!--                            <el-col :span="1" style="text-align: left">{{item.movieId}}</el-col>-->
-                            <el-col :span="4" style="text-align: left">{{item.title}}</el-col>
+                            <el-col :span="4" style="text-align: left">{{item.title}}
+                            </el-col>
                             <el-col :span="2">
                               详情: <i class="" v-if="item.detailSuccess===0"></i>
-                              <i class="el-icon-check success" v-else-if="item.detailSuccess===1"></i>
-                              <i class="el-icon-close failed" v-else="item.detailSuccess===2"></i>
+                              <i class="el-icon-check success"
+                                 v-else-if="item.detailSuccess===1"></i>
+                              <i class="el-icon-close failed"
+                                 v-else="item.detailSuccess===2"></i>
                             </el-col>
                             <el-col :span="2">
                               想看画像: <i class="" v-if="item.portraitSuccess===0"></i>
-                              <i class="el-icon-check success" v-else-if="item.portraitSuccess===1"></i>
-                              <i class="el-icon-close failed" v-else="item.portraitSuccess===2"></i>
+                              <i class="el-icon-check success"
+                                 v-else-if="item.portraitSuccess===1"></i>
+                              <i class="el-icon-close failed"
+                                 v-else="item.portraitSuccess===2"></i>
                             </el-col>
 
                             <el-col :span="2">
                               预售票房: <i class="" v-if="item.premiereSuccess===0"></i>
                               <i class="el-icon-check success"
                                  v-else-if="item.premiereSuccess===1"></i>
-                              <i class="el-icon-close failed" v-else="item.premiereSuccess===2"></i>
+                              <i class="el-icon-close failed"
+                                 v-else="item.premiereSuccess===2"></i>
                             </el-col>
                             <el-col :span="2">
-                              预售票房明细: <i class="" v-if="item.bookingDetailsSuccess===0"></i>
+                              预售票房明细: <i class=""
+                                         v-if="item.bookingDetailsSuccess===0"></i>
                               <i class="el-icon-check success"
                                  v-else-if="item.bookingDetailsSuccess===1"></i>
-                              <i class="el-icon-close failed" v-else="item.premiereSuccess===2"></i>
+                              <i class="el-icon-close failed"
+                                 v-else="item.premiereSuccess===2"></i>
                             </el-col>
                           </el-row>
                         </el-card>
@@ -389,10 +393,7 @@
           params: this.queryModel
         }).then(response => {
           console.log('getListByPaginationRequest', response)
-          response.data.forEach((item, index) => {
-            this.$set(this.tableList, index, item)
-          })
-          // this.tableList = response.data
+          this.tableList = response.data
           this.total = response.pagination.total
           this.listLoading = false
         })
