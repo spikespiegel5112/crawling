@@ -530,7 +530,7 @@ const _crawlPreSaleBookingDetailsPromise = (req, res, next) => {
 
 
 const getPreSaleBookingDetailsByMovieId = (req, res, next) => {
-	let movieId = req.body.movieId;
+	let movieId = req.query.movieId;
 	if (movieId instanceof Array) {
 		movieId = movieId.map(item => {
 			return Number(item)
@@ -823,45 +823,137 @@ const crawlAndSave = (req, res, next) => {
 };
 
 const deleteRecords = (req, res, next) => {
-	console.log(req.body);
-	console.log(req.params);
-	const idBody = req.body.id;
-	console.log(idBody instanceof Array);
-	if (idBody instanceof Array) {
-		idBody.forEach((item, index) => {
-			MaoyanPreSaleModel.findByPk(item).then(async response => {
-				const result = await response.destroy();
-				if (index + 1 === req.body.id.length) {
-					res.status(200).json({
-						message: 'Delete successful',
-						body: result
-					});
+	console.log('deleteRecords+++++', req.body);
+	let selections = req.body.selections instanceof Array ? req.body.selections : [req.body.selections];
+	const Op = Sequelize.Op;
+	const deleteRecord = () => {
+		return new Promise((resolve, reject) => {
+			MaoyanPreSaleModel.findAll({
+				where: {
+					id: {
+						[Op.or]: selections.map(item => item.id)
+					}
 				}
-			}).catch(error => {
-				res.status(400).json({
-					message: 'Delete failed',
-					error: error.toString()
+			}).then(async response => {
+				console.log('response', response);
+				response.forEach(async (item, index) => {
+					await item.destroy();
+					if (index + 1 === response.length) {
+						resolve(response);
+					}
 				});
-			})
-		})
-	} else {
-		MaoyanPreSaleModel.findByPk(idBody).then(result => {
-			console.log(result);
-			result.destroy().then(() => {
-				if (index + 1 === req.body.id.length) {
-					res.status(200).json({
-						message: 'Delete successful',
-						body: result
-					});
-				}
-			})
-		}).catch(error => {
-			res.status(400).json({
-				message: 'Delete failed',
-				error: error.toString()
+			}).catch(error => {
+				reject(error)
 			});
 		})
-	}
+	};
+
+	const deleteBookingDetails = () => {
+		return new Promise((resolve, reject) => {
+			MaoyanPreSaleBookingDetailsModel.findAll({
+				where: {
+					timestamp: {
+						[Op.or]: selections.map(item => item.timestamp)
+					}
+				}
+			}).then(async response => {
+				response.forEach(async (item, index) => {
+					await item.destroy();
+					if (index + 1 === response.length) {
+						resolve(response);
+					}
+				});
+			}).catch(error => {
+				reject(error)
+			});
+
+		})
+	};
+
+	const deleteBookingDetailsMapping = () => {
+		return new Promise((resolve, reject) => {
+			MaoyanPreSaleBookingDetailsMappingModel.findAll({
+				where: {
+					movieId: {
+						[Op.or]: selections.map(item => item.movieId)
+					}
+				}
+			}).then(async response => {
+				response.forEach(async (item, index) => {
+					await item.destroy();
+					if (index + 1 === response.length) {
+						resolve(response);
+					}
+				});
+			}).catch(error => {
+				reject(error)
+			});
+
+		})
+	};
+
+	const deleteRecordPromise = deleteRecord();
+	const deleteBookingDetailsPromise = deleteBookingDetails();
+	const deleteBookingDetailsMappingPromise = deleteBookingDetailsMapping();
+
+	Promise.all([deleteRecordPromise, deleteBookingDetailsPromise, deleteBookingDetailsMappingPromise]).then(responseAll => {
+		res.status(200).json({
+			message: 'success',
+			data: responseAll
+		});
+	}).catch(error => {
+		res.status(400).json({
+			message: error
+		});
+	})
+
+
+};
+
+const deletePreSaleBookingDetails = (req, res, next) => {
+	const idSelections = req.body.id;
+	console.log(idSelections instanceof Array);
+	// MaoyanPreSaleBookingDetailsModel
+	// MaoyanPreSaleBookingDetailsMappingModel
+	const deleteRecord = () => {
+		return new Promise((resolve, reject) => {
+			if (idSelections instanceof Array) {
+				idSelections.forEach((item, index) => {
+					MaoyanPreSaleModel.findByPk(item).then(async response => {
+						const result = await response.destroy();
+						if (index + 1 === req.body.id.length) {
+							res.status(200).json({
+								message: 'Delete successful',
+								body: result
+							});
+						}
+					}).catch(error => {
+						res.status(400).json({
+							message: 'Delete failed',
+							error: error.toString()
+						});
+					})
+				})
+			} else {
+				MaoyanPreSaleModel.findByPk(idSelections).then(result => {
+					console.log(result);
+					result.destroy().then(() => {
+						if (index + 1 === req.body.id.length) {
+							res.status(200).json({
+								message: 'Delete successful',
+								body: result
+							});
+						}
+					})
+				}).catch(error => {
+					res.status(400).json({
+						message: 'Delete failed',
+						error: error.toString()
+					});
+				})
+			}
+		})
+	};
 };
 
 const exportCSV = (req, res, getTitle, rows, fileName) => {
@@ -922,4 +1014,5 @@ exports.getListByPagination = getListByPagination;
 exports.getListByDate = getListByDate;
 exports.crawlAndSave = crawlAndSave;
 exports.deleteRecords = deleteRecords;
+exports.deletePreSaleBookingDetails = deletePreSaleBookingDetails;
 exports.exportCSV = exportCSV;

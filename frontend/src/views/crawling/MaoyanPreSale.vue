@@ -501,8 +501,13 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
+          console.log('this.multipleSelection+++++', this.multipleSelection)
           this.deleteRecord(this.multipleSelection.map(item => {
-            return item.id
+            return {
+              id: item.id,
+              movieId: item.movieId,
+              timestamp: item.timestamp
+            }
           }))
         }).catch(() => {
           this.$message({
@@ -519,7 +524,7 @@
           type: 'warning'
         }).then(() => {
 
-          this.deleteRecord([scope.row.id])
+          this.deleteRecord([scope.row.movieId])
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -530,7 +535,7 @@
       deleteRecord(data) {
         this.$http.delete(this.$baseUrl + this.deleteRecordRequest, {
           data: {
-            id: data
+            selections: data
           }
         }).then((response) => {
           console.log(response)
@@ -839,9 +844,8 @@
         this.crawlingFlag = false
       },
       save() {
-        let that = this
         if (this.crawlingCount === this.preSaleListCountLimit) {
-          console.log(this.preSaleData)
+          console.log('this.preSaleData+++++', this.preSaleData)
           const promise1 = this.$http.post(this.$baseUrl + this.saveMultipleMaoyanPreSaleRequest, this.preSaleData)
           const promise2 = this.$http.post(this.$baseUrl + this.saveMultipleMaoyanPreSaleBookingDetailsRequest, this.bookingDetailsData)
 

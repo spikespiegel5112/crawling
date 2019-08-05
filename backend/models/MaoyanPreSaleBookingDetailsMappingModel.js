@@ -9,6 +9,10 @@ const MaoyanPreSaleBookingDetailsMappingModel = sequelize.define('MaoyanPreSaleB
 		allowNull: true,
 		primaryKey: true
 	},
+	recordId: {
+		type: Sequelize.STRING,
+		allowNull: false
+	},
 	movieId: {
 		type: Sequelize.STRING,
 		allowNull: false
