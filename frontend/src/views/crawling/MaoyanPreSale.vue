@@ -22,10 +22,10 @@
     </CommonQuery>
     <el-table :data="tableList" :height="tableHeight" @selection-change="handleSelectionChange"
               border
-              fit
-              v-loading.body="listLoading"
               element-loading-text="Loading"
+              fit
               highlight-current-row
+              v-loading.body="listLoading"
     >
       <el-table-column fixed="left" type="selection" width="30"></el-table-column>
       <el-table-column align="center" fixed label="No" type="index" width="45"></el-table-column>
@@ -661,7 +661,7 @@
             detailSuccess: 0,
             portraitSuccess: 0,
             premiereSuccess: 0,
-            bookingDetailsSuccess: 0,
+            bookingDetailsSuccess: 0
           }))
         })
 
@@ -839,18 +839,18 @@
         this.crawlingFlag = false
       },
       save() {
-        let that=this;
+        let that = this
         if (this.crawlingCount === this.preSaleListCountLimit) {
           console.log(this.preSaleData)
           const promise1 = this.$http.post(this.$baseUrl + this.saveMultipleMaoyanPreSaleRequest, this.preSaleData)
           const promise2 = this.$http.post(this.$baseUrl + this.saveMultipleMaoyanPreSaleBookingDetailsRequest, this.bookingDetailsData)
 
-          Promise.all(promise1, promise2).then(responseAll => {
-            // this.$message.success('数据提交成功')
-            // this.getTableData()
-            // this.stepCrawlFlag = false
+          Promise.all([promise1, promise2]).then(responseAll => {
+            this.getTableData()
+            this.stepCrawlFlag = false
+            this.$message.success('数据提交成功')
           }).catch(error => {
-            that.$message.warning(error)
+            this.$message.warning(error)
 
           })
 
@@ -874,7 +874,6 @@
           }))
         })
         console.log('this.preSaleListData+++', this.preSaleListData)
-        debugger
 
       }
 

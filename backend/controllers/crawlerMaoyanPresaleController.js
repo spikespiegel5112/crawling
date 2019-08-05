@@ -565,7 +565,7 @@ const saveMultipleMaoyanPreSaleBookingDetails = (req, res, next) => {
 		_timestamp = Date.now();
 	}
 
-	_createMultipleMaoyanPreSaleBookingDetailsPromise(req, res, _timestamp).then(response => {
+	_saveMultipleMaoyanPreSaleBookingDetailsPromise(req, res, _timestamp).then(response => {
 		res.status(200).json({
 			message: 'success',
 			data: response
@@ -578,74 +578,71 @@ const saveMultipleMaoyanPreSaleBookingDetails = (req, res, next) => {
 };
 
 
-const _createMultipleMaoyanPreSaleBookingDetailsPromise = (req, res, _timestamp) => {
+const _saveMultipleMaoyanPreSaleBookingDetailsPromise = (req, res, _timestamp) => {
 
 	return new Promise(async (resolve, reject) => {
 		const requestBody = req.body.map(item => item.list);
 
 		console.log('req.body+++++++++', req.body);
-		try {
-			const bulkCreateBookingDetailsMapping = () => {
-				return new Promise(async (resolve, reject) => {
-					try {
-						await MaoyanPreSaleBookingDetailsMappingModel.bulkCreate(
-							req.body.map(item => {
-								return {
-									movieId: item.movieId,
-									timestamp: item.timestamp
-								}
-							})
-						);
+		const bulkCreateBookingDetailsMapping = () => {
+			return new Promise(async (resolve, reject) => {
+				MaoyanPreSaleBookingDetailsMappingModel.bulkCreate(
+					req.body.map(item => {
+						return {
+							movieId: item.movieId,
+							timestamp: item.timestamp
+						}
+					})
+				).then(response => {
+					resolve(response)
+				}).catch(error => {
+					reject(error)
+				})
+			})
+		};
+
+
+		let bookingDetailsCount = 0;
+		const bulkCreateBookingDetails = () => {
+			return new Promise(async (resolve, reject) => {
+				const loop = async () => {
+					if (bookingDetailsCount < requestBody.length) {
+						console.log('requestBody+++++++++', requestBody);
+						console.log('requestBody[bookingDetailsCount]+++++++++', requestBody[bookingDetailsCount]);
+
+						await MaoyanPreSaleBookingDetailsModel.bulkCreate(requestBody[bookingDetailsCount]);
+						bookingDetailsCount++;
+						loop();
+					} else {
 						resolve()
-					} catch (e) {
-						reject(e)
+					}
+				};
+				loop()
+			});
+		};
+
+		const promise1 = bulkCreateBookingDetailsMapping();
+		const promise2 = bulkCreateBookingDetails();
+
+		Promise.all([promise1, promise2]).then(responseAll => {
+			res.status(200).json({
+				message: 'success',
+				body: req.body,
+				response2: req.body.map(item => {
+					return {
+						movieId: item.movieId,
+						timestamp: item.timestamp
 					}
 				})
-			};
-
-			// res.status(200).json({
-			// 	message: 'success',
-			// 	body: req.body,
-			// 	response2: req.body.map(item => {
-			// 		return {
-			// 			movieId: item.movieId,
-			// 			timestamp: item.timestamp
-			// 		}
-			// 	})
-			// });
-			let bookingDetailsCount = 0;
-			const bulkCreateBookingDetails = () => {
-				return new Promise((resolve, reject) => {
-					const loop = async () => {
-						try {
-							if (bookingDetailsCount < requestBody.length) {
-								console.log('requestBody+++++++++', requestBody[bookingDetailsCount]);
-
-								await MaoyanPreSaleBookingDetailsModel.bulkCreate(requestBody[bookingDetailsCount]);
-								bookingDetailsCount++;
-								loop();
-							} else {
-								resolve()
-							}
-						} catch (e) {
-							reject(e)
-						}
-					};
-					loop()
-				});
-			};
-			const promise1 = bulkCreateBookingDetailsMapping();
-			const promise2 = bulkCreateBookingDetails();
-
-			Promise.all(promise1, promise2).then(responseAll => {
-				resolve(Object.assign(response1, response2))
-			}).catch(error => {
-				reject(error)
-			})
-
-		} catch (e) {
-			reject(e)
-		}
+			});
+			resolve(responseAll)
+		}).catch(async error => {
+			res.status(400).json({
+				message: 'error',
+				error: error
+			});
+			reject(error)
+		})
 	})
 };
 
@@ -818,18 +815,6 @@ const crawlAndSave = (req, res, next) => {
 		};
 
 		loop();
-		// response.data.list.forEach((item, index) => {
-		// 	_createRecordPromise(item, timestamp).then(response2 => {
-		// 		if (index === response.data.list.length - 1) {
-		// 			res.status(200).json(response);
-		// 		}
-		// 	}).catch(error => {
-		// 		res.status(400).json({
-		// 			message: error2
-		// 		});
-		// 	})
-		//
-		// });
 	}).catch(error => {
 		res.status(400).json({
 			message: error
