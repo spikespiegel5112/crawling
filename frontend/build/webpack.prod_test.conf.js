@@ -1,6 +1,6 @@
 'use strict'
 const path = require('path')
-const utils = require('./utils')
+const utils = require('./utils2')
 const webpack = require('webpack')
 const config = require('../config')
 const merge = require('webpack-merge')
@@ -8,23 +8,60 @@ const baseWebpackConfig = require('./webpack.base.conf')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
-const bundleConfig = require("../bundle-config.json")
+const bundleConfig = require('../bundle-config.json')
 
-function resolve (dir) {
+function resolve(dir) {
   return path.join(__dirname, '..', dir)
 }
 
 const env = require('../config/dev.env')
 
 const webpackConfig = merge(baseWebpackConfig, {
+  mode: 'production',
   module: {
     rules: utils.styleLoaders({
       sourceMap: config.build.productionSourceMap,
       extract: true,
       usePostCSS: true
     })
+  },
+  optimization: {
+    splitChunks: {
+      chunks: 'initial',
+      automaticNameDelimiter: '.',
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          // test: path.resolve(__dirname, "node_modules"),
+          chunks: 'initial',
+          name: 'vendor'
+        },
+        'async-vendor': {
+          test: /[\\/]node_modules[\\/]/,
+          // test: path.resolve(__dirname, "node_modules"),
+          chunks: 'async',
+          name: 'async-vendor'
+        }
+      }
+    },
+    runtimeChunk: {
+      name: 'manifest'
+    },
+    minimizer: [
+      new UglifyJsPlugin({
+        uglifyOptions: {
+          compress: false,
+          mangle: true,
+          output: {
+            comments: false
+          }
+        },
+        sourceMap: false
+      })
+    ]
   },
   devtool: config.build.productionSourceMap ? config.build.devtool : false,
   output: {
@@ -37,22 +74,26 @@ const webpackConfig = merge(baseWebpackConfig, {
     new webpack.DefinePlugin({
       'process.env': env
     }),
-    new UglifyJsPlugin({
-      uglifyOptions: {
-        compress: {
-          warnings: false
-        }
-      },
-      sourceMap: config.build.productionSourceMap,
-      parallel: true
-    }),
+
+    // new UglifyJsPlugin({
+    //   uglifyOptions: {
+    //     compress: {
+    //       warnings: false
+    //     }
+    //   },
+    //   sourceMap: config.build.productionSourceMap,
+    //   parallel: true
+    // }),
     // extract css into its own file
-    new ExtractTextPlugin({
-      filename: utils.assetsPath('css/[name].[contenthash].css'),
-      // Setting the following option to `false` will not extract CSS from codesplit chunks.
-      // Their CSS will instead be inserted dynamically with style-loader when the codesplit chunk has been loaded by webpack.
-      // increasing file size: https://github.com/vuejs-templates/webpack/issues/1110
-      allChunks: false,
+    // new ExtractTextPlugin({
+    //   filename: utils.assetsPath('css/[name].[hash].css'),
+    //   // Setting the following option to `false` will not extract CSS from codesplit chunks.
+    //   // Their CSS will instead be inserted dynamically with style-loader when the codesplit chunk has been loaded by webpack.
+    //   // increasing file size: https://github.com/vuejs-templates/webpack/issues/1110
+    //   allChunks: false
+    // }),
+    new MiniCssExtractPlugin({
+      filename: utils.assetsPath('css/[name].[contenthash:7].css')
     }),
     // Compress extracted CSS. We are using this plugin so that possible
     // duplicated CSS from different components can be deduped.
@@ -109,12 +150,12 @@ const webpackConfig = merge(baseWebpackConfig, {
     // This instance extracts shared chunks from code splitted chunks and bundles them
     // in a separate chunk, similar to the vendor chunk
     // see: https://webpack.js.org/plugins/commons-chunk-plugin/#extra-async-commons-chunk
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'app',
-      async: 'vendor-async',
-      children: true,
-      minChunks: 3
-    }),
+    // new webpack.optimize.CommonsChunkPlugin({
+    //   name: 'app',
+    //   async: 'vendor-async',
+    //   children: true,
+    //   minChunks: 3
+    // }),
 
     // copy custom static assets
     new CopyWebpackPlugin([
