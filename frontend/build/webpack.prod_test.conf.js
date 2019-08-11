@@ -14,6 +14,8 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const bundleConfig = require('../bundle-config.json')
 
 function resolve(dir) {
+  console.log('__dirname+++++++', __dirname)
+  console.log('join+++++++', path.join(__dirname, '..', dir))
   return path.join(__dirname, '..', dir)
 }
 

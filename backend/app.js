@@ -65,7 +65,7 @@ app.use('/common', cors(corsOptions), commonRoutes);
 // app.use('*', errorController.get404);
 
 sequelize.sync().then(result => {
-	app.listen(3000);
+	app.listen(3001);
 }).catch(error => {
 	console.log(error)
 });

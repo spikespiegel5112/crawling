@@ -53,6 +53,7 @@ module.exports = {
     index: path.resolve(__dirname, '../dist/index.html'),
 
     // Paths
+    // assetsRoot: path.join(__dirname, '../dist'),
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
 
@@ -63,7 +64,7 @@ module.exports = {
      * then assetsPublicPath should be set to "/bar/".
      * In most cases please use '/' !!!
      */
-    assetsPublicPath: './', // If you are deployed on the root path, please use '/'
+    assetsPublicPath:  '', // If you are deployed on the root path, please use '/'
 
     /**
      * Source Maps

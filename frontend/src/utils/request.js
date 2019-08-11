@@ -1,17 +1,14 @@
 import axios from 'axios'
 // import { MessageBox } from 'element-ui'
 import store from '../store/store'
-import {getToken} from '@/utils/auth'
+import { getToken } from '@/utils/auth'
 
-const baseUrl = process.env.NODE_ENV === 'production' ? 'http://gateway.zan-qian.com/' : 'http://localhost:3000/';
-// const baseUrl = 'http://gateway.zan-qian.com/';
-
+// const baseUrl = process.env.NODE_ENV === 'production' ? 'http://crawler.antisony.org:3001/' : 'http://localhost:3001/'
+const baseUrl = 'http://crawler.antisony.org:3001/'
 
 // 创建axios实例
 const service = axios.create({
-  // baseURL: 'http://testgate.zan-qian.com/',
   baseURL: baseUrl,
-  // baseURL: process.env.NODE_ENV === 'production' ? 'http://gateway.zan-qian.com/' : 'http://testgate.zan-qian.com/',
   // api的base_url
   timeout: 5000, // 请求超时时间
   // transformRequest: [function(data) {
@@ -25,7 +22,7 @@ const service = axios.create({
   headers: {
     // 'Content-Type': 'application/json;charset=utf-8'
   }
-});
+})
 
 // request拦截器
 service.interceptors.request.use(config => {
@@ -40,7 +37,7 @@ service.interceptors.request.use(config => {
   // Do something with request error
   console.log(error) // for debug
   Promise.reject(error)
-});
+})
 
 // respone拦截器
 service.interceptors.response.use(
@@ -48,7 +45,7 @@ service.interceptors.response.use(
     return response.data
   },
   error => {
-    const result_response = error.response;
+    const result_response = error.response
 
     // if (result_response.status && result_response.status === 401) {
     //   store.dispatch('FedLogOut').then(() => {
@@ -76,4 +73,4 @@ service.interceptors.response.use(
 )
 
 export default service
-export {baseUrl}
+export { baseUrl }

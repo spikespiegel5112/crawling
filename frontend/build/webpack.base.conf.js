@@ -39,10 +39,11 @@ module.exports = {
     extensions: ['.js', '.vue', '.json'],
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
+      '@': resolve('src'),
+      'localPath': resolve(''),
       'simditor_modified$': resolve('/static/assets/js/simditor/simditor_modified.js'),
       'uploader_modified$': resolve('/static/assets/js/simditor/uploader_modified.js'),
       // 'simpleHotkeys$': resolve('/static/assets/js/simditor/hotkeys.js'),
-      '@': resolve('src'),
       'swiper$': resolve('/src/assets/swiper/swiper.esm.bundle.js')
     }
   },
@@ -57,6 +58,9 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'babel-loader',
+        options: {
+          cacheDirectory: true
+        },
         // exclude: /node_modules\/(?!(dom7|swiper)\/).*/,
         include: [resolve('src'), resolve('test'), resolve('node_modules/webpack-dev-server/client')]
       },
