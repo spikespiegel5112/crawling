@@ -10,6 +10,7 @@ router.get('/getListByDate', crawlerByJsonController.getListByDate);
 router.post('/save', crawlerByJsonController.save);
 router.post('/crawlAndSave', crawlerByJsonController.crawlAndSave);
 router.delete('/deleteRecords', crawlerByJsonController.deleteRecords);
+router.get('/testUrl', crawlerByJsonController.testUrl);
 
 
 module.exports = router;
