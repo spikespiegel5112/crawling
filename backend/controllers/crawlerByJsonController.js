@@ -376,9 +376,16 @@ const testUrl = (req, res, next) => {
 	url: 'http://www.baidu.com'
   };
   console.log('testUrl++++++', data);
-  res.status(200).json({
-	data: data
-  })
+  try{
+	res.status(200).json({
+	  data: data
+	})
+  }catch (e) {
+	res.status(400).json({
+	  data: data
+	})
+  }
+
 };
 
 
