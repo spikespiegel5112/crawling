@@ -371,22 +371,6 @@ const deleteRecords = (req, res, next) => {
 	}
 };
 
-const testUrl = (req, res, next) => {
-  let data = {
-	url: 'http://www.baidu.com'
-  };
-  console.log('testUrl++++++', data);
-  try{
-	res.status(200).json({
-	  data: data
-	})
-  }catch (e) {
-	res.status(400).json({
-	  data: data
-	})
-  }
-
-};
 
 
 exports.crawl = crawl;
@@ -395,5 +379,5 @@ exports.getListByPagination = getListByPagination;
 exports.getListByDate = getListByDate;
 exports.crawlAndSave = crawlAndSave;
 exports.deleteRecords = deleteRecords;
-exports.testUrl = testUrl;
+
 

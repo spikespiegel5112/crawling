@@ -24,6 +24,7 @@ const headerSettingsRoutes = require('./routers/headerSettings');
 const crawlerMaoyanRankingListRoutes = require('./routers/crawlerMaoyanRankingListRoutes');
 const settingsRoutes = require('./routers/settingsRoutes');
 const dictionaryRoutes = require('./routers/dictionary');
+const testRoutes = require('./routers/testRouters');
 
 
 app.use(express.static(__dirname));
@@ -61,6 +62,7 @@ app.use('/headerSettings', cors(corsOptions), headerSettingsRoutes);
 app.use('/settings', cors(corsOptions), settingsRoutes);
 app.use('/dictionary', cors(corsOptions), dictionaryRoutes);
 app.use('/common', cors(corsOptions), commonRoutes);
+app.use('/test', cors(corsOptions), testRoutes);
 
 // app.use('*', errorController.get404);
 
