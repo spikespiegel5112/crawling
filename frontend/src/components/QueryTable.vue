@@ -1,6 +1,6 @@
 <template>
-  <div class="common-querytable-wrapper">
-    <div class="queryform-wrapper">
+  <div class="common_querytable_wrapper">
+    <div class="queryform_wrapper">
       <div class="outside">
         <el-form class="basearea">
           <ul class="pull-left">
@@ -9,9 +9,9 @@
             </li>
           </ul>
         </el-form>
-        <ul class="operation-wrapper pull-right">
+        <ul class="operation_wrapper pull-right">
           <li>
-            <div class="common-search-wrapper" @keyup.enter="search">
+            <div class="common_search_wrapper" @keyup.enter="search">
               <input v-model="queryModel.keyword" type="text" placeholder="请输入名称"/>
               <a>
                 <span @click="search" class="el-icon-search"></span>

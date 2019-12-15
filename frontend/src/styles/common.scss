@@ -5,15 +5,15 @@
   }
 }
 
-.common-main-container {
+.common_main_container {
   background-color: #f0f2f5;
 }
 
-.common-pagination-wrapper {
+.common_pagination_wrapper {
   margin: 10px 0;
 }
 
-.common-tag-wrapper {
+.common_tag_wrapper {
   .el-tag {
     margin: 0 0 0 10px;
     vertical-align: middle;
@@ -35,13 +35,13 @@
   }
 }
 
-.common-querytable-wrapper {
+.common_querytable_wrapper {
   padding: 0;
   width: 100%;
   background: #fff;
   font-size: 0;
   //border-bottom: 1px solid #ddd;
-  .queryform-wrapper {
+  .queryform_wrapper {
     display: inline-block;
     width: 100%;
     vertical-align: top;
@@ -83,7 +83,7 @@
     }
   }
 
-  .operation-wrapper {
+  .operation_wrapper {
     display: inline-block;
     //width: 240px;
     vertical-align: top;
@@ -100,7 +100,7 @@
   }
 }
 
-.common-search-wrapper {
+.common_search_wrapper {
   margin: 0 auto;
   width: 180px;
   height: 30px;
@@ -138,7 +138,7 @@
   }
 }
 
-.common-textareamedium-wrapper {
+.common_textareamedium_wrapper {
   .el-textarea {
     .el-textarea__inner {
       min-height: 150px !important;
@@ -147,7 +147,7 @@
 
 }
 
-.common-imguploadpreview-wrapper {
+.common_imguploadpreview_wrapper {
   position: relative;
   .image-item {
     display: inline-block;
@@ -271,7 +271,7 @@
   }
 }
 
-.management-dashboard-container {
+.management_dashboard_container {
   //width: 100%;
   height: 100%;
   background: #f0f2f5;
@@ -279,7 +279,7 @@
   .common-notice-wrapper {
     //margin: 0 5px 0 0;
   }
-  .common-plaintextbutton-item {
+  .common_plaintextbutton_item {
     float: right;
   }
   .el-table__row {
@@ -309,7 +309,7 @@
     }
   }
   .noticelist {
-    .management-noticeedit-wrapper {
+    .management_noticeedit_wrapper {
       position: relative;
     }
     .main {
@@ -557,7 +557,7 @@
   }
 }
 
-.common-loading-wrapper {
+.common_loading_wrapper {
   width: 100%;
   height: 100%;
   position: absolute;

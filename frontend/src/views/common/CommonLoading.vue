@@ -1,5 +1,5 @@
 <template>
-  <div v-show="loading===true" class="common-loading-wrapper" :style="relativeStyle">
+  <div v-show="loading===true" class="common_loading_wrapper" :style="relativeStyle">
     <div class="box">
       <div class="loader-16"></div>
       <p>{{text}}</p>

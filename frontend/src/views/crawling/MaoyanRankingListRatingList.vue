@@ -13,7 +13,7 @@
         <!--        </el-button>-->
       </template>
       <template slot="query1">
-        <div @keyup.enter="search" class="common-search-wrapper">
+        <div @keyup.enter="search" class="common_search_wrapper">
           <label>
             <input placeholder="请输入游戏名称" type="text" v-model="queryModel.brandName"/>
           </label>
@@ -75,7 +75,7 @@
       <!--      </el-table-column>-->
     </el-table>
     <!-- 分页 -->
-    <div class="common-pagination-wrapper">
+    <div class="common_pagination_wrapper">
       <el-pagination :current-page.sync="pagination.page" :page-size="pagination.limit"
                      :page-sizes="[10,20,30,50,100]"
                      :total="total"

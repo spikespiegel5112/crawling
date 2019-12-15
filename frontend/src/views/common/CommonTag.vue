@@ -1,5 +1,5 @@
 <template>
-  <el-row class="common-tag-wrapper">
+  <el-row class="common_tag_wrapper">
     <el-col :span="2">{{title}}</el-col>
     <el-col :span="22">
       <el-tag

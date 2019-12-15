@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <div class="common-imguploadpreview-wrapper">
+    <div class="common_imguploadpreview_wrapper">
       <!--{{innerFileList}}-->
       <div v-if="innerFileList.length===0">
         暂无{{fileType==='image'?'图片':'文件'}}

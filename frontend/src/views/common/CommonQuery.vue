@@ -1,6 +1,6 @@
 <template>
-  <div class="common-querytable-wrapper">
-    <div class="queryform-wrapper">
+  <div class="common_querytable_wrapper">
+    <div class="queryform_wrapper">
       <div class="outside">
         <el-form class="basearea">
           <ul class="pull-left">
@@ -13,7 +13,7 @@
             </li>
           </ul>
         </el-form>
-        <ul class="operation-wrapper pull-right">
+        <ul class="operation_wrapper pull-right">
           <li>
             <slot name="query1"></slot>
           </li>
