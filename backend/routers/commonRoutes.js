@@ -12,6 +12,7 @@ router.post('/arrayBufferToBase64', commonController.arrayBufferToBase64);
 router.post('/getFontFile', commonController.getFontFile);
 router.post('/decodeFontValue', commonController.decodeFontValue);
 router.post('/getDecodeFontValue', commonController.getDecodeFontValue);
+router.post('/exportCSV', commonController.exportCSV);
 
 
 module.exports = router;

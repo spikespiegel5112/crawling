@@ -43,11 +43,6 @@
       <el-table-column align="center" label="平台名称（英文）" prop='platformEngName'></el-table-column>
       <el-table-column align="center" label="平台名称（中文）" prop='platformChineseName'></el-table-column>
       <el-table-column align="center" label="平台类型" prop='platformType'></el-table-column>
-      <el-table-column align="center" label="描述" prop='description'>
-        <template slot-scope="scope">
-          <el-button @click="checkDescription(scope)">查看</el-button>
-        </template>
-      </el-table-column>
 
       <el-table-column align="center" label="评分人数" prop='numOfRating'></el-table-column>
       <el-table-column align="center" label="总评分" prop='rating'></el-table-column>
@@ -1211,14 +1206,6 @@
           this.$set(this.preSaleWantToSeeListData, index, Object.assign(this.preSaleWantToSeeListData[index], {
             active: index < this.rankingListCountLimit
           }))
-        })
-      },
-      checkDescription(scope) {
-        this.$alert(scope.row.description, '电影描述', {
-          confirmButtonText: '关闭',
-          closeOnClickModal: true,
-          callback: action => {
-          }
         })
       }
 

@@ -23,7 +23,7 @@
     "cors": "^2.8.5",
     "crawler": "^1.2.1",
     "express": "^4.17.1",
-    "fast-csv": "^3.0.1",
+    "fast-csv": "^3.4.0",
     "font-cmap": "^1.0.1",
     "json2csv": "^4.5.1",
     "mysql2": "^1.6.5",

@@ -616,6 +616,7 @@ const _crawlRankingListWantToSeePortraitPromise = (req, res, next) => {
 			// console.log('$+++++++++', titleEL.text());
 
 			const base64 = $('#js-nuwa').html().match(/(?<=src:url\().+.(?=\)\sformat\("woff"\))/)[0];
+			console.warn('base64+++++++++++++++++++++++', JSON.stringify(base64))
 
 			const isEmpty = $(".bar-group .single-bar text").text() === '' ? true : false;
 
