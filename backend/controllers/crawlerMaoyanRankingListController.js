@@ -7,7 +7,7 @@ const uuidv1 = require('uuid/v1');
 const commonController = require('./commonController');
 const MaoyanRecordModel = require('../models/MaoyanRecordModel');
 const SettingsModel = require('../models/SettingsModel');
-const {AsyncParser} = require('json2csv');
+const { AsyncParser } = require('json2csv');
 const fastCsv = require('fast-csv');
 const Serializer = require('sequelize-to-json');
 const fs = require('fs');
@@ -19,12 +19,12 @@ const saveOneRankingListRecord = (req, res, next) => {
 		res.status(200).json({
 			message: 'success',
 			data: response
-		})
+		});
 	}).catch(error => {
 		res.status(400).json({
 			error: error
-		})
-	})
+		});
+	});
 };
 const _createRecord = (requestBody, timestamp) => {
 	let _timestamp = timestamp;
@@ -40,12 +40,12 @@ const _createRecord = (requestBody, timestamp) => {
 	}
 	return new Promise((resolve, reject) => {
 		MaoyanRecordModel.create(requestBody).then(result => {
-			resolve(result)
+			resolve(result);
 		}).catch(error => {
 			console.log(error);
-			reject(error)
-		})
-	})
+			reject(error);
+		});
+	});
 };
 
 const saveMultipleMaoyanRankingListRecord = (req, res, next) => {
@@ -53,24 +53,24 @@ const saveMultipleMaoyanRankingListRecord = (req, res, next) => {
 	if (!(requestBody instanceof Array)) {
 		res.status(400).json({
 			error: 'not array'
-		})
+		});
 	}
 	const timestamp = Date.now();
 	requestBody = requestBody.map(item => {
 		return Object.assign(item, {
 			recordId: uuidv1(),
 			timestamp: timestamp
-		})
+		});
 	});
 	_createMultipleMaoyanRankingListRecordPromise(requestBody, timestamp).then(response => {
 		res.status(200).json({
 			data: response
-		})
+		});
 
 	}).catch(error => {
 		res.status(400).json({
 			error: error
-		})
+		});
 	});
 
 
@@ -88,12 +88,12 @@ const _createMultipleMaoyanRankingListRecordPromise = (requestBody, timestamp) =
 	return new Promise((resolve, reject) => {
 		MaoyanRecordModel.bulkCreate(requestBody.reverse()).then(result => {
 			// console.log(result);
-			resolve(result)
+			resolve(result);
 		}).catch(error => {
-			reject(error)
-		})
+			reject(error);
+		});
 
-	})
+	});
 };
 
 
@@ -122,7 +122,7 @@ const _crawlRankingListPromise = (req, res, next) => {
 							movieId: itemValue.replace(/[^0-9]/ig, ""),
 							data: itemValue,
 							indexOf: itemValue.indexOf('/movie/'),
-						})
+						});
 					}
 				} else {
 					offset++;
@@ -130,11 +130,11 @@ const _crawlRankingListPromise = (req, res, next) => {
 			});
 			// console.log('titleEL+++++++++', titleEL.options);
 
-			resolve(result)
+			resolve(result);
 		}).catch(error => {
-			reject(error)
-		})
-	})
+			reject(error);
+		});
+	});
 };
 
 const _crawlRankingListDetailPromise = (req, res, next) => {
@@ -176,16 +176,16 @@ const _crawlRankingListDetailPromise = (req, res, next) => {
 			};
 			console.log('_crawlRankingListDetailPromise result+++++++++', result);
 
-			resolve(result)
+			resolve(result);
 
 		} catch (e) {
 			res.status(400).json({
 				error: e
 			});
-			reject(e)
+			reject(e);
 		}
 
-	})
+	});
 };
 
 const crawlRankingListMoreSections = async (req, res, next) => {
@@ -198,7 +198,7 @@ const crawlRankingListMoreSections = async (req, res, next) => {
 		res.status(400).json({
 			error: error
 		});
-	})
+	});
 };
 const _crawlRankingListMoreSectionsPromise = (req, res, next) => {
 	return new Promise(async (resolve, reject) => {
@@ -231,24 +231,24 @@ const _crawlRankingListMoreSectionsPromise = (req, res, next) => {
 
 			console.log('_crawlRankingListMoreSectionsPromise result+++++++++', result);
 
-			resolve(result)
+			resolve(result);
 
 		} catch (e) {
 			res.status(400).json({
 				error: e
 			});
-			reject(e)
+			reject(e);
 		}
 
-	})
+	});
 };
 
 const _trimData = selector => {
 	let result = selector.html().replace('.', '').split(';');
 	// console.log('_trimData+++++++++++++++++', result)
 	return result.filter((item, index) => index < result.length - 2).map(item => {
-		return item + ';'
-	}).join('')
+		return item + ';';
+	}).join('');
 };
 
 const crawlRankingListBoxOfficeDetail = async (req, res, next) => {
@@ -261,7 +261,7 @@ const crawlRankingListBoxOfficeDetail = async (req, res, next) => {
 		res.status(400).json({
 			error: error
 		});
-	})
+	});
 };
 
 const crawlRankingListBoxOfficePremiere = async (req, res, next) => {
@@ -274,7 +274,7 @@ const crawlRankingListBoxOfficePremiere = async (req, res, next) => {
 		res.status(400).json({
 			error: error
 		});
-	})
+	});
 };
 
 const _crawlRankingListBoxOfficePremierePromise = async (req, res, next) => {
@@ -299,12 +299,12 @@ const _crawlRankingListBoxOfficePremierePromise = async (req, res, next) => {
 			};
 			console.log('_crawlRankingListBoxOfficeGlobalPromise result+++++++++', result);
 
-			resolve(result)
+			resolve(result);
 		} catch (e) {
-			reject(e)
+			reject(e);
 		}
 
-	})
+	});
 };
 
 const crawlRankingListBoxOfficeGlobal = async (req, res, next) => {
@@ -317,7 +317,7 @@ const crawlRankingListBoxOfficeGlobal = async (req, res, next) => {
 		res.status(400).json({
 			error: error
 		});
-	})
+	});
 };
 
 const crawlRankingListRating = async (req, res, next) => {
@@ -330,7 +330,7 @@ const crawlRankingListRating = async (req, res, next) => {
 		res.status(400).json({
 			error: error
 		});
-	})
+	});
 };
 
 const crawlRankingListPremiereBox = async (req, res, next) => {
@@ -343,7 +343,7 @@ const crawlRankingListPremiereBox = async (req, res, next) => {
 		res.status(400).json({
 			error: error
 		});
-	})
+	});
 };
 
 
@@ -363,9 +363,9 @@ const _crawlRankingListPremiereBoxPromise = async (req, res, next) => {
 
 
 			const base64 = $('#js-nuwa').html().match(/(?<=src:url\().+.(?=\)\sformat\("woff"\))/)[0];
-			res.status(200).json({
-				data: base64
-			});
+			// res.status(200).json({
+			// 	data: base64
+			// });
 
 			const rawData = {
 				preSaleBoxInfo: find($, '.box-item:eq(0) .box-num').text() + find($, '.box-item:eq(0) .box-unit').text(),
@@ -385,16 +385,16 @@ const _crawlRankingListPremiereBoxPromise = async (req, res, next) => {
 			};
 			console.log('_crawlRankingListDetailPromise result+++++++++', result);
 
-			resolve(result)
+			resolve(result);
 
 		} catch (e) {
 			res.status(400).json({
 				error: e
 			});
-			reject(e)
+			reject(e);
 		}
 
-	})
+	});
 };
 
 const _crawlRankingListBoxOfficeDetailPromise = async (req, res, next) => {
@@ -475,14 +475,15 @@ const _crawlRankingListBoxOfficeDetailPromise = async (req, res, next) => {
 			};
 			console.log('_crawlRankingListDetailPromise result+++++++++', result);
 
-			resolve(result)
+			resolve(result);
 
 		} catch (e) {
-			reject(e)
+			reject(e);
 		}
 
-	})
+	});
 };
+
 
 
 const _crawlRankingListBoxOfficeGlobalPromise = async (req, res, next) => {
@@ -507,12 +508,12 @@ const _crawlRankingListBoxOfficeGlobalPromise = async (req, res, next) => {
 			};
 			console.log('_crawlRankingListBoxOfficeGlobalPromise result+++++++++', result);
 
-			resolve(result)
+			resolve(result);
 		} catch (e) {
-			reject(e)
+			reject(e);
 		}
 
-	})
+	});
 };
 
 const _crawlRankingListRatingPromise = async (req, res, next) => {
@@ -582,16 +583,16 @@ const _crawlRankingListRatingPromise = async (req, res, next) => {
 			};
 			console.log('_crawlRankingListDetailPromise result+++++++++', result);
 
-			resolve(result)
+			resolve(result);
 
 		} catch (e) {
 			res.status(400).json({
 				error: e
 			});
-			reject(e)
+			reject(e);
 		}
 
-	})
+	});
 };
 
 
@@ -616,7 +617,7 @@ const _crawlRankingListWantToSeePortraitPromise = (req, res, next) => {
 			// console.log('$+++++++++', titleEL.text());
 
 			const base64 = $('#js-nuwa').html().match(/(?<=src:url\().+.(?=\)\sformat\("woff"\))/)[0];
-			console.warn('base64+++++++++++++++++++++++', JSON.stringify(base64))
+			console.warn('base64+++++++++++++++++++++++', JSON.stringify(base64));
 
 			const isEmpty = $(".bar-group .single-bar text").text() === '' ? true : false;
 
@@ -653,7 +654,7 @@ const _crawlRankingListWantToSeePortraitPromise = (req, res, next) => {
 			};
 			console.log('_crawlRankingListDetailPromise result+++++++++', result);
 
-			resolve(rawData)
+			resolve(rawData);
 
 		} catch (e) {
 			reject(e);
@@ -663,7 +664,7 @@ const _crawlRankingListWantToSeePortraitPromise = (req, res, next) => {
 			});
 		}
 
-	})
+	});
 };
 
 const crawlRankingList = async (req, res, next) => {
@@ -675,7 +676,7 @@ const crawlRankingList = async (req, res, next) => {
 		res.status(400).json({
 			message: error.toString()
 		});
-	})
+	});
 
 
 };
@@ -689,7 +690,7 @@ const crawlRankingListByYear = async (req, res, next) => {
 		res.status(400).json({
 			error: error.toString()
 		});
-	})
+	});
 };
 
 const _crawlRankingListbyYearPromise = async (req, res, next) => {
@@ -721,12 +722,12 @@ const _crawlRankingListbyYearPromise = async (req, res, next) => {
 							// data: itemValue,
 							movieId: itemValue.replace(/[^0-9]/ig, ""),
 							title: listItem.find('.first-line').text(),
-						})
+						});
 						// result.push($('#ranks-list .row'))
 					}
 
 				} else {
-					offset++
+					offset++;
 				}
 
 			});
@@ -736,19 +737,19 @@ const _crawlRankingListbyYearPromise = async (req, res, next) => {
 					index = index - offset;
 					if (index < Number(limit) || Number(limit) === 0 || limit === '' || limit === undefined) {
 						// console.log(listItem.find('.first-line')[item].children[0].data);
-						result[index].title = listItem.find('.first-line')[item].children[0].data
+						result[index].title = listItem.find('.first-line')[item].children[0].data;
 					}
 				} else {
-					offset++
+					offset++;
 				}
 			});
 			offset = 0;
-			resolve(result)
+			resolve(result);
 
 		}).catch(error => {
-			reject(error)
-		})
-	})
+			reject(error);
+		});
+	});
 };
 
 
@@ -763,8 +764,8 @@ const crawlRankingListDetail = async (req, res, next) => {
 			res.status(400).json({
 				error: error
 			});
-		})
-	})
+		});
+	});
 };
 
 
@@ -779,8 +780,8 @@ const crawlRankingListWantToSeePortrait = async (req, res, next) => {
 			res.status(400).json({
 				error: error
 			});
-		})
-	})
+		});
+	});
 };
 
 
@@ -801,15 +802,15 @@ const getListByPagination = (req, res, next) => {
 				total: await MaoyanRecordModel.count(),
 			},
 			data: data
-		})
+		});
 	}).catch(error => {
 		res.status(400).json({
 			error: {
 				message: error,
 				req: pagination
 			}
-		})
-	})
+		});
+	});
 };
 
 const getCrawlDate = (req, res, next) => {
@@ -826,15 +827,15 @@ const getCrawlDate = (req, res, next) => {
 		res.status(200).json({
 			req: pagination,
 			data: data
-		})
+		});
 	}).catch(error => {
 		res.status(400).json({
 			error: {
 				message: error,
 				req: pagination
 			}
-		})
-	})
+		});
+	});
 };
 
 const getListByDate = (req, res, next) => {
@@ -851,15 +852,15 @@ const getListByDate = (req, res, next) => {
 		res.status(200).json({
 			req: pagination,
 			data: data
-		})
+		});
 	}).catch(error => {
 		res.status(400).json({
 			error: {
 				message: error,
 				req: pagination
 			}
-		})
-	})
+		});
+	});
 };
 
 const saveMultipleMovieData = (req, res, next) => {
@@ -869,12 +870,12 @@ const saveMultipleMovieData = (req, res, next) => {
 	_createRecord(req, timestamp).then(response => {
 		res.status(200).json({
 			body: req.body
-		})
+		});
 	}).catch(error => {
 		res.status(400).json({
 			error: error
-		})
-	})
+		});
+	});
 };
 
 
@@ -891,13 +892,13 @@ const crawlAndSave = (req, res, next) => {
 					res.status(200).json(response);
 				} else {
 					loop();
-					count++
+					count++;
 				}
 			}).catch(error => {
 				res.status(400).json({
 					message: error2
 				});
-			})
+			});
 		};
 
 		loop();
@@ -917,7 +918,7 @@ const crawlAndSave = (req, res, next) => {
 		res.status(400).json({
 			message: error
 		});
-	})
+	});
 };
 
 const deleteRecords = (req, res, next) => {
@@ -940,8 +941,8 @@ const deleteRecords = (req, res, next) => {
 					message: 'Delete failed',
 					error: error.toString()
 				});
-			})
-		})
+			});
+		});
 	} else {
 		MaoyanRecordModel.findByPk(idBody).then(result => {
 			console.log(result);
@@ -952,13 +953,13 @@ const deleteRecords = (req, res, next) => {
 						body: result
 					});
 				}
-			})
+			});
 		}).catch(error => {
 			res.status(400).json({
 				message: 'Delete failed',
 				error: error.toString()
 			});
-		})
+		});
 	}
 };
 
@@ -983,7 +984,7 @@ const exportCSV = (req, res, getTitle, rows, fileName) => {
 					content = iconv.convert(csv);
 					res.attachment('nation.csv');
 					res.send(content);
-				})
+				});
 
 			}
 		} catch (error) {
@@ -991,15 +992,15 @@ const exportCSV = (req, res, getTitle, rows, fileName) => {
 			res.status(400).json({
 				message: 'error',
 				error: response
-			})
+			});
 		}
 
 
 	}).catch(error => {
 		res.status(400).json({
 			error: error
-		})
-	})
+		});
+	});
 };
 
 const fontParser = (req, res, next) => {
@@ -1009,12 +1010,12 @@ const fontParser = (req, res, next) => {
 			console.log(result);
 			res.status(200).json({
 				data: result
-			})
+			});
 		}).catch(error => {
 			res.status(400).json({
 				data: result
-			})
-		})
+			});
+		});
 	});
 };
 

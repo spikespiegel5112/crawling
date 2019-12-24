@@ -54,7 +54,7 @@ const crawlPagePromise = (req, res, next) => {
 					// $ is Cheerio by default
 					//a lean implementation of core jQuery designed specifically for the server
 					// console.log($("title").text());
-					console.log('dataJSONHeadersSample+++++', dataJSONHeadersSample)
+					console.log('dataJSONHeadersSample+++++', dataJSONHeadersSample);
 					// done();
 
 				}
@@ -63,6 +63,7 @@ const crawlPagePromise = (req, res, next) => {
 
 
 		let body = Object.assign(req.body, req.query);
+		console.log('body++++', body);
 		let query = query => {
 			let queryKeyList = Object.keys(query);
 			let result = '';
@@ -71,7 +72,7 @@ const crawlPagePromise = (req, res, next) => {
 				queryKeyList.forEach((item, index) => {
 					result += item + '=' + query[item];
 					if (index < Object.keys(query).length - 1) {
-						result += '&'
+						result += '&';
 					}
 				});
 			}
@@ -156,20 +157,20 @@ const woffParser = (req, res, next) => {
 		console.log(result);
 		res.status(200).json({
 			data: result
-		})
+		});
 	}).catch(error => {
 		res.status(400).json({
 			error: error,
 			data: buffer,
-		})
-	})
+		});
+	});
 };
 
 const _getOpenTypeDataFromBase64 = (data) => {
 	const base64String = data.split('base64,')[1];
 	let buffer = Buffer.from(base64String, 'base64');
 
-	return _getOpenTypeDataFromBuffer(buffer)
+	return _getOpenTypeDataFromBuffer(buffer);
 };
 
 const _getOpenTypeDataFromBuffer = buffer => {
@@ -206,7 +207,7 @@ const _fetch = url => {
 			// }).catch(error => {
 			// 	reject(error)
 		});
-	})
+	});
 };
 
 const _request = url => {
@@ -215,8 +216,8 @@ const _request = url => {
 
 		}).catch(error => {
 
-		})
-	})
+		});
+	});
 };
 
 const getFontFile = (req, res, next) => {
@@ -224,12 +225,12 @@ const getFontFile = (req, res, next) => {
 	_request(url).then(response => {
 		res.status(200).json({
 			body: url
-		})
+		});
 		// }).catch(error=>{
 		// 	res.status(400).json({
 		// 		error: error
 		// 	})
-	})
+	});
 
 	// _fetch(url).then(response => {
 	// 	res.status(200).json({
@@ -280,8 +281,8 @@ const _getPathData = fontData => {
 				onCurve: onCurve,
 				x: x,
 				y: y
-			})
-		})
+			});
+		});
 
 
 	});
@@ -291,31 +292,60 @@ const _getPathData = fontData => {
 
 };
 
-const opentypeJs = (req, res, next) => {
-	console.log(req.body.address);
-	try {
-		
-		const fontData = _getOpenTypeDataFromBase64(req.body.base64);
+const _getFontDataByBase64Promise = (base64Data) => {
+	return new Promise((resolve, reject) => {
+		try {
+			const fontData = _getOpenTypeDataFromBase64(base64Data);
+			const pathData = _getPathData(fontData);
+			console.log('base64+++++++++++++++++', base64Data);
 
-		
-		const pathData = _getPathData(fontData);
-		console.log('base64+++++++++++++++++', req.body.base64);
-
-		console.log('pathData opentypeJs+++++++++', pathData);
+			console.log('pathData getFontData+++++++++', pathData);
 
 
-		console.log('glyphs+++++++++++++++++', fontData.glyphs.glyphs);
-		console.log('pathData+++++++++++++++++', pathData);
+			console.log('glyphs+++++++++++++++++', fontData.glyphs.glyphs);
+			console.log('pathData+++++++++++++++++', pathData);
+			resolve(pathData);
+		} catch (error) {
+			reject(error);
+		}
+	});
+};
+const getFontDataByBase64 = (req, res, next) => {
+	const options = {
+		address: req.body.address || '',
+		base64Data: req.body.base64 || ''
+	};
+	_getFontDataByBase64Promise(options.base64Data).then(response => {
 		res.status(200).json({
-			data: pathData
+			data: response
+		});
+	}).then(error => {
+		res.status(400).json({
+			error: error
+		});
+	});
+};
+
+const getFontDataFromPage = async (req, res, next) => {
+	try {
+		let base64Data = await _getBase64DataFromPagePromise(req);
+		// res.status(200).json({
+		// 	data: base64Data
+		// });
+		_getFontDataByBase64Promise(base64Data).then(response => {
+			res.status(200).json({
+				data: response
+			});
+		}).catch(error => {
+			res.status(400).json({
+				error: error
+			});
 		});
 	} catch (error) {
 		res.status(400).json({
-			address: req.body.address,
 			error: error
 		});
 	}
-
 };
 
 
@@ -324,12 +354,12 @@ const _fileReader = url => {
 		fs.readFile(url, (err, response) => {
 			if (err) {
 
-				reject(err)
+				reject(err);
 			} else {
-				resolve(JSON.parse(response.toString()))
+				resolve(JSON.parse(response.toString()));
 			}
-		})
-	})
+		});
+	});
 };
 
 const _fileStat = url => {
@@ -337,18 +367,18 @@ const _fileStat = url => {
 		fs.stat(url, (err, response) => {
 			if (err) {
 
-				reject(err)
+				reject(err);
 			} else {
-				resolve(JSON.parse(response.toString()))
+				resolve(JSON.parse(response.toString()));
 			}
-		})
-	})
+		});
+	});
 };
 
 const getDecodeFontValue = async (req, res, next) => {
 	let unicode = req.body.unicode;
 	let base64 = req.body.base64;
-	decodeFontValue(unicode, base64).then(response => {
+	_decodeFontValuePromise(unicode, base64).then(response => {
 		res.status(200).json({
 			data: response
 		});
@@ -356,13 +386,13 @@ const getDecodeFontValue = async (req, res, next) => {
 		res.status(400).json({
 			error: error
 		});
-	})
+	});
 };
 
-const decodeFontValue = (unicode, base64) => {
+const _decodeFontValuePromise = (unicode, base64) => {
 	return new Promise(async (resolve, reject) => {
-		const fontDictionaryUrl = './data/fontDictionary1.json';
-		// const fontDictionaryUrl = './data/fontDictionary_old.json';
+		// const fontDictionaryUrl = './data/fontDictionary1.json';
+		const fontDictionaryUrl = './data/fontDictionary2.json';
 
 		const fontDictionaryData = await _fileReader(fontDictionaryUrl);
 
@@ -401,7 +431,7 @@ const decodeFontValue = (unicode, base64) => {
 			if (selectedGlyphObject !== '') {
 				matchedResult = fontDictionaryData.find(item3 => {
 					let count = 0;
-					// debugger
+					const limit = item3.points.length > 10 ? 10 : item3.points.length;
 					item3.points.forEach((item4, index4) => {
 						if (item4.lastPointOfContour === selectedGlyphObject.points[index4].lastPointOfContour &&
 							item4.onCurve === selectedGlyphObject.points[index4].onCurve &&
@@ -410,20 +440,20 @@ const decodeFontValue = (unicode, base64) => {
 							count++;
 						}
 					});
-					if ((count >= 1 || count >= item3.points.length) && count !== 0) {
-						return true
+					if ((count >= 1 || count >= limit) && count !== 0) {
+						return true;
 					}
 
-				});
+				}) || '';
 			}
 
 			resolve({
 				selectedUnicode: selectedUnicode,
 				result: matchedResult,
 				selectedGlyphObject: selectedGlyphObject
-			})
+			});
 		} catch (e) {
-			reject(null)
+			reject(null);
 		}
 	});
 
@@ -451,11 +481,11 @@ const _parseUnicodeValue = (data, base64) => {
 		let result = [];
 		console.log('data++++++++++++++', data);
 
-		res.status(200).json({
-			raw: data,
-			// data: data.trim('').split('&#x').filter((item, index) => index > 0)
-			data: base64
-		});
+		// res.status(200).json({
+		// 	raw: data,
+		// 	// data: data.trim('').split('&#x').filter((item, index) => index > 0)
+		// 	data: base64
+		// });
 
 		let count = 0;
 
@@ -466,7 +496,7 @@ const _parseUnicodeValue = (data, base64) => {
 				if (item.length >= 4) {
 					console.log('_parseUnicodeValue++++++++++++++', item);
 					console.log('base64++++++++++++++', base64);
-					decodeFontValue(item, base64).then(async response => {
+					_decodeFontValuePromise(item, base64).then(async response => {
 						result.push(response.result);
 
 						console.log('result+++++', result);
@@ -474,7 +504,7 @@ const _parseUnicodeValue = (data, base64) => {
 							resolve(result);
 							// return result
 						} else {
-							// console.log("await commonController.decodeFontValue(item, base64)", await decodeFontValue(item, base64));
+							// console.log("await commonController._decodeFontValuePromise(item, base64)", await _decodeFontValuePromise(item, base64));
 							count++;
 							loop(base64);
 
@@ -482,8 +512,8 @@ const _parseUnicodeValue = (data, base64) => {
 					}).catch(error => {
 						console.log(error);
 						count = data.split('&#x').length;
-						reject(error)
-					})
+						reject(error);
+					});
 				} else {
 					count++;
 					loop(base64);
@@ -498,8 +528,8 @@ const _parseUnicodeValue = (data, base64) => {
 const _trimData = selector => {
 	let result = selector.html().replace('.', '').split(';');
 	return result.filter((item, index) => index < result.length - 2).map(item => {
-		return item + ';'
-	}).join('')
+		return item + ';';
+	}).join('');
 };
 const parseDecimal = (data, base64) => {
 	return new Promise((resolve, reject) => {
@@ -508,7 +538,7 @@ const parseDecimal = (data, base64) => {
 		let dotIndex = '';
 		data.split('&#x').forEach((item, index) => {
 			if (item.split('').filter(item2 => item2 === '.').length > 0) {
-				dotIndex = index
+				dotIndex = index;
 			}
 		});
 		data = data.replace('.', '');
@@ -518,7 +548,7 @@ const parseDecimal = (data, base64) => {
 				if (index === dotIndex - 1) {
 					return item.value + '.';
 				} else {
-					return item.value
+					return item.value;
 				}
 			}).join('');
 			resolve(result);
@@ -526,8 +556,8 @@ const parseDecimal = (data, base64) => {
 			// resolve(response.map(item => item.value));
 		}).catch(error => {
 			reject('_parseDecimal error');
-		})
-	})
+		});
+	});
 };
 const exportCSV = (req, res) => {
 	const rows = req.body.data;
@@ -563,21 +593,53 @@ const exportCSV = (req, res) => {
 	}).catch(error => {
 		res.status(400).json({
 			error: error
-		})
+		});
 
-	})
+	});
 	// const stream = fastCsv.format();
 	// stream.pipe(process.stdout);
 	// stream.write(rows);
 	// stream.end()
 };
 
+const _getBase64DataFromPagePromise = (req) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			const response = await crawlPagePromise(req);
+			console.log('_crawlRankingListBoxOfficePromise+++++', req.query);
+			console.log('response+++++', response);
+			const $ = response.$;
+			const base64 = $('#js-nuwa').html().match(/(?<=src:url\().+.(?=\)\sformat\("woff"\))/)[0];
+
+			resolve(base64);
+
+		} catch (error) {
+			reject(error);
+		}
+
+	});
+};
+
+const getBase64Data = async (req, res, next) => {
+	_getBase64DataFromPagePromise(req).then(response => {
+		res.status(200).json({
+			data: response
+		});
+	}).catch(error => {
+		res.status(400).json({
+			error2: error
+		});
+	});
+};
+
+
 exports.crawlPagePromise = crawlPagePromise;
 exports.woffParser = woffParser;
-exports.opentypeJs = opentypeJs;
+exports.getFontDataFromPage = getFontDataFromPage;
+exports.getFontDataByBase64 = getFontDataByBase64;
 exports.getFontFile = getFontFile;
+exports.getBase64Data = getBase64Data;
 exports.arrayBufferToBase64 = arrayBufferToBase64;
-exports.decodeFontValue = decodeFontValue;
 exports.getDecodeFontValue = getDecodeFontValue;
 exports.parseDecimal = parseDecimal;
 exports.exportCSV = exportCSV;
