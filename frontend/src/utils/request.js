@@ -3,14 +3,14 @@ import axios from 'axios'
 import store from '../store/store'
 import { getToken } from '@/utils/auth'
 
-const baseUrl = process.env.NODE_ENV === 'production' ? 'http://antisony.org:3001/' : 'http://localhost:3001/'
+const baseUrl = process.env.NODE_ENV === 'production' ? 'http://antisony.org:3001/' : 'http://localhost:3000/'
 // const baseUrl = 'http://antisony.org:3001/'
 
 // 创建axios实例
 const service = axios.create({
   baseURL: baseUrl,
   // api的base_url
-  timeout: 5000, // 请求超时时间
+  timeout: 60000, // 请求超时时间
   // transformRequest: [function(data) {
   //   // Do whatever you want to transform the data
   //   let ret = '';

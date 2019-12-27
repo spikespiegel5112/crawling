@@ -9,6 +9,7 @@ const MaoyanRecords = require('./models/MaoyanBoxOfficeRecordModel');
 const MaoyanBoxOfficeRecordModel = require('./models/MaoyanBoxOfficeRecordModel');
 const Dictionaries = require('./models/Dictionaries');
 const HeadersModel = require('./models/HeadersSettings');
+const LogsModel = require('./models/LogsModel');
 const SettingsModel = require('./models/SettingsModel');
 const MaoyanWantSeeModel = require('./models/MaoyanWantSeeModel');
 const MaoyanPreSaleModel = require('./models/MaoyanPreSaleModel');
@@ -24,7 +25,8 @@ const headerSettingsRoutes = require('./routers/headerSettings');
 const crawlerMaoyanRankingListRoutes = require('./routers/crawlerMaoyanRankingListRoutes');
 const settingsRoutes = require('./routers/settingsRoutes');
 const dictionaryRoutes = require('./routers/dictionary');
-const testRoutes = require('./routers/testRouters');
+const glyphMappingRoutes = require('./routers/glyphMappingRoutes');
+const testRoutes = require('./routers/testRoutes');
 
 
 app.use(express.static(__dirname));
@@ -61,13 +63,14 @@ app.use('/crawlerMaoyanBoxOffice', cors(corsOptions), crawlerMaoyanBoxOfficeRout
 app.use('/headerSettings', cors(corsOptions), headerSettingsRoutes);
 app.use('/settings', cors(corsOptions), settingsRoutes);
 app.use('/dictionary', cors(corsOptions), dictionaryRoutes);
+app.use('/glyphMapping', cors(corsOptions), glyphMappingRoutes);
 app.use('/common', cors(corsOptions), commonRoutes);
 app.use('/test', cors(corsOptions), testRoutes);
 
 // app.use('*', errorController.get404);
 
 sequelize.sync().then(result => {
-	app.listen(3001);
+	app.listen(3000);
 }).catch(error => {
 	console.log(error)
 });

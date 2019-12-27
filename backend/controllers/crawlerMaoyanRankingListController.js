@@ -598,12 +598,12 @@ const _crawlRankingListRatingPromise = async (req, res, next) => {
 
 const _crawlRankingListWantToSeePortraitPromise = (req, res, next) => {
 	return new Promise(async (resolve, reject) => {
-		console.log('_crawlRankingListWantToSeePortraitPromise+++++', req.query);
 
 		req.query = Object.assign(req.query, {
-			address: encodeURI(req.query.address + '/wantindex?city_tier=0&city_id=0&cityName=全国')
-			// address: req.query.address + '/wantindex?city_tier=0&city_id=0&cityName=全国'
+			address: encodeURI(req.query.address + '?city_tier=0&city_id=0&cityName=全国')
 		});
+
+		console.log('_crawlRankingListWantToSeePortraitPromise+++++', req.query);
 
 		try {
 			const response = await commonController.crawlPagePromise(req, res, next);

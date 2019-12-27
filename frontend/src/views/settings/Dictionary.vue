@@ -53,7 +53,7 @@
       >
       </el-pagination>
     </div>
-    <!-- 新增 -->
+    <!-- 编辑-->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="createDialogFormVisible" width="850px">
       <el-row justify="center" type="flex">
         <el-col :span="20">
@@ -84,7 +84,7 @@
         </el-col>
       </el-row>
       <div class="dialog-footer" slot="footer">
-        <el-button @click="dialogFormVisible = false" v-waves>{{$t('table.cancel')}}</el-button>
+        <el-button @click="createDialogFormVisible = false" v-waves>{{$t('table.cancel')}}</el-button>
         <el-button @click="updateData" type="primary">{{$t('table.confirm')}}</el-button>
       </div>
     </el-dialog>

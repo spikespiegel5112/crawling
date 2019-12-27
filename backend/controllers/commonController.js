@@ -389,11 +389,40 @@ const getDecodeFontValue = async (req, res, next) => {
 	});
 };
 
+const generateFontDictionary = (req, res, next) => {
+	const fontData = req.body.data;
+	_generateFontDictionaryPromise(fontData).then(response => {
+		res.status(200).json(response);
+	}).then(error => {
+		res.status(400).json({
+			message: error.toString()
+		});
+	});
+};
+
+const _generateFontDictionaryPromise = fontData => {
+	const fontDictionaryUrl = './data/fontDictionary2.json';
+	return new Promise((resolve, reject) => {
+		try {
+			let fontDictionaryData = fontData;
+			fontDictionaryData.forEach((item, index) => {
+				if (!item.unicode) {
+					fontDictionaryData[index].unicode = null;
+				}
+				fontDictionaryData[index].value = index;
+			});
+			resolve(fontDictionaryData);
+		} catch (error) {
+			reject(error);
+		}
+	});
+
+};
+
 const _decodeFontValuePromise = (unicode, base64) => {
 	return new Promise(async (resolve, reject) => {
 		// const fontDictionaryUrl = './data/fontDictionary1.json';
 		const fontDictionaryUrl = './data/fontDictionary2.json';
-
 		const fontDictionaryData = await _fileReader(fontDictionaryUrl);
 
 		try {
@@ -639,6 +668,7 @@ exports.getFontDataFromPage = getFontDataFromPage;
 exports.getFontDataByBase64 = getFontDataByBase64;
 exports.getFontFile = getFontFile;
 exports.getBase64Data = getBase64Data;
+exports.generateFontDictionary = generateFontDictionary;
 exports.arrayBufferToBase64 = arrayBufferToBase64;
 exports.getDecodeFontValue = getDecodeFontValue;
 exports.parseDecimal = parseDecimal;
