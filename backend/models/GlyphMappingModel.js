@@ -9,6 +9,10 @@ const GlyphMappings = sequelize.define('GlyphMapping', {
 		allowNull: true,
 		primaryKey: true
 	},
+	mappingId: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
 	unicode: {
 		type: Sequelize.STRING,
 		allowNull: true

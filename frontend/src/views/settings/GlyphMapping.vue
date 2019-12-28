@@ -119,7 +119,8 @@ export default {
 
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       formData: {
-        id:'',
+        id: '',
+        mappingId: '',
         unicode: '',
         number: '',
         value: ''
@@ -192,20 +193,6 @@ export default {
         this.listLoading = false
       })
     },
-    getTypeList() {
-      const result = []
-      this.tableList.forEach(item => {
-        if (result.filter(item2 => item2.code === item.typeCode).length === 0) {
-          result.push({
-            name: item.typeName,
-            code: item.typeCode
-          })
-        }
-      })
-      console.log(result)
-      // debugger
-      this.typeList = result
-    },
     handleFilter() {
       this.pagination.page = 1
       this.getTableData()
@@ -221,30 +208,24 @@ export default {
     resetTemp() {
       this.formData = {
         id: '',
+        mappingId: '',
         unicode: '',
-        number:'',
+        number: '',
         value: ''
       }
-      this.$refs.formData.resetFields()
+      if (this.$refs.formData) {
+        this.$refs.formData.resetFields()
+      }
     },
     handleCreate() {
+      this.dialogStatus = 'create'
       this.resetTemp()
-      this.getTypeList()
       console.log(this.typeList)
       this.dialogFormVisible = true
-
-    },
-    createData() {
-      this.handleUpdate()
     },
     handleUpdate(scope) {
-      console.log(scope)
-      this.getTypeList()
-      console.log(this.typeList)
-
       this.$nextTick(() => {
         this.formData = Object.assign({}, scope.row)
-
         this.dialogStatus = 'update'
         this.dialogFormVisible = true
         this.$nextTick(() => {
@@ -261,8 +242,9 @@ export default {
         if (valid) {
           this.$http.post(this.$baseUrl + this.createOrUpdateRequest, {
             id: this.formData.id,
+            mappingId: this.formData.mappingId,
             unicode: this.formData.unicode,
-            number:this.formData.number,
+            number: this.formData.number,
             value: this.formData.value
           }).then((response) => {
             console.log(response)
