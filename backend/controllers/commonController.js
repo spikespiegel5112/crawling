@@ -378,7 +378,7 @@ const _fileStat = url => {
 const getDecodeFontValue = async (req, res, next) => {
 	let unicode = req.body.unicode;
 	let base64 = req.body.base64;
-	_decodeFontValuePromise(unicode, base64).then(response => {
+	_decodeFontValuePromise(unicode, base64, res).then(response => {
 		res.status(200).json({
 			data: response
 		});
@@ -393,7 +393,7 @@ const generateFontDictionary = (req, res, next) => {
 	const fontData = req.body.data;
 	_generateFontDictionaryPromise(fontData).then(response => {
 		res.status(200).json(response);
-	}).then(error => {
+	}).catch(error => {
 		res.status(400).json({
 			message: error.toString()
 		});
@@ -404,12 +404,14 @@ const _generateFontDictionaryPromise = fontData => {
 	const fontDictionaryUrl = './data/fontDictionary2.json';
 	return new Promise((resolve, reject) => {
 		try {
+
+			let result = [];
 			let fontDictionaryData = fontData;
-			fontDictionaryData.forEach((item, index) => {
+			fontData.forEach((item, index) => {
 				if (!item.unicode) {
 					fontDictionaryData[index].unicode = null;
 				}
-				fontDictionaryData[index].value = index;
+				fontDictionaryData[index].value = index < 2 ? 0 : index - 1;
 			});
 			resolve(fontDictionaryData);
 		} catch (error) {
@@ -419,11 +421,11 @@ const _generateFontDictionaryPromise = fontData => {
 
 };
 
-const _decodeFontValuePromise = (unicode, base64) => {
+const _decodeFontValuePromise = (unicode, base64, res) => {
 	return new Promise(async (resolve, reject) => {
 		// const fontDictionaryUrl = './data/fontDictionary1.json';
 		const fontDictionaryUrl = './data/fontDictionary2.json';
-		const fontDictionaryData = await _fileReader(fontDictionaryUrl);
+		// const fontDictionaryData = await _fileReader(fontDictionaryUrl);
 
 		try {
 			let selectedUnicode = unicode;
@@ -438,13 +440,16 @@ const _decodeFontValuePromise = (unicode, base64) => {
 
 
 			let fontData = _getOpenTypeDataFromBase64(base64);
+			console.log('_getOpenTypeDataFromBase64 fontData+++++++', fontData);
 
+			let fontDictionaryData = await _generateFontDictionaryPromise(_getPathData(fontData));
+			console.log('_generateFontDictionaryPromise response+++++++', fontDictionaryData);
 
 			let glyphData = _getPathData(fontData);
 			console.log('_getOpenTypeDataFromBase64 response+++++++', glyphData);
 
 			// res.status(200).json({
-			// 	data: glyphData
+			// 	data: fontDictionaryData
 			// });
 			// const pathData = _getPathData(fontData);
 			// console.log('fontDictionaryData+++++++++', fontDictionaryData);
@@ -460,20 +465,25 @@ const _decodeFontValuePromise = (unicode, base64) => {
 			if (selectedGlyphObject !== '') {
 				matchedResult = fontDictionaryData.find(item3 => {
 					let count = 0;
-					const limit = item3.points.length > 10 ? 10 : item3.points.length;
+					const limit = item3.points.length >= 10 ? 10 : item3.points.length;
+
+
 					item3.points.forEach((item4, index4) => {
-						if (item4.lastPointOfContour === selectedGlyphObject.points[index4].lastPointOfContour &&
-							item4.onCurve === selectedGlyphObject.points[index4].onCurve &&
-							item4.x === selectedGlyphObject.points[index4].x &&
-							item4.y === selectedGlyphObject.points[index4].y) {
-							count++;
-						}
+						selectedGlyphObject.points.forEach((item5, index5) => {
+							if (item4.lastPointOfContour === item5.lastPointOfContour &&
+								item4.onCurve === item5.onCurve &&
+								item4.x === item5.x &&
+								item4.y === item5.y) {
+								count++;
+							}
+						});
+
 					});
-					if ((count >= 1 || count >= limit) && count !== 0) {
+					if ((count >= limit - 1) && count !== 0) {
 						return true;
 					}
 
-				}) || '';
+				});
 			}
 
 			resolve({
@@ -482,7 +492,7 @@ const _decodeFontValuePromise = (unicode, base64) => {
 				selectedGlyphObject: selectedGlyphObject
 			});
 		} catch (e) {
-			reject(null);
+			reject(e);
 		}
 	});
 
