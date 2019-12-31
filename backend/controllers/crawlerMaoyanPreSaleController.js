@@ -280,8 +280,8 @@ const _crawlPreSaleWantToSeePortraitPromise = (req, res, next) => {
 			} else {
 				const base64 = $('#js-nuwa').html().match(/(?<=src:url\().+.(?=\)\sformat\("woff"\))/)[0];
 				const rawData = {
-					wantToSeeByGenderMale: await commonController.parseDecimal(_trimData(find($, '.stackcolumn-desc .cs:eq(0)')), base64) + '%',
-					wantToSeeByGenderFemale: await commonController.parseDecimal(_trimData(find($, '.stackcolumn-desc .cs:eq(1)')), base64) + '%',
+					wantToSeeByGenderMale: await commonController.parseDecimalPromise(_trimData(find($, '.stackcolumn-desc .cs:eq(0)')), base64) + '%',
+					wantToSeeByGenderFemale: await commonController.parseDecimalPromise(_trimData(find($, '.stackcolumn-desc .cs:eq(1)')), base64) + '%',
 					wantToSeeByAge20: find($, ".bar-group .single-bar text:eq(0)").text(),
 					wantToSeeByAge20To24: find($, ".bar-group .single-bar text:eq(1)").text(),
 					wantToSeeByAge25To29: find($, ".bar-group .single-bar text:eq(2)").text(),

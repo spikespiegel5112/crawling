@@ -424,8 +424,8 @@ const _generateFontDictionaryPromise = fontData => {
 const _decodeFontValuePromise = (unicode, base64, res) => {
 	return new Promise(async (resolve, reject) => {
 		// const fontDictionaryUrl = './data/fontDictionary1.json';
-		const fontDictionaryUrl = './data/fontDictionary2.json';
-		// const fontDictionaryData = await _fileReader(fontDictionaryUrl);
+		// const fontDictionaryUrl = './data/fontDictionary2.json';
+		const fontDictionaryUrl = './data/fontDictionary3.json';
 
 		try {
 			let selectedUnicode = unicode;
@@ -442,7 +442,10 @@ const _decodeFontValuePromise = (unicode, base64, res) => {
 			let fontData = _getOpenTypeDataFromBase64(base64);
 			console.log('_getOpenTypeDataFromBase64 fontData+++++++', fontData);
 
-			let fontDictionaryData = await _generateFontDictionaryPromise(_getPathData(fontData));
+
+			const fontDictionaryData = await _fileReader(fontDictionaryUrl);
+			// const fontDictionaryData = await _generateFontDictionaryPromise(_getPathData(fontData));
+
 			console.log('_generateFontDictionaryPromise response+++++++', fontDictionaryData);
 
 			let glyphData = _getPathData(fontData);
@@ -570,7 +573,21 @@ const _trimData = selector => {
 		return item + ';';
 	}).join('');
 };
-const parseDecimal = (data, base64) => {
+
+const parseDecimal = (res, req, next) => {
+	const data = req.body.data;
+	const base64 = req.body.base64;
+	_parseDecimalPromise(data, base64).then(response => {
+		res.status(200).json({
+			data: response
+		});
+	}).catch(error => {
+		res.status(400).json({
+			error: error
+		});
+	});
+};
+const _parseDecimalPromise = (data, base64) => {
 	return new Promise((resolve, reject) => {
 		data = data.trim();
 		let result;
@@ -594,7 +611,7 @@ const parseDecimal = (data, base64) => {
 
 			// resolve(response.map(item => item.value));
 		}).catch(error => {
-			reject('_parseDecimal error');
+			reject('__parseDecimalPromise error');
 		});
 	});
 };
@@ -682,4 +699,6 @@ exports.generateFontDictionary = generateFontDictionary;
 exports.arrayBufferToBase64 = arrayBufferToBase64;
 exports.getDecodeFontValue = getDecodeFontValue;
 exports.parseDecimal = parseDecimal;
+exports.parseDecimalPromise = _parseDecimalPromise;
+
 exports.exportCSV = exportCSV;

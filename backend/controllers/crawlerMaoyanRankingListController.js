@@ -416,12 +416,12 @@ const _crawlRankingListBoxOfficeDetailPromise = async (req, res, next) => {
 
 
 			const rawData = {
-				boxInfo: await commonController.parseDecimal(find($, '.box-summary:eq(0) .box-item:eq(0) .box-num .cs').html(), base64) + find($, '.box-summary:eq(0) .box-item:eq(0) .box-unit').text(),
-				boxInfoFirstWeek: await commonController.parseDecimal(find($, '.box-summary:eq(0) .box-item:eq(1) .box-num .cs').html(), base64) + find($, '.box-summary:eq(0) .box-item:eq(1) .box-unit').text(),
-				boxInfoFirstDay: await commonController.parseDecimal(find($, '.box-summary:eq(0) .box-item:eq(1) .box-num .cs').html(), base64) + find($, '.box-summary:eq(0) .box-item:eq(2) .box-unit').text(),
-				splitBoxInfo: await commonController.parseDecimal(find($, '.box-summary:eq(1) .box-item:eq(0) .box-num .cs').html(), base64) + find($, '.box-summary:eq(1) .box-item:eq(0) .box-unit').text(),
-				splitBoxInfoFirstWeek: await commonController.parseDecimal(find($, '.box-summary:eq(1) .box-item:eq(1) .box-num .cs').html(), base64) + find($, '.box-summary:eq(1) .box-item:eq(1) .box-unit').text(),
-				splitBoxInfoFirstDay: await commonController.parseDecimal(find($, '.box-summary:eq(1) .box-item:eq(1) .box-num .cs').html(), base64) + find($, '.box-summary:eq(1) .box-item:eq(2) .box-unit').text(),
+				boxInfo: await commonController.parseDecimalPromise(find($, '.box-summary:eq(0) .box-item:eq(0) .box-num .cs').html(), base64) + find($, '.box-summary:eq(0) .box-item:eq(0) .box-unit').text(),
+				boxInfoFirstWeek: await commonController.parseDecimalPromise(find($, '.box-summary:eq(0) .box-item:eq(1) .box-num .cs').html(), base64) + find($, '.box-summary:eq(0) .box-item:eq(1) .box-unit').text(),
+				boxInfoFirstDay: await commonController.parseDecimalPromise(find($, '.box-summary:eq(0) .box-item:eq(1) .box-num .cs').html(), base64) + find($, '.box-summary:eq(0) .box-item:eq(2) .box-unit').text(),
+				splitBoxInfo: await commonController.parseDecimalPromise(find($, '.box-summary:eq(1) .box-item:eq(0) .box-num .cs').html(), base64) + find($, '.box-summary:eq(1) .box-item:eq(0) .box-unit').text(),
+				splitBoxInfoFirstWeek: await commonController.parseDecimalPromise(find($, '.box-summary:eq(1) .box-item:eq(1) .box-num .cs').html(), base64) + find($, '.box-summary:eq(1) .box-item:eq(1) .box-unit').text(),
+				splitBoxInfoFirstDay: await commonController.parseDecimalPromise(find($, '.box-summary:eq(1) .box-item:eq(1) .box-num .cs').html(), base64) + find($, '.box-summary:eq(1) .box-item:eq(2) .box-unit').text(),
 
 				avgSeatView: '',
 				avgShowView: '',
@@ -537,27 +537,27 @@ const _crawlRankingListRatingPromise = async (req, res, next) => {
 
 
 			const rawData = {
-				rating: await commonController.parseDecimal($('.score-num .cs').html(), base64),
-				numOfRating: await commonController.parseDecimal($('.score-count .cs').html(), base64),
+				rating: await commonController.parseDecimalPromise($('.score-num .cs').html(), base64),
+				numOfRating: await commonController.parseDecimalPromise($('.score-count .cs').html(), base64),
 				rating9To10: find($, '.movie-comments .distribute-item:eq(0) .distribute-val').text(),
 				rating7To8: find($, '.movie-comments .distribute-item:eq(1) .distribute-val').text(),
 				rating5To6: find($, '.movie-comments .distribute-item:eq(2) .distribute-val').text(),
 				rating3To4: find($, '.movie-comments .distribute-item:eq(3) .distribute-val').text(),
 				rating1To2: find($, '.movie-comments .distribute-item:eq(4) .distribute-val').text(),
-				ratingByGenderMale: await commonController.parseDecimal($('.persona-gender-male .persona-item-value .cs').html()
+				ratingByGenderMale: await commonController.parseDecimalPromise($('.persona-gender-male .persona-item-value .cs').html()
 					, base64),
-				ratingByGenderFemale: await commonController.parseDecimal($('.persona-gender-female .persona-item-value .cs').html()
+				ratingByGenderFemale: await commonController.parseDecimalPromise($('.persona-gender-female .persona-item-value .cs').html()
 					, base64),
-				ratingByAge20: await commonController.parseDecimal(find($, '.persona-item-value:eq(2) .cs').html(), base64) + '%',
-				ratingByAge20To24: await commonController.parseDecimal(find($, '.persona-item-value:eq(3) .cs').html(), base64) + '%',
-				ratingByAge25To29: await commonController.parseDecimal(find($, '.persona-item-value:eq(4) .cs').html(), base64) + '%',
-				ratingByAge30To34: await commonController.parseDecimal(find($, '.persona-item-value:eq(5) .cs').html(), base64) + '%',
-				ratingByAge35To39: await commonController.parseDecimal(find($, '.persona-item-value:eq(6) .cs').html(), base64) + '%',
-				ratingByAge40: await commonController.parseDecimal(find($, '.persona-item-value:eq(7) .cs').html(), base64) + '%',
-				ratingByTier1: await commonController.parseDecimal(find($, '.persona-item-value:eq(8) .cs').html(), base64) + '%',
-				ratingByTier2: await commonController.parseDecimal(find($, '.persona-item-value:eq(9) .cs').html(), base64) + '%',
-				ratingByTier3: await commonController.parseDecimal(find($, '.persona-item-value:eq(10) .cs').html(), base64) + '%',
-				ratingByTier4: await commonController.parseDecimal(find($, '.persona-item-value:eq(11) .cs').html(), base64) + '%',
+				ratingByAge20: await commonController.parseDecimalPromise(find($, '.persona-item-value:eq(2) .cs').html(), base64) + '%',
+				ratingByAge20To24: await commonController.parseDecimalPromise(find($, '.persona-item-value:eq(3) .cs').html(), base64) + '%',
+				ratingByAge25To29: await commonController.parseDecimalPromise(find($, '.persona-item-value:eq(4) .cs').html(), base64) + '%',
+				ratingByAge30To34: await commonController.parseDecimalPromise(find($, '.persona-item-value:eq(5) .cs').html(), base64) + '%',
+				ratingByAge35To39: await commonController.parseDecimalPromise(find($, '.persona-item-value:eq(6) .cs').html(), base64) + '%',
+				ratingByAge40: await commonController.parseDecimalPromise(find($, '.persona-item-value:eq(7) .cs').html(), base64) + '%',
+				ratingByTier1: await commonController.parseDecimalPromise(find($, '.persona-item-value:eq(8) .cs').html(), base64) + '%',
+				ratingByTier2: await commonController.parseDecimalPromise(find($, '.persona-item-value:eq(9) .cs').html(), base64) + '%',
+				ratingByTier3: await commonController.parseDecimalPromise(find($, '.persona-item-value:eq(10) .cs').html(), base64) + '%',
+				ratingByTier4: await commonController.parseDecimalPromise(find($, '.persona-item-value:eq(11) .cs').html(), base64) + '%',
 			};
 
 			const result = {
@@ -622,8 +622,8 @@ const _crawlRankingListWantToSeePortraitPromise = (req, res, next) => {
 			const isEmpty = $(".bar-group .single-bar text").text() === '' ? true : false;
 
 			const rawData = {
-				wantToSeeByGenderMale: await commonController.parseDecimal(_trimData(find($, '.stackcolumn-desc .cs:eq(0)')), base64) + '%',
-				wantToSeeByGenderFemale: await commonController.parseDecimal(_trimData(find($, '.stackcolumn-desc .cs:eq(1)')), base64) + '%',
+				wantToSeeByGenderMale: await commonController.parseDecimalPromise(_trimData(find($, '.stackcolumn-desc .cs:eq(0)')), base64) + '%',
+				wantToSeeByGenderFemale: await commonController.parseDecimalPromise(_trimData(find($, '.stackcolumn-desc .cs:eq(1)')), base64) + '%',
 				wantToSeeByAge20: find($, ".bar-group .single-bar text:eq(0)").text(),
 				wantToSeeByAge20To24: find($, ".bar-group .single-bar text:eq(1)").text(),
 				wantToSeeByAge25To29: find($, ".bar-group .single-bar text:eq(2)").text(),
