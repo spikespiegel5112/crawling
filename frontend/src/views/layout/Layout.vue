@@ -58,12 +58,12 @@
         setTimeout(() => {
           this.$autoHeight({
             target: '.app-main',
-            offset: -75
+            offset: -50
           })
           layoutHeight = this.$autoHeight({
             target: '.app-main',
             reference: '.main-container',
-            offset: -80,
+            offset: -100,
             returnValue: true
           })
         }, 500)
