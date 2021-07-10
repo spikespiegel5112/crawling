@@ -9,8 +9,6 @@ import './assets/simditor/styles/simditor.scss'
 
 import App from './App'
 import router from './router/router'
-import { autoComplete, layout, row } from 'vue-beauty'
-import 'vue-beauty/package/style/vue-beauty.min.css'
 
 import store from './store/store'
 import i18n from './lang' // Internationalization
@@ -26,8 +24,8 @@ import CommonLoading from './views/common/CommonLoading.vue'
 Vue.use(waves)
 
 Vue.use(ElementUI, {
-    size: 'medium', // set element-ui default size
-    i18n: (key, value) => i18n.t(key, value)
+	size: 'medium', // set element-ui default size
+	i18n: (key, value) => i18n.t(key, value),
 })
 // Vue.use(layout)
 // Vue.use(row)
@@ -55,13 +53,11 @@ Vue.component('CommonUploadImage', CommonUploadImage)
 Vue.component('CommonLoading', CommonLoading)
 
 const VueInstance = new Vue({
-    el: '#app',
-    router,
-    store,
-    i18n,
-    template: '<App/>',
-    components: { App }
-})
+	el: '#app',
+	router,
+	store,
+	i18n,
+	render: (h) => h(App),
+}).$mount('#app')
 
 export default VueInstance
-
