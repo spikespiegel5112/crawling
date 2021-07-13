@@ -304,6 +304,7 @@ const _getFontDataByBase64Promise = (base64Data) => {
 
 			console.log('glyphs+++++++++++++++++', fontData.glyphs.glyphs);
 			console.log('pathData+++++++++++++++++', pathData);
+			// resolve(JSON.stringify(fontData));
 			resolve(pathData);
 		} catch (error) {
 			reject(error);
@@ -340,6 +341,21 @@ const getFontDataFromPage = async (req, res, next) => {
 			res.status(400).json({
 				error: error
 			});
+		});
+	} catch (error) {
+		res.status(400).json({
+			error: error
+		});
+	}
+};
+
+const getFontDictionaryFromPage = async (req, res, next) => {
+	try {
+		const base64Data = await _getBase64DataFromPagePromise(req);
+		const fontData = _getOpenTypeDataFromBase64(base64Data);
+		const fontDictionaryData = await _generateFontDictionaryPromise(_getPathData(fontData));
+		res.status(200).json({
+			data: fontDictionaryData
 		});
 	} catch (error) {
 		res.status(400).json({
@@ -411,7 +427,7 @@ const _generateFontDictionaryPromise = fontData => {
 				if (!item.unicode) {
 					fontDictionaryData[index].unicode = null;
 				}
-				fontDictionaryData[index].value = index < 2 ? 0 : index - 1;
+				fontDictionaryData[index].value = index < 3 ? '?' : index - 1;
 			});
 			resolve(fontDictionaryData);
 		} catch (error) {
@@ -443,8 +459,8 @@ const _decodeFontValuePromise = (unicode, base64, res) => {
 			console.log('_getOpenTypeDataFromBase64 fontData+++++++', fontData);
 
 
-			const fontDictionaryData = await _fileReader(fontDictionaryUrl);
-			// const fontDictionaryData = await _generateFontDictionaryPromise(_getPathData(fontData));
+			// const fontDictionaryData = await _fileReader(fontDictionaryUrl);
+			const fontDictionaryData = await _generateFontDictionaryPromise(_getPathData(fontData));
 
 			console.log('_generateFontDictionaryPromise response+++++++', fontDictionaryData);
 
@@ -486,7 +502,7 @@ const _decodeFontValuePromise = (unicode, base64, res) => {
 						return true;
 					}
 
-				});
+				}) || '';
 			}
 
 			resolve({
@@ -601,6 +617,10 @@ const _parseDecimalPromise = (data, base64) => {
 
 		_parseUnicodeValue(data, base64).then(async response => {
 			result = response.map((item, index) => {
+				if (!item) {
+
+					return item;
+				}
 				if (index === dotIndex - 1) {
 					return item.value + '.';
 				} else {
@@ -693,6 +713,7 @@ exports.crawlPagePromise = crawlPagePromise;
 exports.woffParser = woffParser;
 exports.getFontDataFromPage = getFontDataFromPage;
 exports.getFontDataByBase64 = getFontDataByBase64;
+exports.getFontDictionaryFromPage = getFontDictionaryFromPage;
 exports.getFontFile = getFontFile;
 exports.getBase64Data = getBase64Data;
 exports.generateFontDictionary = generateFontDictionary;

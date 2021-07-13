@@ -37,12 +37,13 @@ const getList = (req, res, next) => {
 const createOrUpdate = (req, res, next) => {
 	console.log('createOrUpdate', req.body);
 	let mappingId = req.body.mappingId;
+	let id = req.body.id;
 
 
 	if (!id || id === '') {
 		console.log('create');
 		GlyphMappingModel.create({
-			mappingId: uuidv1(),
+			// mappingId: uuidv1(),
 			unicode: req.body.unicode,
 			number: req.body.number,
 			value: req.body.value,
@@ -61,7 +62,7 @@ const createOrUpdate = (req, res, next) => {
 		console.log('update');
 		GlyphMappingModel.findOne({
 			where: {
-				mappingId: req.body.mappingId
+				id: req.body.id
 			}
 		}).then(async data => {
 			data.unicode = req.body.unicode;

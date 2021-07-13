@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const csrf = require('csurf');
+const session = require('express-session');
 // const observe = require('object.observe');
 const sequelize = require('./util/database');
 
@@ -26,18 +28,27 @@ const crawlerMaoyanRankingListRoutes = require('./routers/crawlerMaoyanRankingLi
 const settingsRoutes = require('./routers/settingsRoutes');
 const dictionaryRoutes = require('./routers/dictionary');
 const glyphMappingRoutes = require('./routers/glyphMappingRoutes');
+const userRoutes = require('./routers/userRoutes');
 const testRoutes = require('./routers/testRoutes');
 
+const csrfProtection = csrf({
+	cookie: true
+});
+app.use(session({ 
+	secret: 'my secret',
+	reserve: false,
+	saveUninitialized: false
+}));
 
 app.use(express.static(__dirname));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.raw());
 app.use(bodyParser.text());
 
 
 app.use((err, req, res, next) => {
-	let {origin} = req.headers;
+	let { origin } = req.headers;
 	console.log('dsdsds');
 	res.header("Access-Control-Allow-Origin", "*");
 	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -65,6 +76,7 @@ app.use('/settings', cors(corsOptions), settingsRoutes);
 app.use('/dictionary', cors(corsOptions), dictionaryRoutes);
 app.use('/glyphMapping', cors(corsOptions), glyphMappingRoutes);
 app.use('/common', cors(corsOptions), commonRoutes);
+app.use('/user', cors(corsOptions), userRoutes);
 app.use('/test', cors(corsOptions), testRoutes);
 
 // app.use('*', errorController.get404);
@@ -72,6 +84,6 @@ app.use('/test', cors(corsOptions), testRoutes);
 sequelize.sync().then(result => {
 	app.listen(3000);
 }).catch(error => {
-	console.log(error)
+	console.log(error);
 });
 
