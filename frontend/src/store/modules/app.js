@@ -116,7 +116,7 @@ const app = {
     },
     UPDATE_LAYOUT_HEIGHT(state, payload) {
       state.layoutHeight = payload
-      state.tableHeight = payload - 115
+      state.tableHeight = payload - 90
     },
     TOGGLE_SIDEBAR: state => {
       if (state.sidebar.opened) {

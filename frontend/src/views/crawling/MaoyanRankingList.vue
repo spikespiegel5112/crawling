@@ -2,26 +2,31 @@
   <el-row class="app-container">
     <CommonQuery>
       <template slot="button1">
-        <el-button
-          @click="stepCrawlFlag = true"
-          icon="el-icon-plus"
-          size="mini"
-          type="primary"
-          v-waves
-        >
-          分步抓取
-        </el-button>
-        <el-button
-          @click="handleMultipleDelete"
-          icon="el-icon-delete"
-          size="mini"
-          type="danger"
-          v-waves
-        >
-          批量删除
-        </el-button>
+        <el-row>
+          <el-col :span="24">
+            <el-button
+              @click="stepCrawlFlag = true"
+              icon="el-icon-plus"
+              size="mini"
+              type="primary"
+              v-waves
+            >
+              分步抓取
+            </el-button>
+            <el-button
+              @click="handleMultipleDelete"
+              icon="el-icon-delete"
+              size="mini"
+              type="danger"
+              v-waves
+            >
+              批量删除
+            </el-button>
+          </el-col>
+          <el-col :span="12"> </el-col>
+        </el-row>
       </template>
-      <template slot="query1">
+      <template slot="quicksearch">
         <div @keyup.enter="search" class="common_search_wrapper">
           <label>
             <input
@@ -562,13 +567,13 @@
                             <el-col :span="1" style="text-align: left"
                               >第{{ index + 1 }}条</el-col
                             >
-                            <el-col :span="1" style="text-align: left">{{
+                            <el-col :span="2" style="text-align: left">{{
                               item.movieId
                             }}</el-col>
-                            <el-col :span="4" style="text-align: left">{{
+                            <el-col :span="3" style="text-align: left">{{
                               item.title
                             }}</el-col>
-                            <el-col :span="1">
+                            <el-col :span="2">
                               详情:
                               <i class="" v-if="item.detailSuccess === 0"></i>
                               <i
@@ -580,7 +585,7 @@
                                 v-else-if="item.detailSuccess === 2"
                               ></i>
                             </el-col>
-                            <el-col :span="1">
+                            <el-col :span="2">
                               更多:
                               <i
                                 class=""
@@ -595,7 +600,7 @@
                                 v-else-if="item.moreSectionsSuccess === 2"
                               ></i>
                             </el-col>
-                            <el-col :span="1">
+                            <el-col :span="2">
                               评分:
                               <i
                                 class=""
@@ -611,7 +616,7 @@
                               ></i>
                             </el-col>
 
-                            <el-col :span="1">
+                            <el-col :span="2">
                               想看:
                               <i
                                 class=""
@@ -632,7 +637,7 @@
                                 "
                               ></i>
                             </el-col>
-                            <el-col :span="2">
+                            <el-col :span="3">
                               首映日票房:
                               <i
                                 class=""
@@ -1784,7 +1789,7 @@ export default {
       this.crawlingFlag = false;
     },
     handleSave() {
-        debugger
+      debugger;
       if (
         this.crawlingCount !== 0 &&
         this.crawlingCount === this.rankingListCountLimit

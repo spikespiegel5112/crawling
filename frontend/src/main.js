@@ -16,9 +16,8 @@ import util from './utils/util'
 import '@/icons' // icon
 import '@/permission' // permission control
 import waves from '@/directive/waves' // 水波纹指令
-import CommonUploadImage from './views/common/CommonUploadImage.vue'
-import CommonLoading from './views/common/CommonLoading.vue'
-// import Cookies from 'js-cookie'
+
+import '@/utils/globalComponents';
 
 // import locale from 'element-ui/lib/locale/lang/zh-CN' // lang i18n
 Vue.use(waves)
@@ -48,8 +47,7 @@ console.log(baseUrl)
 
 // Vue.prototype.$baseUrl = process.env.NODE_ENV === 'production' ? '/' : 'http://192.168.1.112:9002/';
 
-Vue.component('CommonUploadImage', CommonUploadImage)
-Vue.component('CommonLoading', CommonLoading)
+
 
 const VueInstance = new Vue({
 	el: '#app',
