@@ -18,8 +18,8 @@
       </el-tooltip>-->
 
       <el-dropdown class="avatar-container" trigger="click">
-        <div class="common-imguploadpreview-wrapper">
-          <img class="user-avatar" :src="avatarImage" />
+        <div class="common_imguploadpreview_wrapper">
+          <img class="user-avatar" :src="avatarImage"/>
           <i class="el-icon-caret-bottom"></i>
         </div>
         <el-dropdown-menu class="user-dropdown" slot="dropdown">
@@ -33,7 +33,7 @@
       </el-dropdown>
 
       <!-- <el-dropdown class="avatar-container right-menu-item" trigger="click">
-        <div class="common-imguploadpreview-wrapper">
+        <div class="common_imguploadpreview_wrapper">
           <img class="user-avatar" :src="avatar+'?imageView2/1/w/80/h/80'">
           <i class="el-icon-caret-bottom"></i>
         </div>

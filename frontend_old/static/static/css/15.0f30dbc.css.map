@@ -1,0 +1,1 @@
+{"version":3,"sources":["15.0f30dbc.css"],"names":[],"mappings":"AAAA,sCACE,WAAa,CACd,AACD,iCACE,eAAgB,AAChB,gBAAkB,CACnB","file":"15.0f30dbc.css","sourcesContent":[".dashboard-container[data-v-106c86ed] {\n  margin: 30px;\n}\n.dashboard-text[data-v-106c86ed] {\n  font-size: 30px;\n  line-height: 46px;\n}\n\n"]}
