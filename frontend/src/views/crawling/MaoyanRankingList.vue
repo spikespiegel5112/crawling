@@ -1362,7 +1362,7 @@ export default {
                   },
                   response1.data
                 );
-                // debugger
+               
                 this.$set(
                   this.rankingListData,
                   crawlingCount,
@@ -1381,7 +1381,8 @@ export default {
                     detailSuccess: 2
                   })
                 );
-                reject(error);
+                resolve(error);
+
               });
           });
         };
@@ -1419,7 +1420,8 @@ export default {
                     moreSectionsSuccess: 2
                   })
                 );
-                reject(error);
+                resolve(error);
+
               });
           });
         };
@@ -1444,7 +1446,7 @@ export default {
                 record.portrait = response1.data;
 
                 console.log('getRankingListWantToSeePortrait', response1.data);
-                // debugger
+               
                 this.$set(
                   this.rankingListData,
                   crawlingCount,
@@ -1462,8 +1464,8 @@ export default {
                     rankingListWantToSeePortraitSuccess: 2
                   })
                 );
+                resolve(error);
 
-                reject(error);
               });
           });
         };
@@ -1502,7 +1504,8 @@ export default {
                     rankingListRatingSuccess: 2
                   })
                 );
-                reject(error);
+                resolve(error);
+
               });
           });
         };
@@ -1544,7 +1547,8 @@ export default {
                     RankingListPemiereBoxSuccess: 2
                   })
                 );
-                reject(error);
+                resolve(error);
+
               });
           });
         };
@@ -1586,7 +1590,8 @@ export default {
                     rankingListBoxOfficeGlobalSuccess: 2
                   })
                 );
-                reject(error);
+                resolve(error);
+
               });
           });
         };
@@ -1607,6 +1612,7 @@ export default {
           getRankingListBoxOfficeGlobalPromise
         ])
           .then(responseAll => {
+            ;
             console.log('responseAll', responseAll);
             this.rankingListData[crawlingCount].color = 'success';
             this.$set(
@@ -1624,7 +1630,7 @@ export default {
 
             console.log('rankingListMovieData', this.rankingListMovieData);
             if (this.crawlingCount === this.rankingListCountLimit) {
-              // debugger
+             
               this.crawlingFlag = false;
               this.crawlingCount = 0;
             } else {
@@ -1640,7 +1646,7 @@ export default {
           .catch(error => {
             console.log(error);
             if (this.crawlingCount === this.rankingListData.length) {
-              // debugger
+             
               this.crawlingFlag = false;
             } else {
               this.crawlingCount++;
@@ -1745,7 +1751,7 @@ export default {
         const getDetailPromise = getDetail();
         const getPreSaleWantToSeePortraitPromise = getPreSaleWantToSeePortrait();
         if (this.crawlingCount === this.rankingListCountLimit) {
-          // debugger
+         
           this.crawlingFlag = false;
         } else {
           this.crawlingCount++;
@@ -1772,7 +1778,7 @@ export default {
           .catch(error => {
             console.log(error);
             if (this.crawlingCount === this.rankingListCountLimit) {
-              // debugger
+             
               this.crawlingFlag = false;
             } else {
               this.crawlingCount++;
@@ -1789,7 +1795,7 @@ export default {
       this.crawlingFlag = false;
     },
     handleSave() {
-      debugger;
+      ;
       if (
         this.crawlingCount !== 0 &&
         this.crawlingCount === this.rankingListCountLimit
