@@ -1,121 +1,64 @@
 import $ from 'jquery';
 import store from '../store/store';
 
-let util = {};
-util.install = function (Vue) {
-
-  Vue.prototype.$checkOSS = (url, suffix) => {
-    if (url !== null) {
-      if (suffix === undefined && suffix !== null) {
-        suffix = '-style_100x100';
-      }
-      return url.indexOf('resource') > 0 ? url + suffix : url;
-    }
-  }
-
-
-  Vue.prototype.$platformChecker = objectName => {
-    let judgeModel = store.state.platformCheckerModel[objectName] || {};
-    // console.log(Object.keys(judgeModel).length === 0)
-    // console.log(store.state.platformCheckerModel[objectName])
-
-    Object.keys(judgeModel).forEach(item => {
-      if (judgeModel[item] instanceof Object) {
-        let result = false;
-        Object.values(judgeModel[item]).forEach(item2 => {
-          if (item2 === true) {
-            result = true;
-          }
-        });
-        judgeModel[item].show = result;
-      }
-    });
-    if (objectName === 'personBasicInfo') {
-      console.log(judgeModel)
-    }
-    return judgeModel;
-  };
-
-  Vue.prototype.$getDictionaryData = name => {
+const utils = {
+  $isEmpty(value) {
+    return value === '' || (!value && value !== 0);
+  },
+  $isNotEmpty(value) {
+    return !this.$isEmpty(value);
+  },
+  $getDictionaryData(name) {
     let result = [];
     let requestList = store.state.dictionaryDataSequence;
     let targetDictionary = store.state.dictionaryData[name];
-    if (typeof targetDictionary !== 'undefined' && targetDictionary.data.length !== 0) {
+    if (
+      typeof targetDictionary !== 'undefined' &&
+      targetDictionary.data.length !== 0
+    ) {
       result = store.state.dictionaryData[name].data;
     } else {
       let getData = new Promise((resolve, reject) => {
         if (requestList.filter(item => item === name).length === 0) {
-          store.commit('pushDictionaryDataSequence', name)
+          store.commit('pushDictionaryDataSequence', name);
           resolve();
         } else {
           reject('nonono');
         }
       });
-      getData.then(() => {
-        Vue.prototype.$http.get(Vue.prototype.$baseUrl + 'dictionary/dictionList', {
-          params: {
-            type: name
-          }
-        }).then(response => {
-          response = response.data.data;
-          targetDictionary.pending = false;
-          if (response.length > 0) {
-            store.commit('updateDictionaryData', {
-              name: name,
-              data: response
+      getData
+        .then(() => {
+          Vue.prototype.$http
+            .get(Vue.prototype.$baseUrl + 'dictionary/dictionList', {
+              params: {
+                type: name
+              }
+            })
+            .then(response => {
+              response = response.data.data;
+              targetDictionary.pending = false;
+              if (response.length > 0) {
+                store.commit('updateDictionaryData', {
+                  name: name,
+                  data: response
+                });
+              } else {
+                this.$message.error(`${name}类字典数据为空`);
+              }
+            })
+            .catch(error => {
+              this.$message.error(`无${name}类字典数据`);
+              store.commit('splitDictionaryDataSequence', name);
             });
-          } else {
-            this.$message.error(`${name}类字典数据为空`)
-          }
-        }).catch(error => {
-          this.$message.error(`无${name}类字典数据`);
-          store.commit('splitDictionaryDataSequence', name)
+        })
+        .catch(err => {
+          // console.log(err)
         });
-      }).catch(err => {
-        // console.log(err)
-      });
       result = store.state.dictionaryData[name].data;
     }
     return result;
-  };
-
-  Vue.prototype.$getDictionaryData_old = name => {
-    let result = [];
-    let targetDictionary = store.state.dictionaryData[name];
-    if (typeof targetDictionary !== 'undefined' && targetDictionary.data.length !== 0) {
-      result = store.state.dictionaryData[name].data;
-    } else {
-      if (targetDictionary.pending === false || typeof targetDictionary.pending === 'undefined') {
-        targetDictionary.pending = true;
-        Vue.prototype.$http.get(Vue.prototype.$baseUrl + 'dictionary/dictionList', {
-          params: {
-            type: name
-          }
-        }).then(response => {
-          response = response.data.data;
-          targetDictionary.pending = false;
-          if (response.length > 0) {
-            store.commit('updateDictionaryData', {
-              name: name,
-              data: response
-            });
-          } else {
-            Vue.prototype.$message.error(`${name}类字典数据为空`)
-          }
-        }).catch(error => {
-          Vue.prototype.$message.error(`无${name}类字典数据`)
-        });
-        result = store.state.dictionaryData[name].data;
-      } else {
-        result = [{
-          name: 'dsdsds'
-        }];
-      }
-    }
-    return result;
-  };
-
-  Vue.prototype.$generateUrlParams = data => {
+  },
+  $generateUrlParams(data) {
     let result = '?';
     Object.keys(data).forEach((item, index) => {
       if (index < Object.keys(data).length - 1) {
@@ -125,32 +68,44 @@ util.install = function (Vue) {
       }
     });
     return result;
-  };
-
-  Vue.prototype.$fireKeyEvent = (el, evtType, keyCode) => {
+  },
+  $fireKeyEvent(el, evtType, keyCode) {
     let doc = el.ownerDocument,
       win = doc.defaultView || doc.parentWindow,
       evtObj;
     if (doc.createEvent) {
       if (win.KeyEvent) {
         evtObj = doc.createEvent('KeyEvents');
-        evtObj.initKeyEvent(evtType, true, true, win, false, false, false, false, keyCode, 0);
+        evtObj.initKeyEvent(
+          evtType,
+          true,
+          true,
+          win,
+          false,
+          false,
+          false,
+          false,
+          keyCode,
+          0
+        );
       } else {
         evtObj = doc.createEvent('UIEvents');
         Object.defineProperty(evtObj, 'keyCode', {
-          get: function () {
+          get: function() {
             return this.keyCodeVal;
           }
         });
         Object.defineProperty(evtObj, 'which', {
-          get: function () {
+          get: function() {
             return this.keyCodeVal;
           }
         });
         evtObj.initUIEvent(evtType, true, true, win, 1);
         evtObj.keyCodeVal = keyCode;
         if (evtObj.keyCode !== keyCode) {
-          console.log('keyCode ' + evtObj.keyCode + ' 和 (' + evtObj.which + ') 不匹配');
+          console.log(
+            'keyCode ' + evtObj.keyCode + ' 和 (' + evtObj.which + ') 不匹配'
+          );
         }
       }
       el.dispatchEvent(evtObj);
@@ -159,11 +114,9 @@ util.install = function (Vue) {
       evtObj.keyCode = keyCode;
       el.fireEvent('on' + evtType, evtObj);
     }
-  };
-
-  Vue.prototype.$fullScreen = () => {
+  },
+  $fullScreen() {
     if (!sessionStorage.getItem('isFullScreen')) {
-
       let element = document.documentElement;
       if (element.requestFullscreen) {
         element.requestFullscreen();
@@ -176,9 +129,8 @@ util.install = function (Vue) {
       }
       // sessionStorage.setItem('isFullScreen', 'true');
     }
-  };
-
-  Vue.prototype.$generateRandomList = count => {
+  },
+  $generateRandomList(count) {
     let orderedArr = [];
     let upsetArr = [];
     let loopTimes = count;
@@ -200,31 +152,33 @@ util.install = function (Vue) {
       upsetArr.push(rand);
     }
     return upsetArr;
-  };
-
-
-  Vue.prototype.$setMenuData = options => {
-    let menuData = Object.assign({
-      showMenu: true
-    }, options);
+  },
+  $setMenuData(options) {
+    let menuData = Object.assign(
+      {
+        showMenu: true
+      },
+      options
+    );
 
     if (typeof localStorage.getItem('menuData') === 'undefined') {
       localStorage.setItem('menuData', menuData);
     }
-  };
-
-  Vue.prototype.$makeYearMonthDate = (timeStamp = Date.parse(new Date())) => {
-
-    let result = Vue.prototype.$formatDate({
+  },
+  $makeYearMonthDate(timeStamp = Date.parse(new Date())) {
+    let result =
+      Vue.prototype.$formatDate({
         date: new Date(timeStamp)
-      }) + '年' +
+      }) +
+      '年' +
       Vue.prototype.$formatDate({
         date: new Date(timeStamp),
         format: 'MM'
-      }) + '月';
+      }) +
+      '月';
     return result;
-  };
-  Vue.prototype.$getDomain = (options) => {
+  },
+  $getDomain(options) {
     let domain = window.location.toString();
     let protocol;
     if (options === 'noProtocal') {
@@ -234,9 +188,8 @@ util.install = function (Vue) {
     } else {
       return domain.replace(domain.substr(domain.indexOf('/#')), '');
     }
-
-  };
-  Vue.prototype.$formatDate2 = fmt => {
+  },
+  $formatDate2(fmt) {
     let o = {
       'M+': this.getMonth() + 1, //月份
       'd+': this.getDate(), //日
@@ -245,7 +198,7 @@ util.install = function (Vue) {
       'm+': this.getMinutes(), //分
       's+': this.getSeconds(), //秒
       'q+': Math.floor((this.getMonth() + 3) / 3), //季度
-      'S': this.getMilliseconds() //毫秒
+      S: this.getMilliseconds() //毫秒
     };
     let week = {
       '0': '/u65e5',
@@ -257,32 +210,51 @@ util.install = function (Vue) {
       '6': '/u516d'
     };
     if (/(y+)/.test(fmt)) {
-      fmt = fmt.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length));
+      fmt = fmt.replace(
+        RegExp.$1,
+        (this.getFullYear() + '').substr(4 - RegExp.$1.length)
+      );
     }
     if (/(E+)/.test(fmt)) {
-      fmt = fmt.replace(RegExp.$1, ((RegExp.$1.length > 1) ? (RegExp.$1.length > 2 ? '/u661f/u671f' : '/u5468') : '') + week[this.getDay() + '']);
+      fmt = fmt.replace(
+        RegExp.$1,
+        (RegExp.$1.length > 1
+          ? RegExp.$1.length > 2
+            ? '/u661f/u671f'
+            : '/u5468'
+          : '') + week[this.getDay() + '']
+      );
     }
     for (let k in o) {
       if (new RegExp('(' + k + ')').test(fmt)) {
-        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)));
+        fmt = fmt.replace(
+          RegExp.$1,
+          RegExp.$1.length == 1
+            ? o[k]
+            : ('00' + o[k]).substr(('' + o[k]).length)
+        );
       }
     }
     return fmt;
-  };
-  Vue.prototype.$formatDate = options => {
-    options = Object.assign({
-      date: 0,
-      format: 'yyyy'
-    }, options);
+  },
+  $formatDate(options) {
+    options = Object.assign(
+      {
+        date: 0,
+        format: 'yyyy'
+      },
+      options
+    );
     let o = {
       'M+': options.date.getMonth() + 1, //月份
       'd+': options.date.getDate(), //日
-      'h+': options.date.getHours() % 12 === 0 ? 12 : options.date.getHours() % 12, //小时
+      'h+':
+        options.date.getHours() % 12 === 0 ? 12 : options.date.getHours() % 12, //小时
       'H+': options.date.getHours(), //小时
       'm+': options.date.getMinutes(), //分
       's+': options.date.getSeconds(), //秒
       'q+': Math.floor((options.date.getMonth() + 3) / 3), //季度
-      'S': options.date.getMilliseconds() //毫秒
+      S: options.date.getMilliseconds() //毫秒
     };
     let week = {
       '0': '/u65e5',
@@ -294,25 +266,42 @@ util.install = function (Vue) {
       '6': '/u516d'
     };
     if (/(y+)/.test(options.format)) {
-      options.format = options.format.replace(RegExp.$1, (options.date.getFullYear() + '').substr(4 - RegExp.$1.length));
+      options.format = options.format.replace(
+        RegExp.$1,
+        (options.date.getFullYear() + '').substr(4 - RegExp.$1.length)
+      );
     }
     if (/(E+)/.test(options.format)) {
-      options.format = options.format.replace(RegExp.$1, ((RegExp.$1.length > 1) ? (RegExp.$1.length > 2 ? '/u661f/u671f' : '/u5468') : '') + week[options.date.getDay() + '']);
+      options.format = options.format.replace(
+        RegExp.$1,
+        (RegExp.$1.length > 1
+          ? RegExp.$1.length > 2
+            ? '/u661f/u671f'
+            : '/u5468'
+          : '') + week[options.date.getDay() + '']
+      );
     }
     for (let k in o) {
       if (new RegExp('(' + k + ')').test(options.format)) {
-        options.format = options.format.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)));
+        options.format = options.format.replace(
+          RegExp.$1,
+          RegExp.$1.length == 1
+            ? o[k]
+            : ('00' + o[k]).substr(('' + o[k]).length)
+        );
       }
     }
     return options.format;
-  };
-
-  Vue.prototype.$findByKey = options => {
-    options = Object.assign({
-      array: [],
-      key: '',
-      value: ''
-    }, options);
+  },
+  $findByKey(options) {
+    options = Object.assign(
+      {
+        array: [],
+        key: '',
+        value: ''
+      },
+      options
+    );
     let result;
     options.array.forEach(item => {
       if (item[options.key] === options.value) {
@@ -320,17 +309,21 @@ util.install = function (Vue) {
       }
     });
     return result;
-  };
-
-  Vue.prototype.$translateXAxisName = options => {
-    options = Object.assign({
-      list: [],
-      keyName: 'key',
-      dictionary: [{
-        name: '',
-        value: ''
-      }]
-    }, options);
+  },
+  $translateXAxisName(options) {
+    options = Object.assign(
+      {
+        list: [],
+        keyName: 'key',
+        dictionary: [
+          {
+            name: '',
+            value: ''
+          }
+        ]
+      },
+      options
+    );
     let result = [];
     options.list.forEach(item => {
       let value = Vue.prototype.$findByKey({
@@ -343,27 +336,31 @@ util.install = function (Vue) {
       }
     });
     return result;
-  };
-
-  Vue.prototype.$autoHeight = (options) => {
-    options = $.extend({
-      reference: '',
-      target: '',
-      content: 'body',
-      offset: 0,
-      scale: 1,
-      minHeight: 0,
-      returnValue: false
-    }, options);
+  },
+  $autoHeight(options) {
+    options = $.extend(
+      {
+        reference: '',
+        target: '',
+        content: 'body',
+        offset: 0,
+        scale: 1,
+        minHeight: 0,
+        returnValue: false
+      },
+      options
+    );
     let windowHeight = $(window).height();
     let targetHeight = 0;
     let referenceHeight = $(options.reference).height();
     let contentHeight = $(options.content).height();
     let pageHeight = document.body.scrollHeight;
     let offset = Number(options.offset);
-    if (referenceHeight < options.minHeight || windowHeight < options.minHeight) {
+    if (
+      referenceHeight < options.minHeight ||
+      windowHeight < options.minHeight
+    ) {
       targetHeight = options.minHeight * options.scale;
-
     } else if (referenceHeight > windowHeight) {
       targetHeight = referenceHeight * options.scale + offset;
     } else if (contentHeight > windowHeight) {
@@ -391,9 +388,8 @@ util.install = function (Vue) {
     } else {
       $(options.target).height(targetHeight);
     }
-  };
-
-  Vue.prototype.$quickSort = (arr) => {
+  },
+  $quickSort(arr) {
     let that = this;
     //如果数组<=1,则直接返回
     if (arr.length <= 1) {
@@ -410,16 +406,16 @@ util.install = function (Vue) {
     for (let i = 0; i < arr.length; i++) {
       if (arr[i] <= pivot) {
         left.push(arr[i]);
-      }
-      else {
+      } else {
         right.push(arr[i]);
       }
     }
     //递归
-    return Vue.prototype.$quickSort(left).concat([pivot], Vue.prototype.$quickSort(right));
-  };
-
-  Vue.prototype.$colorRgb = function (hex) {
+    return Vue.prototype
+      .$quickSort(left)
+      .concat([pivot], Vue.prototype.$quickSort(right));
+  },
+  $colorRgb(hex) {
     let sColor = hex.toLowerCase();
     //十六进制颜色值的正则表达式
     let reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
@@ -440,19 +436,20 @@ util.install = function (Vue) {
       return 'RGB(' + sColorChange.join(',') + ')';
     }
     return sColor;
-  };
-
-  Vue.prototype.$popup = (options) => {
-    options = $.extend({
-      container: '',
-      closebtn: '',
-      maskopacity: 0,
-      noborder: false,
-      align: false,
-      widthoffset: 17,
-      callback: function () {
-      }
-    }, options);
+  },
+  $popup(options) {
+    options = $.extend(
+      {
+        container: '',
+        closebtn: '',
+        maskopacity: 0,
+        noborder: false,
+        align: false,
+        widthoffset: 17,
+        callback: function() {}
+      },
+      options
+    );
     let that = this,
       containerEl = $(options.container),
       thisParent = containerEl.parent(),
@@ -460,10 +457,10 @@ util.install = function (Vue) {
       popupContainerEl = $('.commonPopupContainer'),
       popupWrapperEl = $('.commonPopupWrapper');
     let tools = {
-      getContainerWidth: function () {
+      getContainerWidth: function() {
         popupContainerEl.show();
         if (options.align && Vue.prototype.$align) {
-          setTimeout(function () {
+          setTimeout(function() {
             Vue.prototype.$align({
               target: '.commonPopupWrapper'
             });
@@ -498,10 +495,10 @@ util.install = function (Vue) {
       height: $(window).height(),
       background: 'rgba(0,0,0,' + options.maskopacity + ')'
     });
-    popupContainerEl.resize(function () {
+    popupContainerEl.resize(function() {
       popupContainerEl.css({
         width: $(window).width(),
-        height: $(window).height(),
+        height: $(window).height()
       });
     });
     containerEl.css({
@@ -513,35 +510,37 @@ util.install = function (Vue) {
     });
     if (popupWrapperEl.height() > $(window).height() - 20) {
       popupWrapperEl.css({
-        width: (containerEl.outerWidth() + options.widthoffset),
-        height: ($(window).height() - 100),
+        width: containerEl.outerWidth() + options.widthoffset,
+        height: $(window).height() - 100,
         overflow: 'auto'
       });
     }
 
     if (options.closebtn != '') {
-      $(options.closebtn).each(function () {
-        $(this).on('click', function () {
+      $(options.closebtn).each(function() {
+        $(this).on('click', function() {
           // $('body').append($(".commonPopupContainer"));
           $('.commonPopupContainer').hide();
         });
       });
     }
     options.callback();
-  };
-
-  Vue.prototype.$align = (options) => {
-    options = $.extend({
-      position: 'both',
-      target: '',
-      container: '',
-      positive: false,
-      isImage: false,
-      offsetX: 0,
-      offsetY: 0,
-      ignoreY: 0,
-      ignoreX: 0
-    }, options);
+  },
+  $align(options) {
+    options = $.extend(
+      {
+        position: 'both',
+        target: '',
+        container: '',
+        positive: false,
+        isImage: false,
+        offsetX: 0,
+        offsetY: 0,
+        ignoreY: 0,
+        ignoreX: 0
+      },
+      options
+    );
 
     let that = $(options.target),
       imgSrc = that.attr('src'),
@@ -563,8 +562,11 @@ util.install = function (Vue) {
       windowHeight = $(window).height();
     //_this.attr('src', imgSrc + '?' + Date.parse(new Date()))
     let tools = {
-      calculateIgnore: function () {
-        if (typeof options.ignoreY === 'string' || typeof options.ignoreX === 'string') {
+      calculateIgnore: function() {
+        if (
+          typeof options.ignoreY === 'string' ||
+          typeof options.ignoreX === 'string'
+        ) {
           let ignoreArrX = options.ignoreX.split(','),
             ignoreArrY = options.ignoreY.split(',');
           for (let i = 0; i < ignoreArrX.length; i++) {
@@ -583,7 +585,7 @@ util.install = function (Vue) {
       }
     };
     initAligning();
-    $(window).resize(function () {
+    $(window).resize(function() {
       initAligning();
     });
 
@@ -591,8 +593,8 @@ util.install = function (Vue) {
       //当居中元素是img标签时，特殊处理！
       if (that.is('img')) {
         //递归判断需要居中的图片是否加载完成，如果没有就重载
-        let checkImageLoaded = function () {
-          that.each(function (index) {
+        let checkImageLoaded = function() {
+          that.each(function(index) {
             let $this = $(options.target);
             let imageSrc = $this.attr('src');
             containerWidth = container.eq(index).width();
@@ -610,7 +612,6 @@ util.install = function (Vue) {
         checkImageLoaded();
         //缺省情况
       } else {
-
         //需要遍历每个居中对象，判断其每个container尺寸不同时，需分别处理
         //当设置了container时，以container尺寸大小居中
         if (options.container != '') {
@@ -630,7 +631,7 @@ util.install = function (Vue) {
         } else {
           containerWidth = $(window).width();
           containerHeight = $(window).height();
-          that.each(function (index) {
+          that.each(function(index) {
             let $this = $(options.target);
             if ($this.is(':hidden')) {
               return true;
@@ -646,10 +647,10 @@ util.install = function (Vue) {
       let marginY, marginX;
 
       checkBrowser({
-        ie: function () {
+        ie: function() {
           window.clearTimeout(timer);
         },
-        other: function () {
+        other: function() {
           clearTimeout(timer);
         }
       });
@@ -657,7 +658,6 @@ util.install = function (Vue) {
       if (arguments[1] != null && arguments[2] != null) {
         thisWidth = imageWidth;
         thisHeight = imageHeight;
-
       } else {
         thisWidth = _this.outerWidth();
         thisHeight = _this.outerHeight();
@@ -668,30 +668,47 @@ util.install = function (Vue) {
           // console.log(thisHeight)
           marginY = (containerHeight - thisHeight) / 2;
           marginX = (containerWidth - thisWidth) / 2;
-          if (options.positive && marginY < 0 || marginX < 0) {
+          if ((options.positive && marginY < 0) || marginX < 0) {
             marginY = marginX = 0;
           }
           if (thisWidth <= containerWidth) {
             if (options.offsetX !== 0) {
               _this.css({
-                'margin': marginY + offsetY - ignoreY + 'px ' + (containerWidth - thisWidth) / 2 + offsetX - ignoreX + 'px'
+                margin:
+                  marginY +
+                  offsetY -
+                  ignoreY +
+                  'px ' +
+                  (containerWidth - thisWidth) / 2 +
+                  offsetX -
+                  ignoreX +
+                  'px'
               });
             } else {
               _this.css({
-                'margin': marginY + offsetY - ignoreY + 'px auto'
+                margin: marginY + offsetY - ignoreY + 'px auto'
               });
             }
           } else {
             let marginX = (containerWidth - thisWidth) / 2;
             _this.css({
-              'margin': marginY + offsetY - ignoreY + 'px ' + (marginX + options.offsetX) + 'px'
+              margin:
+                marginY +
+                offsetY -
+                ignoreY +
+                'px ' +
+                (marginX + options.offsetX) +
+                'px'
             });
           }
           break;
         case 'top':
-          aligning(function (thisWidth, thisHeight) {
+          aligning(function(thisWidth, thisHeight) {
             _this.css({
-              'margin': '0 ' + ((containerWidth - thisWidth) / 2 + offsetX - ignoreX) + 'px'
+              margin:
+                '0 ' +
+                ((containerWidth - thisWidth) / 2 + offsetX - ignoreX) +
+                'px'
             });
           });
           break;
@@ -699,20 +716,20 @@ util.install = function (Vue) {
           if (thisHeight <= containerHeight) {
             if (options.offsetY !== 0) {
               _this.css({
-                'margin': marginY + offsetY - ignoreY + 'px 0'
+                margin: marginY + offsetY - ignoreY + 'px 0'
               });
             } else {
               _this.css({
-                'margin': marginY + offsetY - ignoreY + 'px 0'
+                margin: marginY + offsetY - ignoreY + 'px 0'
               });
             }
           } else {
             marginX = (containerWidth - thisWidth) / 2;
             _this.css({
-              'margin': (containerHeight - thisHeight) / 2 + offsetY - ignoreY + 'px 0'
+              margin:
+                (containerHeight - thisHeight) / 2 + offsetY - ignoreY + 'px 0'
             });
           }
-
 
           // aligning(function(thisWidth, thisHeight) {
           // 	_this.css({
@@ -721,22 +738,22 @@ util.install = function (Vue) {
           // });
           break;
         case 'bottom':
-          aligning(function (thisWidth, thisHeight) {
+          aligning(function(thisWidth, thisHeight) {
             tools.calculateIgnore();
             if (ignoreY <= windowHeight) {
               _this.css({
-                'margin': (windowHeight - thisHeight + offsetY - ignoreY) + 'px auto 0'
+                margin:
+                  windowHeight - thisHeight + offsetY - ignoreY + 'px auto 0'
               });
               console.log(ignoreY);
               console.log(windowHeight);
             }
-            ;
           });
           break;
         case 'left':
-          aligning(function (thisWidth, thisHeight) {
+          aligning(function(thisWidth, thisHeight) {
             _this.css({
-              'margin': (windowHeight - thisHeight) / 2 + 'px 0 0 0'
+              margin: (windowHeight - thisHeight) / 2 + 'px 0 0 0'
             });
           });
           break;
@@ -750,12 +767,13 @@ util.install = function (Vue) {
     }
 
     function checkBrowser(callback) {
-      callback = $.extend({
-        ie: function () {
+      callback = $.extend(
+        {
+          ie: function() {},
+          other: function() {}
         },
-        other: function () {
-        }
-      }, callback);
+        callback
+      );
       if (navigator.appName.indexOf('Explorer') > -1) {
         console.log('IE');
         callback.ie();
@@ -770,17 +788,17 @@ util.install = function (Vue) {
       let windowWidth = $(window).width(),
         windowHeight = $(window).height(),
         orientation = '';
-      callback = $.extend({
-        portrait: function () {
+      callback = $.extend(
+        {
+          portrait: function() {},
+          landscape: function() {},
+          orientationchange: function(windowWidth, windowHeight) {}
         },
-        landscape: function () {
-        },
-        orientationchange: function (windowWidth, windowHeight) {
-        }
-      }, callback);
+        callback
+      );
 
       checkoritation();
-      $(window).resize(function () {
+      $(window).resize(function() {
         checkoritation();
       });
 
@@ -793,20 +811,29 @@ util.install = function (Vue) {
         }
       }
 
-      return (windowWidth < windowHeight) ? orientation = 'portrait' : orientation = 'landscape';
+      return windowWidth < windowHeight
+        ? (orientation = 'portrait')
+        : (orientation = 'landscape');
     }
-  };
-  Vue.prototype.$rawArray2ChartArray = function (data, firstProp = 'value', secondProp = 'name') {
+  },
+  $rawArray2ChartArray(data, firstProp = 'value', secondProp = 'name') {
     let datalist = [];
     for (let i in data) {
       if (data[i] !== 0) {
-        datalist.push({[firstProp]: data[i], [secondProp]: i});
+        datalist.push({ [firstProp]: data[i], [secondProp]: i });
       }
     }
     datalist = datalist.reverse();
     return datalist;
-  };
-
-
+  }
 };
-export default util;
+
+utils.install = function(Vue) {
+  Object.keys(utils).forEach((item, index) => {
+    if (item !== 'install') {
+      Vue.prototype[item] = utils[item];
+    }
+  });
+};
+
+export default utils;
