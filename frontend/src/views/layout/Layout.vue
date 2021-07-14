@@ -5,7 +5,7 @@
       class="drawer-bg"
       @click="handleClickOutside"
     ></div> -->
-    <el-aside :width="classObj ? 180 : 50">
+    <el-aside class="aside" :width="classObj ? 180 : 50">
       <Sidebar class="sidebar-container" />
     </el-aside>
     <el-container>
@@ -91,7 +91,9 @@ export default {
 
 <style lang="scss" scoped>
 @import 'src/styles/mixin.scss';
-
+.aside {
+  font-size: 0;
+}
 .common-main-contaner {
   @include clearfix;
   position: relative;

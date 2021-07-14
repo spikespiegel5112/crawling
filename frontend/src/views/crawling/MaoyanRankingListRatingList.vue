@@ -10,15 +10,9 @@
           v-waves
         >
           查看数据
-        </el-button>
-        <!--        <el-button size="mini" type="primary" icon="el-icon-plus" @click="oneKeyCrawlFlag=true" v-waves>-->
-        <!--          一键抓取-->
-        <!--        </el-button>-->
-        <!--        <el-button size="mini" type="danger" icon="el-icon-delete" @click="handleMultipleDelete" v-waves>-->
-        <!--          批量删除-->
-        <!--        </el-button>-->
+            </el-button>
       </template>
-      <template slot="query1">
+       <template slot="quicksearch">
         <div @keyup.enter="search" class="common_search_wrapper">
           <label>
             <input

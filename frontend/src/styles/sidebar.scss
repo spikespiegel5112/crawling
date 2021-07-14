@@ -16,8 +16,7 @@
         .scrollbar-wrapper {
             padding: 0;
             overflow: auto;
-            // height: calc(100vh - 0);
-            height: 100vh;
+            height: 100%;
             .el-scrollbar__view {
                 height: 100%;
             }

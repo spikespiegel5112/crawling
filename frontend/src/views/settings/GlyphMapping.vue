@@ -19,7 +19,7 @@
           >批量删除</el-button
         >
       </template>
-      <template slot="query1">
+      <template slot="quicksearch">
         <div @keyup.enter="search" class="common-search-wrapper">
           <label>
             <input

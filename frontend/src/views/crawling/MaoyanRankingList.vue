@@ -1337,7 +1337,6 @@ export default {
         'this.movieId++++',
         this.rankingListData.map(item => item.movieId)
       );
-      
 
       this.crawlingCount = 0;
       this.rankingListMovieData = [];
@@ -1380,7 +1379,6 @@ export default {
                 resolve(response1.data);
               })
               .catch(error => {
-                
                 this.$set(
                   this.rankingListData,
                   crawlingCount,
@@ -1628,7 +1626,7 @@ export default {
               )
             );
             console.log('this.rankingListData+++++', this.rankingListData);
-            // 
+            //
 
             console.log('rankingListMovieData', this.rankingListMovieData);
             if (this.crawlingCount === this.rankingListCountLimit) {
@@ -1796,14 +1794,13 @@ export default {
       ) {
         console.log(this.rankingListMovieData);
         const params = this.rankingListMovieData.map(item => {
-        //   delete item.config;
-        //   delete item.request;
-        //   delete item.response;
+          //   delete item.config;
+          //   delete item.request;
+          //   delete item.response;
           delete item.toJSON;
           return item;
         });
         console.log('params+++++', params);
-        
 
         this.$http
           .post(

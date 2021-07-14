@@ -21,7 +21,7 @@
           批量删除
         </el-button>
       </template>
-      <template slot="query1">
+      <template slot="quicksearch">
         <div @keyup.enter="search" class="common_search_wrapper">
           <label>
             <input

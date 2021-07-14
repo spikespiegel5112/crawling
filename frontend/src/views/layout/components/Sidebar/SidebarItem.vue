@@ -149,7 +149,7 @@ export default {
 
 <style lang="scss" scoped>
 .menu_wrapper {
-    width: 100%;
+  width: 100%;
   \deep\.el-menu-item {
     .icon {
       font-size: 10px;
