@@ -1,5 +1,5 @@
 <template>
-  <el-row class="app-container">
+  <el-row>
     <CommonQuery>
       <template slot="button1">
         <el-button @click="handleMultipleDelete" icon="el-icon-delete" size="mini" type="danger" v-waves>

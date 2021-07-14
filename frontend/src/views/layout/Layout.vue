@@ -1,16 +1,20 @@
 <template>
-  <div class="common_main_container" :class="classObj">
-    <div
+  <el-container class="common_main_container" :class="classObj">
+    <!-- <div
       v-if="device === 'mobile' && sidebar.opened"
       class="drawer-bg"
       @click="handleClickOutside"
-    ></div>
-    <Sidebar class="sidebar-container" />
-    <div class="main-container">
-      <Navbar />
-      <AppMain v-if="heightReadyFlag" />
-    </div>
-  </div>
+    ></div> -->
+    <el-aside :width="classObj ? 180 : 50">
+      <Sidebar class="sidebar-container" />
+    </el-aside>
+    <el-container>
+      <div class="main-container">
+        <Navbar />
+        <AppMain v-if="heightReadyFlag" />
+      </div>
+    </el-container>
+  </el-container>
 </template>
 <script>
 import { Navbar, Sidebar, AppMain } from './components';
@@ -59,14 +63,14 @@ export default {
     autoHeight() {
       let layoutHeight;
       setTimeout(() => {
-        this.$autoHeight({
-          target: '.app-main',
-          offset: -50
-        });
+        // this.$autoHeight({
+        //   target: '.app-main',
+        //   offset: -50
+        // });
         layoutHeight = this.$autoHeight({
           target: '.app-main',
           reference: '.main-container',
-          offset: -100,
+          offset: -110,
           returnValue: true
         });
       }, 500);
@@ -85,7 +89,7 @@ export default {
 };
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style lang="scss" scoped>
 @import 'src/styles/mixin.scss';
 
 .common-main-contaner {

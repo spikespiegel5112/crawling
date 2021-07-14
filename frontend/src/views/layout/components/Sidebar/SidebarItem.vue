@@ -2,7 +2,7 @@
   <div class="menu_wrapper">
     <div v-for="(item, index) in routerInner" :key="index">
       <div v-if="!item.hidden && item.children">
-        <router-link
+        <RouterLink
           v-if="
             hasOneShowingChildren(item.children) &&
               !item.children[0].children &&
@@ -26,7 +26,7 @@
               >{{ item.children[0].meta.title }}</span
             >
           </el-menu-item>
-        </router-link>
+        </RouterLink>
 
         <el-submenu v-else :index="item.name || item.path" :key="item.name">
           <template slot="title">
@@ -35,9 +35,9 @@
               class="icon"
               :class="item.meta.icon"
             ></span>
-            <span v-if="item.meta && item.meta.title" slot="title">{{
-              item.meta.title
-            }}</span>
+            <span v-if="item.meta && item.meta.title" slot="title">
+              {{ item.meta.title }}
+            </span>
           </template>
 
           <template v-for="child in item.children">
@@ -48,7 +48,7 @@
               :routes="[child]"
               :key="child.path"
             ></sidebar-item>
-            <router-link
+            <RouterLink
               v-else
               :to="item.path + '/' + child.path"
               :key="child.name"
@@ -63,7 +63,7 @@
                   >{{ child.meta.title }}
                 </span>
               </el-menu-item>
-            </router-link>
+            </RouterLink>
           </template>
         </el-submenu>
       </div>
@@ -149,6 +149,7 @@ export default {
 
 <style lang="scss" scoped>
 .menu_wrapper {
+    width: 100%;
   \deep\.el-menu-item {
     .icon {
       font-size: 10px;
