@@ -5,7 +5,6 @@ import 'element-ui/lib/theme-chalk/index.css'
 import service, { baseUrl } from './utils/request'
 import moment from 'moment'
 import '@/styles/index.scss' // global css
-import './assets/simditor/styles/simditor.scss'
 
 import App from './App'
 import router from './router/router'
@@ -13,7 +12,6 @@ import router from './router/router'
 import store from './store/store'
 import i18n from './lang' // Internationalization
 import util from './utils/util'
-import '@/icons' // icon
 import '@/permission' // permission control
 import waves from '@/directive/waves' // 水波纹指令
 
