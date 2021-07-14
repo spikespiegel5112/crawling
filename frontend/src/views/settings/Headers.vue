@@ -63,7 +63,10 @@
       ></el-table-column>
       <el-table-column align="center" label="爬虫类型" prop="type">
         <template slot-scope="scope">
-          <div v-if="currentEditingCrawlerId !== scope.row.headerId">
+          <div
+            v-if="currentEditingCrawlerId !== scope.row.headerId"
+            class="common_tag_wrapper"
+          >
             <el-tag
               :key="item.code"
               type="success"
@@ -396,9 +399,10 @@ export default {
       console.log('handleChangeCralerType++++++', scope.row);
       this.formData.type = this.$parseStringToArray(scope.row.type);
       this.currentEditingCrawlerId = scope.row.headerId;
+      this.formData.headerId = scope.row.headerId;
       //   this.formData = Object.assign({}, scope.row);
     },
-    
+
     saveHeaderTypes() {
       this.commitUpdate();
       this.currentEditingCrawlerId = '';
