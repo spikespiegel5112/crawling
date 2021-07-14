@@ -825,6 +825,27 @@ const utils = {
     }
     datalist = datalist.reverse();
     return datalist;
+  },
+  $parseStringToArray(string) {
+    let isArray = true;
+    if (string instanceof Array) {
+      return string;
+    }
+    try {
+      JSON.parse(string);
+    } catch (error) {
+      isArray = false;
+    }
+    let result = isArray ? JSON.parse(string) : [string];
+    if (isArray) {
+      result = JSON.parse(string);
+    } else {
+      result = [string];
+    }
+    if (result === '') {
+      result = [];
+    }
+    return result;
   }
 };
 

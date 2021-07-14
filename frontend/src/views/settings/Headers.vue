@@ -79,11 +79,7 @@
             ></el-button>
           </div>
           <div v-else>
-            <el-select
-              multiple
-              placeholder="请选择"
-              v-model="currentHeaderType"
-            >
+            <el-select multiple placeholder="请选择" v-model="formData.type">
               <el-option
                 :key="item.code"
                 :label="item.name"
@@ -143,6 +139,7 @@
       </el-pagination>
     </div>
     <!-- 编辑 -->
+    <!-- 111 -->
     <el-dialog
       :title="textMap[dialogStatus]"
       :visible.sync="dialogFormVisible"
@@ -161,7 +158,7 @@
               <el-input v-model="formData.name"></el-input>
             </el-form-item>
             <el-form-item label="类型" prop="type">
-              <el-select placeholder="" v-model="formData.type">
+              <el-select placeholder="" v-model="formData.type" multiple>
                 <el-option
                   :key="item.code"
                   :label="item.name"
@@ -276,8 +273,7 @@ export default {
         bucketName: 'funyvalley',
         folderName: 'icon'
       },
-      expandQuery: '',
-      currentHeaderType: ''
+      expandQuery: ''
     };
   },
   computed: {
@@ -343,7 +339,7 @@ export default {
       });
     },
     getCrawlerType(scope) {
-      const typeList = this.parseStringToArray(scope.row.type);
+      const typeList = this.$parseStringToArray(scope.row.type);
       return this.$store.state.app.dictionary['crawler'].filter(item => {
         return typeList.some(item2 => item2 === item.code);
       });
@@ -380,6 +376,7 @@ export default {
     },
     handleUpdate(scope) {
       console.log(scope);
+      scope.row.type = this.$parseStringToArray(scope.row.type);
       this.formData = Object.assign({}, scope.row);
 
       this.dialogStatus = 'update';
@@ -397,28 +394,11 @@ export default {
     },
     handleChangeCralerType(scope) {
       console.log('handleChangeCralerType++++++', scope.row);
-      this.currentHeaderType = this.parseStringToArray(scope.row.type);
+      this.formData.type = this.$parseStringToArray(scope.row.type);
       this.currentEditingCrawlerId = scope.row.headerId;
       //   this.formData = Object.assign({}, scope.row);
     },
-    parseStringToArray(string) {
-      let isArray = true;
-      try {
-        JSON.parse(string);
-      } catch (error) {
-        isArray = false;
-      }
-      let result = isArray ? JSON.parse(string) : [string];
-      if (isArray) {
-        result = JSON.parse(string);
-      } else {
-        result = [string];
-      }
-      if (result === '') {
-        result = [];
-      }
-      return result;
-    },
+    
     saveHeaderTypes() {
       this.commitUpdate();
       this.currentEditingCrawlerId = '';
@@ -428,7 +408,7 @@ export default {
         .post(this.$baseUrl + this.createOrUpdateRequest, {
           headerId: this.formData.headerId,
           name: this.formData.name,
-          type: JSON.stringify(this.currentHeaderType),
+          type: JSON.stringify(this.formData.type),
           headerKeyName: this.formData.headerKeyName,
           headerValueName: this.formData.headerValueName
         })
