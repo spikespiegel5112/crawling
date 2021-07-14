@@ -436,7 +436,9 @@
         width="850px"
       ></el-pagination>
     </div>
-    <el-dialog title="一件抓取" :visible.sync="oneKeyCrawlFlag" width="1200px">
+    <!-- 111 -->
+    <!-- 一键抓取 -->
+    <el-dialog title="一键抓取" :visible.sync="oneKeyCrawlFlag" width="1200px">
       <el-row justify="center" type="flex">
         <el-col :span="20">
           <el-form
@@ -469,7 +471,8 @@
         }}</el-button>
       </div>
     </el-dialog>
-    <!--    分步抓取-->
+    <!-- 222 -->
+    <!-- 分步抓取 -->
     <el-dialog
       :title="textMap[dialogStatus]"
       :visible.sync="stepCrawlFlag"
@@ -1329,14 +1332,17 @@ export default {
       });
     },
     async beginToCrawRankingListMovieData() {
+      console.log('this.rankingListData++++', this.rankingListData);
+      console.log(
+        'this.movieId++++',
+        this.rankingListData.map(item => item.movieId)
+      );
+      
+
       this.crawlingCount = 0;
       this.rankingListMovieData = [];
 
-      let result = [];
       const record = {};
-
-      let detailReadyFlag = false;
-      let portraitReadyFlag = false;
 
       const loop = () => {
         const crawlingCount = this.crawlingCount;
@@ -1362,7 +1368,7 @@ export default {
                   },
                   response1.data
                 );
-               
+
                 this.$set(
                   this.rankingListData,
                   crawlingCount,
@@ -1374,6 +1380,7 @@ export default {
                 resolve(response1.data);
               })
               .catch(error => {
+                
                 this.$set(
                   this.rankingListData,
                   crawlingCount,
@@ -1382,7 +1389,6 @@ export default {
                   })
                 );
                 resolve(error);
-
               });
           });
         };
@@ -1421,7 +1427,6 @@ export default {
                   })
                 );
                 resolve(error);
-
               });
           });
         };
@@ -1446,7 +1451,7 @@ export default {
                 record.portrait = response1.data;
 
                 console.log('getRankingListWantToSeePortrait', response1.data);
-               
+
                 this.$set(
                   this.rankingListData,
                   crawlingCount,
@@ -1465,7 +1470,6 @@ export default {
                   })
                 );
                 resolve(error);
-
               });
           });
         };
@@ -1505,7 +1509,6 @@ export default {
                   })
                 );
                 resolve(error);
-
               });
           });
         };
@@ -1548,7 +1551,6 @@ export default {
                   })
                 );
                 resolve(error);
-
               });
           });
         };
@@ -1591,7 +1593,6 @@ export default {
                   })
                 );
                 resolve(error);
-
               });
           });
         };
@@ -1612,7 +1613,6 @@ export default {
           getRankingListBoxOfficeGlobalPromise
         ])
           .then(responseAll => {
-            ;
             console.log('responseAll', responseAll);
             this.rankingListData[crawlingCount].color = 'success';
             this.$set(
@@ -1627,10 +1627,11 @@ export default {
                 responseAll[5]
               )
             );
+            console.log('this.rankingListData+++++', this.rankingListData);
+            // 
 
             console.log('rankingListMovieData', this.rankingListMovieData);
             if (this.crawlingCount === this.rankingListCountLimit) {
-             
               this.crawlingFlag = false;
               this.crawlingCount = 0;
             } else {
@@ -1646,7 +1647,6 @@ export default {
           .catch(error => {
             console.log(error);
             if (this.crawlingCount === this.rankingListData.length) {
-             
               this.crawlingFlag = false;
             } else {
               this.crawlingCount++;
@@ -1665,9 +1665,6 @@ export default {
 
       let result = [];
       let record = {};
-
-      let detailReadyFlag = false;
-      let portraitReadyFlag = false;
 
       const loop = () => {
         const crawlingCount = this.crawlingCount;
@@ -1751,7 +1748,6 @@ export default {
         const getDetailPromise = getDetail();
         const getPreSaleWantToSeePortraitPromise = getPreSaleWantToSeePortrait();
         if (this.crawlingCount === this.rankingListCountLimit) {
-         
           this.crawlingFlag = false;
         } else {
           this.crawlingCount++;
@@ -1778,7 +1774,6 @@ export default {
           .catch(error => {
             console.log(error);
             if (this.crawlingCount === this.rankingListCountLimit) {
-             
               this.crawlingFlag = false;
             } else {
               this.crawlingCount++;
@@ -1795,16 +1790,25 @@ export default {
       this.crawlingFlag = false;
     },
     handleSave() {
-      ;
       if (
         this.crawlingCount !== 0 &&
         this.crawlingCount === this.rankingListCountLimit
       ) {
         console.log(this.rankingListMovieData);
+        const params = this.rankingListMovieData.map(item => {
+        //   delete item.config;
+        //   delete item.request;
+        //   delete item.response;
+          delete item.toJSON;
+          return item;
+        });
+        console.log('params+++++', params);
+        
+
         this.$http
           .post(
             this.$baseUrl + this.saveMultipleMaoyanRankingListRecordRequest,
-            this.rankingListMovieData
+            params
           )
           .then(response => {
             this.$message.success('数据提交成功');
