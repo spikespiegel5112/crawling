@@ -4,7 +4,7 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import service, { baseUrl } from './utils/request'
 import moment from 'moment'
-import '@/styles/index.scss' // global css
+import '@/style/index.scss' // global css
 
 import App from './App'
 import router from './router/router'

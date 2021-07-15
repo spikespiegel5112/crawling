@@ -397,10 +397,10 @@ export default {
     },
     handleChangeCralerType(scope) {
       console.log('handleChangeCralerType++++++', scope.row);
-      this.formData.type = this.$parseStringToArray(scope.row.type);
       this.currentEditingCrawlerId = scope.row.headerId;
+      this.formData = Object.assign({}, scope.row);
       this.formData.headerId = scope.row.headerId;
-      //   this.formData = Object.assign({}, scope.row);
+      this.formData.type = this.$parseStringToArray(scope.row.type);
     },
 
     saveHeaderTypes() {
@@ -530,17 +530,6 @@ export default {
 
     focusSortList(queryString, callback) {
       this.loading = true;
-
-      // this.queryModel = Object.assign(this.queryModel, {
-      //   limit: 999,
-      //   page: 1,
-      //   status: 1,
-      //   title: '',
-      //   description: '',
-      //   gameTypeId: '',
-      // });
-      // console.log(this.queryModel)
-
       this.$http
         .get(this.$baseUrl + this.queryRewardProductByNameRequest, {
           params: {
@@ -571,5 +560,5 @@ export default {
 };
 </script>
 <style lang="scss">
-@import '../../styles/edifice.scss';
+@import '../../style/edifice.scss';
 </style>

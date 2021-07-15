@@ -17,7 +17,9 @@
   </el-container>
 </template>
 <script>
-import { Navbar, Sidebar, AppMain } from './components';
+import Navbar from './components/Navbar';
+import Sidebar from './components/Sidebar';
+import AppMain from './components/AppMain';
 import ResizeMixin from './mixin/ResizeHandler';
 
 export default {
@@ -90,7 +92,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import 'src/styles/mixin.scss';
+@import 'src/style/mixin.scss';
 .aside {
   font-size: 0;
 }

@@ -1227,7 +1227,7 @@ export default {
 };
 </script>
 <style lang="scss">
-@import '../../styles/edifice.scss';
+@import '../../style/edifice.scss';
 
 .timelineitem {
   font-size: 15px;
