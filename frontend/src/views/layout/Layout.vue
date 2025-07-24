@@ -11,7 +11,11 @@
     <el-container>
       <div class="main_container">
         <Navbar />
-        <AppMain v-if="heightReadyFlag" />
+        <el-card class="app-main">
+          <transition name="fade" mode="out-in">
+            <router-view></router-view>
+          </transition>
+        </el-card>
       </div>
     </el-container>
   </el-container>
@@ -19,15 +23,13 @@
 <script>
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
-import AppMain from './components/AppMain';
 import ResizeMixin from './mixin/ResizeHandler';
 
 export default {
   name: 'layout',
   components: {
     Navbar,
-    Sidebar,
-    AppMain
+    Sidebar
   },
   data() {
     return {

@@ -121,12 +121,8 @@
         </el-col>
       </el-row>
       <div class="dialog-footer" slot="footer">
-        <el-button @click="dialogFormVisible = false" v-waves>{{
-          $t('table.cancel')
-        }}</el-button>
-        <el-button @click="updateData" type="primary">{{
-          $t('table.confirm')
-        }}</el-button>
+        <el-button @click="dialogFormVisible = false" v-waves>取消</el-button>
+        <el-button @click="updateData" type="primary">确定</el-button>
       </div>
     </el-dialog>
   </el-row>

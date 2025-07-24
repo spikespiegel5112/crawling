@@ -150,12 +150,8 @@
         </el-col>
       </el-row>
       <div class="dialog-footer" slot="footer">
-        <el-button @click="createDialogFormVisible = false" v-waves>{{
-          $t('table.cancel')
-        }}</el-button>
-        <el-button @click="updateData" type="primary">{{
-          $t('table.confirm')
-        }}</el-button>
+        <el-button @click="createDialogFormVisible = false" v-waves>取消</el-button>
+        <el-button @click="updateData" type="primary">确定</el-button>
       </div>
     </el-dialog>
     <!-- 编辑 -->
@@ -207,12 +203,8 @@
         </el-col>
       </el-row>
       <div class="dialog-footer" slot="footer">
-        <el-button @click="dialogFormVisible = false" v-waves>{{
-          $t('table.cancel')
-        }}</el-button>
-        <el-button @click="updateData" type="primary" v-waves>{{
-          $t('table.confirm')
-        }}</el-button>
+        <el-button @click="dialogFormVisible = false" v-waves>取消</el-button>
+        <el-button @click="updateData" type="primary" v-waves>确定</el-button>
       </div>
     </el-dialog>
     <!-- 新增类型 -->
@@ -243,12 +235,8 @@
         </el-col>
       </el-row>
       <div class="dialog-footer" slot="footer">
-        <el-button @click="addTypeFlag = false" v-waves>{{
-          $t('table.cancel')
-        }}</el-button>
-        <el-button @click="createType" type="primary" v-waves>{{
-          $t('table.confirm')
-        }}</el-button>
+        <el-button @click="addTypeFlag = false" v-waves>取消</el-button>
+        <el-button @click="createType" type="primary" v-waves>确定</el-button>
       </div>
     </el-dialog>
   </el-row>

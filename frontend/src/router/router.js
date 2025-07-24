@@ -53,10 +53,9 @@ export const constantRouterMap = [
     meta: { title: '小红书爬虫', icon: 'iconfont icon-mail' },
     children: [
       {
-        path: 'crawler',
+        path: 'RedNoteHomepage',
         name: 'RedNoteHomepage',
-        component: () =>
-          import('@/views/crawling/RedNoteCrawler/RedNoteHomepage'),
+        component: () => import('@/views/RedNoteCrawler/RedNoteHomepage'),
         meta: { title: '小红书首页爬虫', icon: 'iconfont icon-mail' }
       }
     ]

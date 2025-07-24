@@ -187,18 +187,14 @@
         </el-col>
       </el-row>
       <div class="dialog-footer" slot="footer">
-        <el-button @click="dialogFormVisible = false" v-waves>{{
-          $t('table.cancel')
-        }}</el-button>
+        <el-button @click="dialogFormVisible = false" v-waves>取消</el-button>
         <el-button
           @click="createData"
           type="primary"
           v-if="dialogStatus === 'create'"
           >{{ $t('table.confirm') }}</el-button
         >
-        <el-button @click="updateData" type="primary" v-else v-waves>{{
-          $t('table.confirm')
-        }}</el-button>
+        <el-button @click="updateData" type="primary" v-else v-waves>确定</el-button>
       </div>
     </el-dialog>
   </el-row>

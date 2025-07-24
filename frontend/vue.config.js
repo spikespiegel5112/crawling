@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  lintOnSave: false //配置关闭eslint
+  lintOnSave: false, //配置关闭eslint
   //   configureWebpack: {
   //     resolve: {
   //       alias: {
@@ -10,4 +10,9 @@ module.exports = {
   //       }
   //     }
   //   }
+
+  devServer: {
+    historyApiFallback: true,
+    allowedHosts: 'all'
+  }
 };
