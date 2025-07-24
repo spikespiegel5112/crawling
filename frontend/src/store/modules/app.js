@@ -143,7 +143,7 @@ const app = {
   },
   mutations: {
     updateDictionary(state, payload) {
-      Object.keys(payload).forEach(item => {
+      Object.keys(payload).forEach((item) => {
         if (!state.dictionary[item]) {
           state.dictionary[item] = payload[item];
         }
@@ -153,17 +153,17 @@ const app = {
       state.layoutHeight = payload;
       state.tableHeight = payload - 90;
     },
-    TOGGLE_SIDEBAR: state => {
+    TOGGLE_SIDEBAR: (state) => {
       if (state.sidebar.opened) {
-        sessionStorage.setItem('sidebarStatus', 1);
+        sessionStorage.setItem('sidebarStatus', true);
       } else {
-        sessionStorage.setItem('sidebarStatus', 0);
+        sessionStorage.setItem('sidebarStatus', false);
       }
       state.sidebar.opened = !state.sidebar.opened;
       state.sidebar.withoutAnimation = false;
     },
     CLOSE_SIDEBAR: (state, withoutAnimation) => {
-      sessionStorage.setItem('sidebarStatus', 1);
+      sessionStorage.setItem('sidebarStatus', true);
       state.sidebar.opened = false;
       state.sidebar.withoutAnimation = withoutAnimation;
     },
@@ -192,14 +192,14 @@ const app = {
       return new Promise((resolve, reject) => {
         request
           .post(baseUrl + updateShelfStatusRequest)
-          .then(response => {
+          .then((response) => {
             VueInstance.$message({
               message: '操作成功',
               type: 'success'
             });
             resolve();
           })
-          .catch(errpr => {
+          .catch((errpr) => {
             VueInstance.$message({
               message: '操作失败',
               type: 'error'

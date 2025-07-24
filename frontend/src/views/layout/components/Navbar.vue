@@ -1,28 +1,17 @@
 <template>
   <el-menu class="navbar" mode="horizontal">
     <el-row>
-      <el-col :span="18">
-        <hamburger
-          class="hamburger-container"
+      <el-col :span="12">
+        <Hamburger
+          class="hamburger_container"
           :toggleClick="toggleSideBar"
-          :isActive="sidebar.opened"
-        ></hamburger>
+          :isActive="sidebar.opened === '1'"
+        ></Hamburger>
         <breadcrumb></breadcrumb>
       </el-col>
-      <el-col :span="6" class="right-menu">
+      <el-col :span="12" class="right_menu">
         <div class="common_environmenthint_item" v-if="$prodEnv">测试环境</div>
-        <!-- <error-log class="errLog-container right-menu-item"></error-log> -->
-
-        <!-- <el-tooltip effect="dark" :content="$t('navbar.screenfull')" placement="bottom">
-        <screenfull class="screenfull right-menu-item"></screenfull>
-      </el-tooltip>-->
-
-        <lang-select class="international right-menu-item"></lang-select>
-
-        <!-- <el-tooltip effect="dark" :content="$t('navbar.theme')" placement="bottom">
-        <theme-picker class="theme-switch right-menu-item"></theme-picker>
-      </el-tooltip>-->
-
+        <LangSelect class="international right_menu_item"></LangSelect>
         <el-dropdown class="avatar-container" trigger="click">
           <div class="common_imguploadpreview_wrapper">
             <img class="user-avatar" :src="avatarImage" />
@@ -38,7 +27,7 @@
           </el-dropdown-menu>
         </el-dropdown>
 
-        <!-- <el-dropdown class="avatar-container right-menu-item" trigger="click">
+        <!-- <el-dropdown class="avatar-container right_menu_item" trigger="click">
         <div class="common_imguploadpreview_wrapper">
           <img class="user-avatar" :src="avatar+'?imageView2/1/w/80/h/80'">
           <i class="el-icon-caret-bottom"></i>
@@ -107,7 +96,7 @@ export default {
   height: 50px;
   /*line-height: 50px;*/
   border-radius: 0px !important;
-  .hamburger-container {
+  .hamburger_container {
     line-height: 58px;
     height: 50px;
     float: left;
@@ -120,12 +109,13 @@ export default {
     display: inline-block;
     vertical-align: top;
   }
-  .right-menu {
+  .right_menu {
+    text-align: right;
     height: 100%;
     &:focus {
       outline: none;
     }
-    .right-menu-item {
+    .right_menu_item {
       display: inline-block;
       margin: 0 8px;
     }

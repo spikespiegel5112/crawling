@@ -5,11 +5,11 @@
       class="drawer-bg"
       @click="handleClickOutside"
     ></div> -->
-    <el-aside class="aside" :width="classObj ? 180 : 50">
-      <Sidebar class="sidebar-container" />
+    <el-aside class="aside" :width="classObj ? '180' : '50'">
+      <Sidebar class="sidebar_container" />
     </el-aside>
     <el-container>
-      <div class="main-container">
+      <div class="main_container">
         <Navbar />
         <AppMain v-if="heightReadyFlag" />
       </div>
@@ -34,7 +34,6 @@ export default {
       heightReadyFlag: false
     };
   },
-  mixins: [ResizeMixin],
   computed: {
     sidebar() {
       return this.$store.state.app.sidebar;
@@ -54,50 +53,20 @@ export default {
     }
   },
   created() {},
-  mounted() {
-    this.autoHeight();
-    this.changeHeight();
-  },
+  mounted() {},
   methods: {
     handleClickOutside() {
       this.$store.dispatch('CloseSideBar', { withoutAnimation: false });
-    },
-    autoHeight() {
-      let layoutHeight;
-      setTimeout(() => {
-        // this.$autoHeight({
-        //   target: '.app-main',
-        //   offset: -50
-        // });
-        layoutHeight = this.$autoHeight({
-          target: '.app-main',
-          reference: '.main-container',
-          offset: -110,
-          returnValue: true
-        });
-      }, 500);
-      setTimeout(() => {
-        this.$store.dispatch('updateLayoutHeight', layoutHeight);
-        this.heightReadyFlag = true;
-      }, 1000);
-    },
-    changeHeight() {
-      let that = this;
-      window.onresize = () => {
-        that.autoHeight();
-      };
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-@import 'src/style/mixin.scss';
 .aside {
   font-size: 0;
 }
 .common-main-contaner {
-  @include clearfix;
   position: relative;
   height: 100%;
   width: 100%;

@@ -14,8 +14,8 @@
           <RouterLink
             v-if="
               hasOneShowingChildren(item.children) &&
-                !item.children[0].children &&
-                !item.alwaysShow
+              !item.children[0].children &&
+              !item.alwaysShow
             "
             :to="item.path + '/' + item.children[0].path"
             :key="item.children[0].name"
@@ -77,11 +77,6 @@ import { mapGetters } from 'vuex';
 
 export default {
   props: {
-    routes: {
-      type: Array,
-      default: [],
-      required: false
-    },
     isNest: {
       type: Boolean,
       default: false
@@ -139,7 +134,7 @@ export default {
             result[result.length - 1].children = result[
               result.length - 1
             ].children.filter(
-              item2 => item2.hidden === undefined || !item2.hidden
+              (item2) => item2.hidden === undefined || !item2.hidden
             );
           }
         }
@@ -148,7 +143,7 @@ export default {
     },
     hasOneShowingChildren(children) {
       let showingChildren = [];
-      children.forEach(item => {
+      children.forEach((item) => {
         if (!item.hidden || item.hidden !== true) {
           showingChildren.push(item);
         }
@@ -164,7 +159,7 @@ export default {
 .menu_wrapper {
   height: 100%;
 }
-.sidebar-container {
+.sidebar_container {
   display: inline-block;
   width: 180px;
   transition: width 0.28s;
@@ -200,7 +195,7 @@ export default {
   }
 }
 .hideSidebar {
-  .sidebar-container {
+  .sidebar_container {
     width: 60px !important;
   }
   .submenu-title-noDropdown {
@@ -241,8 +236,8 @@ export default {
     }
   }
 }
-.sidebar-container .nest-menu .el-submenu > .el-submenu__title,
-.sidebar-container .el-submenu .el-menu-item {
+.sidebar_container .nest-menu .el-submenu > .el-submenu__title,
+.sidebar_container .el-submenu .el-menu-item {
   min-width: 180px !important;
   background-color: $subMenuBg !important;
   &:hover {
@@ -255,12 +250,12 @@ export default {
 
 /* 适配移动端 */
 .mobile {
-  .sidebar-container {
+  .sidebar_container {
     transition: transform 0.28s;
     width: 180px !important;
   }
   &.hideSidebar {
-    .sidebar-container {
+    .sidebar_container {
       transition-duration: 0.3s;
       transform: translate3d(-180px, 0, 0);
     }

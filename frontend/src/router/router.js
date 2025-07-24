@@ -46,6 +46,22 @@ export const constantRouterMap = [
     ]
   },
   {
+    path: '/RedNoteCrawler',
+    component: Layout,
+    redirect: '/RedNoteCrawler/RedNoteHomepage',
+    name: 'RedNoteCrawler',
+    meta: { title: '小红书爬虫', icon: 'iconfont icon-mail' },
+    children: [
+      {
+        path: 'crawler',
+        name: 'RedNoteHomepage',
+        component: () =>
+          import('@/views/crawling/RedNoteCrawler/RedNoteHomepage'),
+        meta: { title: '小红书首页爬虫', icon: 'iconfont icon-mail' }
+      }
+    ]
+  },
+  {
     path: '/maoyanRankingList',
     component: Layout,
     redirect: '/maoyanRankingList/maoyanRankingList',
