@@ -533,7 +533,7 @@
                       :span="24"
                       v-if="
                         rankingListData.length > 0 &&
-                          crawlingCount < rankingListData.length
+                        crawlingCount < rankingListData.length
                       "
                     >
                       共有{{ rankingListData.length }}条数据，正在抓取第{{
@@ -558,7 +558,7 @@
                         class="timelineitem"
                         placement="top"
                         v-for="(item, index) in rankingListData.filter(
-                          item => !item.disabled
+                          (item) => !item.disabled
                         )"
                       >
                         <el-card shadow="hover">
@@ -840,14 +840,14 @@ export default {
       },
       downloadLoading: false,
       pickerOptions0: {
-        disabledDate: time => {
+        disabledDate: (time) => {
           if (this.value2 !== '') {
             return time.getTime() > this.value2;
           }
         }
       },
       pickerOptions1: {
-        disabledDate: time => {
+        disabledDate: (time) => {
           return time.getTime() < this.value1;
         }
       },
@@ -917,7 +917,7 @@ export default {
         .get(this.$baseUrl + this.getListByPaginationRequest, {
           params: Object.assign(this.queryModel, this.pagination)
         })
-        .then(response => {
+        .then((response) => {
           console.log('getListByPaginationRequest', response);
 
           this.tableList = response.data;
@@ -933,10 +933,10 @@ export default {
               type: 'crawlerAddress'
             }
           })
-          .then(response => {
+          .then((response) => {
             resolve(response.data);
           })
-          .catch(error => {
+          .catch((error) => {
             console.log(error);
             reject(error);
           });
@@ -973,7 +973,7 @@ export default {
           address: this.formData.crawlerAddress,
           headerCode: this.formData.headerCode
         })
-        .then(response => {
+        .then((response) => {
           console.log(response);
           this.$message.success('抓取成功');
 
@@ -996,7 +996,7 @@ export default {
       });
     },
     updateData() {
-      this.$refs['formData'].validate(valid => {
+      this.$refs['formData'].validate((valid) => {
         if (valid) {
           this.$http
             .post(this.$baseUrl + this.addAndUpdateRewardInfoRequest, {
@@ -1010,13 +1010,13 @@ export default {
               rewardValue: this.formData.rewardValue,
               status: this.formData.status
             })
-            .then(response => {
+            .then((response) => {
               console.log(response);
               this.dialogFormVisible = false;
               this.$message.success('信息修改成功');
               this.getTableData();
             })
-            .catch(error => {
+            .catch((error) => {
               console.log(error);
               this.$message.error(
                 `${error.response.status.toString()}  ${
@@ -1039,7 +1039,7 @@ export default {
       })
         .then(() => {
           this.deleteRecord(
-            this.multipleSelection.map(item => {
+            this.multipleSelection.map((item) => {
               return item.id;
             })
           );
@@ -1075,13 +1075,13 @@ export default {
             id: data
           }
         })
-        .then(response => {
+        .then((response) => {
           console.log(response);
           this.dialogFormVisible = false;
           this.$message.success('删除成功');
           this.getTableData();
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
           this.$message.error(
             `${error.response.status.toString()}  ${error.response.data.error}`
@@ -1117,7 +1117,7 @@ export default {
     },
     chooseRewardType(data) {
       this.formData.type = this.settingsList.filter(
-        item => item.value === data
+        (item) => item.value === data
       )[0].code;
       this.formData.crawlerAddress = data;
     },
@@ -1148,7 +1148,7 @@ export default {
             name: this.chosenReward
           }
         })
-        .then(response => {
+        .then((response) => {
           console.log(response);
           this.loading = false;
           // this.total = response.total;
@@ -1175,6 +1175,7 @@ export default {
       // Promise.all([getRankingListPromise]).then(responseAll => {
       //   console.log(responseAll)
       // }).catch(error => {
+          console.log(error)
       //   console.log(error)
       //   this.$message.error(error)
       // })
@@ -1182,10 +1183,10 @@ export default {
     getMovieData() {
       const getDetailData = this.getDetailData();
       Promise.all([getDetailData])
-        .then(responseAll => {
+        .then((responseAll) => {
           console.log(responseAll);
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
           this.$message.error(error);
         });
@@ -1200,7 +1201,7 @@ export default {
               headerCode: 'maoyanPreSale'
             }
           })
-          .then(response => {
+          .then((response) => {
             console.log(response);
             this.presaleCountLimit = response.data.length;
 
@@ -1226,7 +1227,7 @@ export default {
             this.$message.success('获取预售列表成功');
             resolve(this.preSaleWantToSeeListData);
           })
-          .catch(error => {
+          .catch((error) => {
             this.$message.error(error);
             reject(error);
           });
@@ -1240,7 +1241,7 @@ export default {
             headerCode: 'maoyanPreSale'
           }
         })
-        .then(response => {
+        .then((response) => {
           console.log(response);
           this.presaleCountLimit = response.data.length;
 
@@ -1262,7 +1263,7 @@ export default {
           });
           this.$message.success('获取预售列表成功');
         })
-        .catch(error => {
+        .catch((error) => {
           this.$message.error(error);
         });
     },
@@ -1284,11 +1285,11 @@ export default {
               timeout: 20000
             }
           )
-          .then(response => {
+          .then((response) => {
             this.rankingListCountLimit = response.data.length;
             console.log(response);
 
-            const result = response.data.map(item => {
+            const result = response.data.map((item) => {
               return Object.assign(item, {
                 title: item.title,
                 detailSuccess: 0,
@@ -1321,7 +1322,7 @@ export default {
             //   }))
             // })
           })
-          .catch(error => {
+          .catch((error) => {
             this.$message.error(error);
             reject(error);
           });
@@ -1331,7 +1332,7 @@ export default {
       console.log('this.rankingListData++++', this.rankingListData);
       console.log(
         'this.movieId++++',
-        this.rankingListData.map(item => item.movieId)
+        this.rankingListData.map((item) => item.movieId)
       );
 
       this.crawlingCount = 0;
@@ -1355,7 +1356,7 @@ export default {
                 },
                 timeout: 20000
               })
-              .then(response1 => {
+              .then((response1) => {
                 record.detail = response1.data;
                 response1.data = Object.assign(
                   {
@@ -1374,7 +1375,7 @@ export default {
 
                 resolve(response1.data);
               })
-              .catch(error => {
+              .catch((error) => {
                 this.$set(
                   this.rankingListData,
                   crawlingCount,
@@ -1399,7 +1400,7 @@ export default {
                   headerCode: 'rankingListDetailHeader'
                 }
               })
-              .then(response1 => {
+              .then((response1) => {
                 record.detailMoreSections = response1.data;
 
                 this.$set(
@@ -1412,7 +1413,7 @@ export default {
 
                 resolve(response1.data);
               })
-              .catch(error => {
+              .catch((error) => {
                 this.$set(
                   this.rankingListData,
                   crawlingCount,
@@ -1441,7 +1442,7 @@ export default {
                   timeout: 20000
                 }
               )
-              .then(response1 => {
+              .then((response1) => {
                 record.portrait = response1.data;
 
                 console.log('getRankingListWantToSeePortrait', response1.data);
@@ -1455,7 +1456,7 @@ export default {
                 );
                 resolve(response1.data);
               })
-              .catch(error => {
+              .catch((error) => {
                 this.$set(
                   this.rankingListData,
                   crawlingCount,
@@ -1481,7 +1482,7 @@ export default {
                 },
                 timeout: 300000
               })
-              .then(response1 => {
+              .then((response1) => {
                 record.rating = response1.data;
 
                 this.$set(
@@ -1494,7 +1495,7 @@ export default {
 
                 resolve(response1.data);
               })
-              .catch(error => {
+              .catch((error) => {
                 this.$set(
                   this.rankingListData,
                   crawlingCount,
@@ -1523,7 +1524,7 @@ export default {
                   timeout: 300000
                 }
               )
-              .then(response1 => {
+              .then((response1) => {
                 record.rating = response1.data;
 
                 this.$set(
@@ -1536,7 +1537,7 @@ export default {
 
                 resolve(response1.data);
               })
-              .catch(error => {
+              .catch((error) => {
                 this.$set(
                   this.rankingListData,
                   crawlingCount,
@@ -1565,7 +1566,7 @@ export default {
                   timeout: 300000
                 }
               )
-              .then(response1 => {
+              .then((response1) => {
                 record.rating = response1.data;
 
                 this.$set(
@@ -1578,7 +1579,7 @@ export default {
 
                 resolve(response1.data);
               })
-              .catch(error => {
+              .catch((error) => {
                 this.$set(
                   this.rankingListData,
                   crawlingCount,
@@ -1592,11 +1593,13 @@ export default {
         };
 
         const getDetailPromise = getDetail();
-        const getRankingListWantToSeePortraitPromise = getRankingListWantToSeePortrait();
+        const getRankingListWantToSeePortraitPromise =
+          getRankingListWantToSeePortrait();
         const getRankingListRatingPromise = getRankingListRating();
         const getMoreSectionsPromise = getDetaiMoreSections();
         const getRankingListPremiereBoxPromise = getRankingListPremiereBox();
-        const getRankingListBoxOfficeGlobalPromise = getRankingListBoxOfficeGlobal();
+        const getRankingListBoxOfficeGlobalPromise =
+          getRankingListBoxOfficeGlobal();
 
         Promise.all([
           getDetailPromise,
@@ -1606,7 +1609,7 @@ export default {
           getRankingListPremiereBoxPromise,
           getRankingListBoxOfficeGlobalPromise
         ])
-          .then(responseAll => {
+          .then((responseAll) => {
             console.log('responseAll', responseAll);
             this.rankingListData[crawlingCount].color = 'success';
             this.$set(
@@ -1638,7 +1641,7 @@ export default {
               loop();
             }
           })
-          .catch(error => {
+          .catch((error) => {
             console.log(error);
             if (this.crawlingCount === this.rankingListData.length) {
               this.crawlingFlag = false;
@@ -1673,7 +1676,7 @@ export default {
                   headerCode: 'maoyanPreSale'
                 }
               })
-              .then(response1 => {
+              .then((response1) => {
                 record.detail = response1.data;
 
                 this.$set(
@@ -1686,7 +1689,7 @@ export default {
 
                 resolve(response1.data);
               })
-              .catch(error => {
+              .catch((error) => {
                 this.$set(
                   this.preSaleWantToSeeListData,
                   crawlingCount,
@@ -1711,7 +1714,7 @@ export default {
                   headerCode: 'rankingListDetailHeader'
                 }
               })
-              .then(response1 => {
+              .then((response1) => {
                 record.portrait = response1.data;
 
                 this.$set(
@@ -1724,7 +1727,7 @@ export default {
                 );
                 resolve(response1.data);
               })
-              .catch(error => {
+              .catch((error) => {
                 this.$set(
                   this.preSaleWantToSeeListData,
                   crawlingCount,
@@ -1740,14 +1743,15 @@ export default {
         };
 
         const getDetailPromise = getDetail();
-        const getPreSaleWantToSeePortraitPromise = getPreSaleWantToSeePortrait();
+        const getPreSaleWantToSeePortraitPromise =
+          getPreSaleWantToSeePortrait();
         if (this.crawlingCount === this.rankingListCountLimit) {
           this.crawlingFlag = false;
         } else {
           this.crawlingCount++;
         }
         Promise.all([getDetailPromise, getPreSaleWantToSeePortraitPromise])
-          .then(responseAll => {
+          .then((responseAll) => {
             console.log(responseAll);
 
             this.$set(
@@ -1759,13 +1763,12 @@ export default {
             console.log('rankingListMovieData', this.preSaleWantToSeeListData);
 
             if (this.crawlingFlag) {
-              this.preSaleWantToSeeListData[
-                crawlingCount
-              ].recordTime = this.$moment(Date.now()).format('hh:mm:ss');
+              this.preSaleWantToSeeListData[crawlingCount].recordTime =
+                this.$moment(Date.now()).format('hh:mm:ss');
               loop();
             }
           })
-          .catch(error => {
+          .catch((error) => {
             console.log(error);
             if (this.crawlingCount === this.rankingListCountLimit) {
               this.crawlingFlag = false;
@@ -1789,7 +1792,7 @@ export default {
         this.crawlingCount === this.rankingListCountLimit
       ) {
         console.log(this.rankingListMovieData);
-        const params = this.rankingListMovieData.map(item => {
+        const params = this.rankingListMovieData.map((item) => {
           //   delete item.config;
           //   delete item.request;
           //   delete item.response;
@@ -1803,12 +1806,12 @@ export default {
             this.$baseUrl + this.saveMultipleMaoyanRankingListRecordRequest,
             params
           )
-          .then(response => {
+          .then((response) => {
             this.$message.success('数据提交成功');
             this.getTableData();
             this.stepCrawlFlag = false;
           })
-          .catch(error => {
+          .catch((error) => {
             console.log(error);
           });
       } else {
@@ -1830,7 +1833,7 @@ export default {
       this.$alert(scope.row.description, '电影描述', {
         confirmButtonText: '关闭',
         closeOnClickModal: true,
-        callback: action => {}
+        callback: (action) => {}
       });
     },
     handleChangeLimitType(value) {

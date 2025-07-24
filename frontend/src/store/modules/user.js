@@ -47,6 +47,7 @@ const user = {
           commit('SET_LOGIN_ID', userInfo.username);
           resolve();
         }).catch(error => {
+          console.log(error)
           reject(error);
         });
       });
@@ -79,6 +80,7 @@ const user = {
           commit('SET_AVATAR', data.avatar)
           resolve(response)*/
         }).catch(error => {
+          console.log(error)
           reject(error);
         });
       });
@@ -98,6 +100,7 @@ const user = {
           removeLoginId();
           resolve();
         }).catch(error => {
+          console.log(error)
           reject(error);
         });
         // logout(state.token).then(() => {
@@ -107,6 +110,7 @@ const user = {
         //   removeLoginId();
         //   resolve();
         // }).catch(error => {
+          console.log(error)
         //   reject(error);
         // });
       });

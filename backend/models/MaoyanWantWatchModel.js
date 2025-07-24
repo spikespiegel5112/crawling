@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 
 const sequelize = require('../util/database');
 
-const MaoyanWantSeeModel = sequelize.define('MaoyanWantSee', {
+const MaoyanWantWatchModel = sequelize.define('MaoyanWantWatch', {
 	id: {
 		type: Sequelize.INTEGER,
 		autoIncrement: true,
@@ -99,4 +99,4 @@ const MaoyanWantSeeModel = sequelize.define('MaoyanWantSee', {
 	}
 });
 
-module.exports = MaoyanWantSeeModel;
+module.exports = MaoyanWantWatchModel;

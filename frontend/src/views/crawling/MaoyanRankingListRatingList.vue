@@ -784,6 +784,7 @@ export default {
             resolve(response.data);
           })
           .catch(error => {
+          console.log(error)
             console.log(error);
             reject(error);
           });
@@ -864,6 +865,7 @@ export default {
               this.getTableData();
             })
             .catch(error => {
+          console.log(error)
               console.log(error);
               this.$message.error(
                 `${error.response.status.toString()}  ${
@@ -929,6 +931,7 @@ export default {
           this.getTableData();
         })
         .catch(error => {
+          console.log(error)
           console.log(error);
           this.$message.error(
             `${error.response.status.toString()}  ${error.response.data.error}`
@@ -1024,6 +1027,7 @@ export default {
           console.log(responseAll);
         })
         .catch(error => {
+          console.log(error)
           console.log(error);
           this.$message.error(error);
         });
@@ -1035,6 +1039,7 @@ export default {
           console.log(responseAll);
         })
         .catch(error => {
+          console.log(error)
           console.log(error);
           this.$message.error(error);
         });
@@ -1076,6 +1081,7 @@ export default {
             resolve(this.preSaleWantToSeeListData);
           })
           .catch(error => {
+          console.log(error)
             this.$message.error(error);
             reject(error);
           });
@@ -1112,6 +1118,7 @@ export default {
           this.$message.success('获取预售列表成功');
         })
         .catch(error => {
+          console.log(error)
           this.$message.error(error);
         });
     },
@@ -1161,6 +1168,7 @@ export default {
             this.$message.success('获取电影排名列表成功');
           })
           .catch(error => {
+          console.log(error)
             this.$message.error(error);
             reject(error);
           });
@@ -1212,6 +1220,7 @@ export default {
                 resolve(response1.data);
               })
               .catch(error => {
+          console.log(error)
                 this.$set(
                   this.rankingListData,
                   crawlingCount,
@@ -1250,6 +1259,7 @@ export default {
                 resolve(response1.data);
               })
               .catch(error => {
+          console.log(error)
                 this.$set(
                   this.rankingListData,
                   crawlingCount,
@@ -1293,6 +1303,7 @@ export default {
                 resolve(response1.data);
               })
               .catch(error => {
+          console.log(error)
                 this.$set(
                   this.rankingListData,
                   crawlingCount,
@@ -1333,6 +1344,7 @@ export default {
                 resolve(response1.data);
               })
               .catch(error => {
+          console.log(error)
                 this.$set(
                   this.rankingListData,
                   crawlingCount,
@@ -1376,6 +1388,7 @@ export default {
                 resolve(response1.data);
               })
               .catch(error => {
+          console.log(error)
                 this.$set(
                   this.rankingListData,
                   crawlingCount,
@@ -1418,6 +1431,7 @@ export default {
                 resolve(response1.data);
               })
               .catch(error => {
+          console.log(error)
                 this.$set(
                   this.rankingListData,
                   crawlingCount,
@@ -1479,6 +1493,7 @@ export default {
             }
           })
           .catch(error => {
+          console.log(error)
             console.log(error);
             if (this.crawlingCount === this.rankingListData.length) {
               // debugger
@@ -1531,6 +1546,7 @@ export default {
                 resolve(response1.data);
               })
               .catch(error => {
+          console.log(error)
                 this.$set(
                   this.preSaleWantToSeeListData,
                   crawlingCount,
@@ -1569,6 +1585,7 @@ export default {
                 resolve(response1.data);
               })
               .catch(error => {
+          console.log(error)
                 this.$set(
                   this.preSaleWantToSeeListData,
                   crawlingCount,
@@ -1611,6 +1628,7 @@ export default {
             }
           })
           .catch(error => {
+          console.log(error)
             console.log(error);
             if (this.crawlingCount === this.rankingListCountLimit) {
               // debugger

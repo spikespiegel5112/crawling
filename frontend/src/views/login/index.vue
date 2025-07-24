@@ -151,11 +151,13 @@ export default {
           //       this.$message.error('此账号无管理员权限')
           //     }
           //   }).catch(error => {
+          console.log(error)
           //     console.log(response.access_token)
           //     this.$message.error('dsds')
           //   })
           //
           // }).catch(error => {
+          console.log(error)
           //   console.log(error)
           //   this.loading = false
           //   this.$message({

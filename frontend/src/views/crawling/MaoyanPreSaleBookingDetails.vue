@@ -452,6 +452,7 @@ export default {
             resolve(response.data);
           })
           .catch(error => {
+          console.log(error)
             console.log(error);
             reject(error);
           });
@@ -532,6 +533,7 @@ export default {
               this.getTableData();
             })
             .catch(error => {
+          console.log(error)
               console.log(error);
               this.$message.error(
                 `${error.response.status.toString()}  ${
@@ -597,6 +599,7 @@ export default {
           this.getTableData();
         })
         .catch(error => {
+          console.log(error)
           console.log(error);
           this.$message.error(
             `${error.response.status.toString()}  ${error.response.data.error}`
@@ -719,6 +722,7 @@ export default {
           this.$message.success('获取列表成功');
         })
         .catch(error => {
+          console.log(error)
           this.$message.error(error);
         });
     },
@@ -765,6 +769,7 @@ export default {
                 resolve(response1.data);
               })
               .catch(error => {
+          console.log(error)
                 this.$set(
                   this.preSaleListData,
                   crawlingCount,
@@ -811,6 +816,7 @@ export default {
             }
           })
           .catch(error => {
+          console.log(error)
             console.log(error);
             if (this.crawlingCount === this.preSaleListCountLimit) {
               // debugger
@@ -881,6 +887,7 @@ export default {
           this.currentPreSaleDetailsTableData = response.data;
         })
         .catch(error => {
+          console.log(error)
           console.log(response);
         });
     }

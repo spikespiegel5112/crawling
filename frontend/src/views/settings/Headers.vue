@@ -332,6 +332,7 @@ export default {
             resolve(response.data);
           })
           .catch(error => {
+          console.log(error)
             console.log(error);
             reject(error);
           });
@@ -419,6 +420,7 @@ export default {
           this.getTableData();
         })
         .catch(error => {
+          console.log(error)
           console.log(error);
           this.$message.error(
             `${error.response.status.toString()}  ${error.response.data.error}`
@@ -480,6 +482,7 @@ export default {
           this.getTableData();
         })
         .catch(error => {
+          console.log(error)
           console.log(error);
           this.$message.error(
             `${error.response.status.toString()}  ${error.response.data.error}`

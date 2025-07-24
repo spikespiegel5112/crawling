@@ -1,7 +1,7 @@
 const express = require("express");
 const crawler = require("crawler");
-const MaoyanRecords = require("../models/MaoyanBoxOfficeRecordModel");
-const SettingsModel = require("../models/SettingsModel");
+const MaoyanRecords = require("../../models/MaoyanBoxOfficeRecordModel");
+const SettingsModel = require("../../models/SettingsModel");
 
 let dataJSONHeaders = {};
 const _crawlPromise = (req, res, next) => {

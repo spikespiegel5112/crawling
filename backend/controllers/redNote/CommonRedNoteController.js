@@ -8,7 +8,7 @@ const fetch = require("node-fetch");
 const atob = require("atob");
 const btoa = require("btoa");
 const request = require("request");
-const SettingsModel = require("../models/SettingsModel");
+const SettingsModel = require("../../models/SettingsModel");
 // const woff2Parser = require('../util/woff2Parser');
 const _woff2Parser = require("woff2-parser");
 const _woffParser = require("woff-parser");
@@ -22,7 +22,7 @@ let headers = {};
 let dataJSONHeadersSample = {};
 const crawlPagePromise = (req, res, next) => {
   return new Promise(async (resolve, reject) => {
-    wantWatchDataJSONHeaderSample = {
+    const wantWatchDataJSONHeaderSample = {
       GET: "/movie/1197814/wantindex?city_tier=0&city_id=0&cityName=%E5%85%A8%E5%9B%BD HTTP/1.1",
       Host: "piaofang.maoyan.com",
       Connection: "keep-alive",
@@ -61,10 +61,10 @@ const crawlPagePromise = (req, res, next) => {
       },
     });
 
-    let body = Object.assign(req.body, req.query);
+    const body = Object.assign(req.body, req.query);
     console.log("body++++", body);
-    let query = (query) => {
-      let queryKeyList = Object.keys(query);
+    const query = (query) => {
+      const queryKeyList = Object.keys(query);
       let result = "";
       if (queryKeyList.length > 0) {
         result = "?";
@@ -78,12 +78,12 @@ const crawlPagePromise = (req, res, next) => {
       return result;
     };
 
-    console.log("crawlPagePromise+++++++++++++++", req.method);
+    console.log("crawlPagePromise+++++++++", query(body));
 
     let queryString = "";
     if (req.method === "POST") {
-      queryString = query(body["query"]);
-      console.log("query+++++++++++++++", query(body["query"]));
+      queryString = query(body);
+      console.log("query+++++++++++++++", query(body));
     }
     console.log("body+++++++++++++++", body);
 
@@ -93,8 +93,10 @@ const crawlPagePromise = (req, res, next) => {
       },
     });
 
-    headers = headers._previousDataValues;
-    // console.log('headers._previousDataValues+++++++++++', headers.value);
+    headers = headers?._previousDataValues || {
+      value: "{}",
+    };
+    console.log("headers._previousDataValues+++++++++++", headers.value);
     console.log("req.body.address+++++++++++", req.body.address + queryString);
 
     crawlerInstance.queue({

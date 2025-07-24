@@ -191,18 +191,18 @@
 					"response": []
 				},
 				{
-					"name": "crawlerWantSeeMaoyanList",
+					"name": "crawlerWantWatchMaoyanList",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:3000/crawlerWantSeeMaoyan/crawlMovieList?address=https://piaofang.maoyan.com/store&headerCode=maoyanWantSee",
+							"raw": "localhost:3000/crawlerWantWatchMaoyan/crawlMovieList?address=https://piaofang.maoyan.com/store&headerCode=maoyanWantWatch",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
-								"crawlerWantSeeMaoyan",
+								"crawlerWantWatchMaoyan",
 								"crawlMovieList"
 							],
 							"query": [
@@ -212,7 +212,7 @@
 								},
 								{
 									"key": "headerCode",
-									"value": "maoyanWantSee"
+									"value": "maoyanWantWatch"
 								}
 							]
 						}
@@ -220,18 +220,18 @@
 					"response": []
 				},
 				{
-					"name": "crawlerWantSeeMaoyanDetail",
+					"name": "crawlerWantWatchMaoyanDetail",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:3000/crawlerWantSeeMaoyan/crawlMovieDetail?address=https://piaofang.maoyan.com/movie/346559&headerCode=maoyanWantSee",
+							"raw": "localhost:3000/crawlerWantWatchMaoyan/crawlMovieDetail?address=https://piaofang.maoyan.com/movie/346559&headerCode=maoyanWantWatch",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
-								"crawlerWantSeeMaoyan",
+								"crawlerWantWatchMaoyan",
 								"crawlMovieDetail"
 							],
 							"query": [
@@ -241,7 +241,7 @@
 								},
 								{
 									"key": "headerCode",
-									"value": "maoyanWantSee"
+									"value": "maoyanWantWatch"
 								}
 							]
 						}
@@ -254,13 +254,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:3000/crawlerWantSeeMaoyan/oneKeyMovieDetail?",
+							"raw": "localhost:3000/crawlerWantWatchMaoyan/oneKeyMovieDetail?",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
-								"crawlerWantSeeMaoyan",
+								"crawlerWantWatchMaoyan",
 								"oneKeyMovieDetail"
 							],
 							"query": [
@@ -271,7 +271,7 @@
 								},
 								{
 									"key": "headerCode",
-									"value": "maoyanWantSee",
+									"value": "maoyanWantWatch",
 									"disabled": true
 								}
 							]
